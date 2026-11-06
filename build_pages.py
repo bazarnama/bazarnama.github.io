@@ -6,6 +6,7 @@ import re, json, html, pathlib, datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BASE = "https://bazarnama.github.io"
+GLASS = (ROOT / "glass.css").read_text(encoding="utf-8")
 STYLE = re.search(r"<style>(.*?)</style>", (ROOT / "currency.html").read_text(encoding="utf-8"), re.S).group(1)
 
 A = [
@@ -50,7 +51,7 @@ def page(title, desc, path, body, ld, script=""):
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(desc)}">
 <title>{e(title)}</title>{HEAD_COMMON}
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
-<style>{STYLE}{EXTRA_CSS}</style><link rel="stylesheet" href="/glass.css"></head><body><main class="wrap">
+<style>{STYLE}{EXTRA_CSS}</style><style id="glass">{GLASS}</style></head><body><main class="wrap">
 {TOP}
 {body}
 {FOOT}

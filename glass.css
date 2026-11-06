@@ -1,9 +1,9 @@
 /* Liquid-glass theme — edit here, applies to every page */
-:root{--g-bg:rgba(255,255,255,.40);--g-bg2:rgba(255,255,255,.28);--g-border:rgba(255,255,255,.65);--g-shadow:0 10px 34px rgba(16,70,62,.14);--g-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 22px rgba(255,255,255,.18);--g-blur:blur(22px) saturate(185%)}
+:root{--g-bg:rgba(255,255,255,.40);--g-bg2:rgba(255,255,255,.28);--g-border:rgba(255,255,255,.65);--g-shadow:0 10px 34px rgba(16,70,62,.14);--g-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 22px rgba(255,255,255,.18);--g-blur:blur(28px) saturate(200%)}
 [data-theme="dark"]{--g-bg:rgba(28,48,45,.42);--g-bg2:rgba(34,56,52,.32);--g-border:rgba(255,255,255,.14);--g-shadow:0 12px 36px rgba(0,0,0,.38);--g-hi:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 22px rgba(255,255,255,.03)}
 
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
- background:radial-gradient(520px 420px at 12% 8%,rgba(32,190,160,.55),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(124,92,255,.38),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(255,184,64,.42),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(64,150,255,.34),transparent 70%)}
+ background:radial-gradient(520px 420px at 12% 8%,rgba(32,200,165,.75),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(124,92,255,.55),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(255,184,64,.60),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(64,150,255,.50),transparent 70%)}
 [data-theme="dark"] body::before{background:radial-gradient(520px 420px at 12% 8%,rgba(20,150,125,.55),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(100,70,230,.42),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(210,140,30,.30),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(40,110,220,.34),transparent 70%)}
 
 .card,.panel,.newsItem,.tablewrap,.topbar,.result,.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.btn.ghost,.tag{
