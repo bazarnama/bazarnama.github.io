@@ -54,7 +54,7 @@
     }
   ]
   </script>
-</head>
+<link rel="stylesheet" href="/glass.css"></head>
 <body>
   <header class="topbar">
     <div class="wrap topinner">
@@ -230,10 +230,24 @@
     return assets.filter(a => filter==='all' || (filter==='favorites'?favorites.has(a.id):a.category===filter));
   }
   function iconMarkup(id) {
-    const symbols = {usd:'$',eur:'€',gbp:'£',aed:'د', 'gold-18k':'Au','coin-emami':'●','coin-half':'½','coin-quarter':'¼',xau:'Au',btc:'₿',eth:'Ξ',brent:'B',wti:'W'};
-    const tones = {usd:'currency',eur:'currency',gbp:'currency',aed:'currency','gold-18k':'gold','coin-emami':'gold','coin-half':'gold','coin-quarter':'gold',xau:'gold',btc:'crypto',eth:'crypto',brent:'energy',wti:'energy'};
-    const symbol = symbols[id] || '•';
-    return `<span class="assetIcon ${tones[id] || 'currency'}" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="16.2" stroke="currentColor" stroke-opacity=".28" stroke-width="1.4"/><circle cx="20" cy="20" r="12.5" stroke="currentColor" stroke-opacity=".18" stroke-width=".8"/><text x="20" y="25.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="${symbol.length>1?12:19}" font-weight="800" fill="currentColor">${symbol}</text><path d="M29.5 9.5l1.8-1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>`;
+    const bg = {usd:['#34c98a','#0a7650'],eur:['#5b8cff','#1c3ea6'],gbp:['#9b6cff','#46269e'],aed:['#19c2ae','#0a6761'],
+      'gold-18k':['#fbdc7a','#c48410'],'coin-emami':['#f8d35c','#b5750a'],'coin-half':['#f8d35c','#b5750a'],'coin-quarter':['#f8d35c','#b5750a'],
+      xau:['#efc24f','#8a5805'],btc:['#ffa62e','#d4680a'],eth:['#8c9bff','#3a49c4'],brent:['#4b5262','#10131a'],wti:['#6a7484','#1f242d']};
+    const txt = (t,size) => `<text x="20" y="${size>16?28:25}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${size}" font-weight="800" fill="#fff">${t}</text>`;
+    const ring = '<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4"/>';
+    const glyph = {
+      usd:txt('$',23), eur:txt('€',23), gbp:txt('£',23), aed:txt('د',22),
+      'gold-18k':'<path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/>',
+      'coin-emami':ring+'<circle cx="20" cy="20" r="6.6" fill="#fff"/>',
+      'coin-half':ring+'<path d="M20 13.4a6.6 6.6 0 0 0 0 13.2z" fill="#fff"/>',
+      'coin-quarter':ring+'<path d="M20 20v-6.6A6.6 6.6 0 0 0 13.4 20z" fill="#fff"/>',
+      xau:'<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.2" stroke-opacity=".9"/>'+txt('Au',12.5),
+      btc:txt('₿',24), eth:'<path d="M20 7.5 29 21l-9 5.2L11 21z" fill="#fff"/><path d="M20 28.4 29 23l-9 9.6L11 23z" fill="#fff" fill-opacity=".72"/>',
+      brent:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#12151c">B</text>',
+      wti:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#1f242d">W</text>'
+    }[id] || txt('•',22);
+    const [c1,c2] = bg[id] || ['#3aa68a','#12604f'];
+    return `<span class="assetIcon" aria-hidden="true" style="background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,${c1},${c2});color:#fff;border-radius:50%;width:44px;height:44px;flex-basis:44px;box-shadow:0 6px 14px ${c2}55,inset 0 1px 0 #ffffff66"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px">${glyph}</svg></span>`;
   }
   function renderAssets() {
     const list=visibleAssets();
