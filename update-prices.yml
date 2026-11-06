@@ -1,0 +1,36 @@
+name: Update prices
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Fetch latest prices
+        run: python scripts/update_prices.py
+      - name: Publish changed prices
+        run: |
+          if git diff --quiet -- data/prices.json data/summary.json; then
+            echo "No price changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/prices.json data/summary.json
+          git commit -m "Update prices"
+          git pull --rebase
+          git push
