@@ -1,62 +1,66 @@
-import feedparser
+
 import json
+import re
 import os
-import requests
+import feedparser
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 
 SOURCES = {
-    "ایران اینترنشنال": "https://www.iranintl.com/fa/rss",
-    "ایرنا": "https://www.irna.ir/rss",
+    "ایران اینترنشنال": "https://www.iranintl.com/feed",
     "ایسنا": "https://www.isna.ir/rss",
     "مهر": "https://www.mehrnews.com/rss",
-    "تسنیم": "https://www.tasnimnews.com/fa/rss",
+    "تسنیم": "https://www.tasnimnews.com/fa/rss/feed/0/8/0",
+    "باشگاه خبرنگاران جوان": "https://www.yjc.ir/fa/rss/allnews",
+    "تابناک": "https://www.tabnak.ir/fa/rss/allnews",
     "خبرآنلاین": "https://www.khabaronline.ir/rss",
-    "تابناک": "https://www.tabnak.ir/fa/rss",
+    "ایرنا": "https://www.irna.ir/rss"
 }
 
 KEYWORDS = [
-    "اقتصاد", "دلار", "ارز", "طلا", "سکه",
-    "بورس", "بانک", "تورم", "نفت", "بازار",
-    "قیمت", "تجارت", "صادرات", "واردات",
-    "رمزارز", "بیت کوین", "بودجه"
+    "اقتصاد", "اقتصادی", "دلار", "ارز", "طلا", "سکه",
+    "بورس", "تورم", "بانک", "نفت", "بازار", "قیمت",
+    "تجارت", "صادرات", "واردات", "مسکن", "خودرو",
+    "بودجه", "رمزارز", "بیت کوین", "معیشت"
 ]
 
-def get_date(entry):
-    try:
-        return parsedate_to_datetime(entry.published).astimezone(timezone.utc).isoformat()
-    except Exception:
-        return datetime.now(timezone.utc).isoformat()
+def get_date(item):
+    for field in ("published", "updated"):
+        value = item.get(field)
+        if value:
+            try:
+                return parsedate_to_datetime(value).astimezone(
+                    timezone.utc
+                ).isoformat()
+            except Exception:
+                pass
+    return ""
 
 def main():
     news = []
     seen = set()
+    successful = 0
 
     for source, url in SOURCES.items():
         try:
-            response = requests.get(
-                url,
-                timeout=20,
-                headers={"User-Agent": "Bazarnama News Bot"}
-            )
-            response.raise_for_status()
+            feed = feedparser.parse(url)
+            if not feed.entries:
+                print("No entries:", source)
+                continue
 
-            feed = feedparser.parse(response.content)
+            successful += 1
 
-            for item in feed.entries[:30]:
+            for item in feed.entries[:40]:
                 title = item.get("title", "").strip()
                 link = item.get("link", "").strip()
-                summary = item.get("summary", "")
 
-                text = (title + " " + summary).lower()
-
-                if not title or not link:
+                if not title or not link.startswith("https://"):
                     continue
 
-                if not any(word in text for word in KEYWORDS):
+                if not any(word in title for word in KEYWORDS):
                     continue
 
-                key = title.lower()
+                key = re.sub(r"\W", "", title.lower())
                 if key in seen:
                     continue
 
@@ -64,23 +68,33 @@ def main():
 
                 news.append({
                     "title": title,
+                    "url": link,
                     "source": source,
-                    "link": link,
-                    "date": get_date(item),
-                    "summary": summary[:400]
+                    "published_at": get_date(item)
                 })
 
         except Exception as error:
-            print(f"Error in {source}: {error}")
+            print("Error:", source, error)
 
-    news.sort(key=lambda x: x["date"], reverse=True)
+    if successful == 0:
+        raise SystemExit("All news sources failed")
+
+    news.sort(
+        key=lambda x: x["published_at"],
+        reverse=True
+    )
 
     os.makedirs("data", exist_ok=True)
 
-    with open("data/news.json", "w", encoding="utf-8") as file:
-        json.dump(news[:100], file, ensure_ascii=False, indent=2)
+    output = {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "items": news[:24]
+    }
 
-    print(f"Saved {len(news[:100])} news items")
+    with open("data/news.json", "w", encoding="utf-8") as f:
+        json.dump(output, f, ensure_ascii=False, indent=2)
+
+    print("Saved", len(news[:24]), "news items")
 
 if __name__ == "__main__":
     main()
