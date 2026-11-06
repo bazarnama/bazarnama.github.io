@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://amirhafezgoudarzi90-pixel.github.io/sitemap.xml
