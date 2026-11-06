@@ -70,6 +70,18 @@ table{border-collapse:separate;border-spacing:0}
 /* index: the outer .hero is only a wrapper around .heroBox */
 .hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .panel p a,.panel li a{color:var(--brand);font-weight:700}
+
+/* large screens (Windows desktops 1600px+) */
+@media (min-width:1600px){
+ .wrap{width:min(1480px,100%)}
+ main.wrap:not(#home){width:min(1040px,100%)}
+ .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:2200px){
+ .wrap{width:min(1760px,100%)}
+ main.wrap:not(#home){width:min(1120px,100%)}
+ .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | قیمت ارز</div><h1>قیمت پوند امروز</h1><p>پوند استرلینگ ارز رسمی بریتانیا است و معمولاً از یورو و دلار گران‌تر معامله می‌شود.</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/#alerts">هشدار قیمت</a></div></section>

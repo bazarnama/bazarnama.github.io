@@ -70,6 +70,18 @@ table{border-collapse:separate;border-spacing:0}
 /* index: the outer .hero is only a wrapper around .heroBox */
 .hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .panel p a,.panel li a{color:var(--brand);font-weight:700}
+
+/* large screens (Windows desktops 1600px+) */
+@media (min-width:1600px){
+ .wrap{width:min(1480px,100%)}
+ main.wrap:not(#home){width:min(1040px,100%)}
+ .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:2200px){
+ .wrap{width:min(1760px,100%)}
+ main.wrap:not(#home){width:min(1120px,100%)}
+ .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="فعال‌کردن حالت شب" title="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | اطلاعات بازارهای مالی</div><h1>قیمت دلار امروز و نرخ ارزهای خارجی به تومان</h1><p>نرخ دلار آمریکا، یورو، پوند انگلیس و درهم امارات را در یک صفحه بررسی کن؛ قیمت‌های دریافتی، زمان داده و راهنمای مقایسه نرخ ارز را ببین.</p><div class="actions"><a class="btn" href="/#markets">مشاهده همه قیمت‌ها</a><a class="btn alt" href="/#chart">مشاهده نمودارها</a></div></section>
