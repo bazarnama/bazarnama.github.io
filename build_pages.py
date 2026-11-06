@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate one SEO page per asset (price/<id>.html), about.html and sitemap.xml.
+"""Generate one SEO page per asset (price-<id>.html), about.html and sitemap.xml.
 Run:  python scripts/build_pages.py   (output is committed; no build step on the server)
 """
 import re, json, html, pathlib, datetime
@@ -80,20 +80,20 @@ def asset_page(a):
     id_, name, h1, cat, unit, blurb = a
     title = f"{h1} | بازارنما"
     desc = f"{h1}؛ نرخ لحظه‌ای {name} به {unit} همراه با درصد تغییر ۲۴ ساعته، زمان آخرین داده و منبع قیمت در بازارنما."
-    rel = "".join(f'<a href="/price/{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] == cat and o[0] != id_)
-    others = "".join(f'<a href="/price/{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] != cat)
+    rel = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] == cat and o[0] != id_)
+    others = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] != cat)
     body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1>{html.escape(h1)}</h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/#alerts">هشدار قیمت</a></div></section>
 <section class="panel"><h2>نرخ {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر ۲۴ ساعته</small><b id="chg">…</b></div><div><small>زمان آخرین داده</small><b id="time" style="font-size:15px">…</b></div><div><small>تعداد منابع</small><b id="src" style="font-size:15px">…</b></div></div><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نکاتی درباره {html.escape(name)}</h2><p>{html.escape(blurb)}</p><p>قیمت نمایش‌داده‌شده نرخ تقریبی بازار بر پایه داده منبع است و ممکن است با قیمت نهایی معامله در صرافی، بازار یا فروشگاه تفاوت داشته باشد. همیشه واحد قیمت ({html.escape(unit)}) و زمان ثبت داده را کنار عدد بررسی کن. اطلاعات این صفحه توصیه خرید یا فروش نیست.</p><p>برای دیدن نمودار تاریخی و ماشین‌حساب تبدیل، به <a href="/#chart">صفحه اصلی</a> برو. روش جمع‌آوری داده‌ها در <a href="/about.html">درباره بازارنما</a> توضیح داده شده است.</p></section>
 <section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div></section>"""
     ld = {"@context": "https://schema.org", "@graph": [
-        {"@type": "WebPage", "name": title, "url": f"{BASE}/price/{id_}.html", "inLanguage": "fa-IR", "description": desc,
+        {"@type": "WebPage", "name": title, "url": f"{BASE}/price-{id_}.html", "inLanguage": "fa-IR", "description": desc,
          "isPartOf": {"@type": "WebSite", "name": "بازارنما", "url": BASE + "/"}},
         {"@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
             {"@type": "ListItem", "position": 2, "name": CATN[cat], "item": BASE + CAT[cat] if CAT[cat].startswith("/") and not CAT[cat].startswith("/#") else BASE + "/"},
-            {"@type": "ListItem", "position": 3, "name": name, "item": f"{BASE}/price/{id_}.html"}]}]}
-    return page(title, desc, f"/price/{id_}.html", body, ld, ASSET_JS % json.dumps(id_))
+            {"@type": "ListItem", "position": 3, "name": name, "item": f"{BASE}/price-{id_}.html"}]}]}
+    return page(title, desc, f"/price-{id_}.html", body, ld, ASSET_JS % json.dumps(id_))
 
 
 def about():
@@ -106,12 +106,11 @@ def about():
 
 
 def main():
-    (ROOT / "price").mkdir(exist_ok=True)
     for a in A:
-        (ROOT / "price" / f"{a[0]}.html").write_text(asset_page(a), encoding="utf-8")
+        (ROOT / f"price-{a[0]}.html").write_text(asset_page(a), encoding="utf-8")
     (ROOT / "about.html").write_text(about(), encoding="utf-8")
     today = datetime.date.today().isoformat()
-    urls = ["/", "/currency.html", "/gold.html", "/crypto.html", "/about.html"] + [f"/price/{a[0]}.html" for a in A]
+    urls = ["/", "/currency.html", "/gold.html", "/crypto.html", "/about.html"] + [f"/price-{a[0]}.html" for a in A]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{BASE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sm, encoding="utf-8")
