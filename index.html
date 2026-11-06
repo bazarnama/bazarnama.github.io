@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b766b">
+  <meta name="description" content="قیمت روز دلار و ارزهای خارجی، قیمت طلای ۱۸ عیار و سکه، و نرخ بیت‌کوین و اتریوم را در بازارنما ببینید؛ همراه با جدول قیمت‌ها، نمودار، زمان به‌روزرسانی و ماشین‌حساب تبدیل ارز.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://bazarnama.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:site_name" content="بازارنما">
+  <meta property="og:title" content="قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما">
+  <meta property="og:description" content="قیمت روز دلار و ارز، طلای ۱۸ عیار و سکه، بیت‌کوین و اتریوم؛ همراه با جدول قیمت، نمودار و ماشین‌حساب تبدیل ارز.">
+  <meta property="og:url" content="https://bazarnama.github.io/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما">
+  <meta name="twitter:description" content="نرخ روز ارز، طلا و رمزارزها را در بازارنما ببینید؛ همراه با نمودار و ماشین‌حساب تبدیل ارز.">
+  <title>قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما</title>
+  <link rel="preconnect" href="https://nerkhara.com">
+  <link rel="preconnect" href="https://api.frankfurter.dev">
+  <link rel="preconnect" href="https://pro-api.coinmarketcap.com">
+  <style>
+    :root{--bg:#f3f7f6;--surface:#fff;--surface2:#f7faf9;--text:#17332e;--muted:#70847e;--line:#e3ece8;--brand:#087e6e;--brand2:#20aa91;--good:#15966d;--bad:#d65353;--gold:#d79a24;--shadow:0 10px 28px rgba(18,55,47,.07);--radius:18px}
+    [data-theme="dark"]{--bg:#0c1716;--surface:#142321;--surface2:#192c29;--text:#e7f2ee;--muted:#9bb0a9;--line:#29413c;--brand:#25a995;--brand2:#177e70;--good:#48c69b;--bad:#ff7777;--gold:#e9b64f;--shadow:0 12px 30px rgba(0,0,0,.2)}
+    *{box-sizing:border-box;min-width:0}html{scroll-behavior:smooth;scroll-padding-top:85px}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.7;overflow-x:hidden;transition:background .2s,color .2s}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.wrap{width:min(1160px,100%);margin:auto;padding:0 18px}.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.topinner{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}.brandmark{width:38px;height:38px;border-radius:13px;background:linear-gradient(140deg,var(--brand),var(--brand2));display:grid;place-items:center;color:white;font-size:19px;box-shadow:0 5px 14px #087e6e35}.nav{display:flex;align-items:center;gap:18px;color:var(--muted);font-size:13px}.nav a:hover{color:var(--brand)}.iconbtn,.smallbtn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:9px 12px}.iconbtn{font-size:18px;min-width:42px}.hero{padding:36px 0 22px}.heroBox{position:relative;overflow:hidden;border-radius:26px;padding:30px;background:linear-gradient(120deg,#075c55,#0b8b79 62%,#24ad91);color:white;box-shadow:0 18px 40px #087e6e25}.heroBox:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffffff22;border-radius:50%;left:-55px;top:-130px;box-shadow:0 0 0 28px #ffffff09,0 0 0 58px #ffffff08}.heroContent{position:relative;z-index:1;max-width:690px}.eyebrow{font-size:12px;letter-spacing:.3px;opacity:.82}.hero h1{font-size:clamp(25px,5vw,38px);line-height:1.45;margin:8px 0}.hero p{margin:0;color:#e2f7f1;font-size:14px}.heroActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.btn{border:0;border-radius:12px;padding:11px 17px;font-weight:700}.btn.light{background:white;color:#087e6e}.btn.ghost{background:#ffffff18;color:white;border:1px solid #ffffff44}.section{padding:19px 0}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:14px}.sectionHead h2{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:3px}.status{font-size:12px;color:var(--muted);padding:8px 0}.status.error{color:var(--bad)}.status.ok{color:var(--good)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card,.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.asset{padding:15px;position:relative;overflow:hidden}.assetTop{display:flex;align-items:center;justify-content:space-between;gap:8px}.assetName{font-size:13px;color:var(--muted);font-weight:700}.assetIdentity{display:flex;align-items:center;gap:9px;min-width:0}.assetIcon{width:39px;height:39px;flex:0 0 39px;border-radius:13px;display:grid;place-items:center;box-shadow:inset 0 1px 0 #ffffff70,0 4px 10px #102a2412}.assetIcon svg{width:25px;height:25px;display:block}.assetIcon.currency{background:linear-gradient(145deg,#e3f5ed,#b9e2d1);color:#08785e}.assetIcon.gold{background:linear-gradient(145deg,#fff2cf,#e9c36f);color:#93620a}.assetIcon.crypto{background:linear-gradient(145deg,#f2eaff,#d9c5ff);color:#6840a8}.assetIcon.energy{background:linear-gradient(145deg,#e5efff,#b9d0f5);color:#315f9e}[data-theme="dark"] .assetIcon.currency{background:linear-gradient(145deg,#21483d,#17372f);color:#8ee0bd}[data-theme="dark"] .assetIcon.gold{background:linear-gradient(145deg,#59451e,#382d18);color:#f4cf78}[data-theme="dark"] .assetIcon.crypto{background:linear-gradient(145deg,#40315b,#2b2340);color:#d0b7ff}[data-theme="dark"] .assetIcon.energy{background:linear-gradient(145deg,#263d5d,#1c2d45);color:#a9c9ff}.assetNameWrap{display:flex;flex-direction:column;gap:1px;min-width:0}.assetNameWrap .assetName{color:var(--text)}.assetCode{font-size:10px;color:var(--muted);font-weight:500}.star{border:0;background:transparent;color:var(--muted);font-size:20px;padding:0 3px}.star.active{color:var(--gold)}.assetPrice{font-size:clamp(17px,2.3vw,23px);font-weight:900;margin:9px 0 2px;overflow-wrap:anywhere;direction:ltr;text-align:right}.assetUnit{font-size:11px;color:var(--muted)}.change{display:inline-flex;gap:4px;align-items:center;font-size:11px;font-weight:700;margin-top:9px}.up{color:var(--good)}.down{color:var(--bad)}.neutral{color:var(--muted)}.assetFoot{font-size:10px;color:var(--muted);margin-top:8px}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:30px;padding:8px 13px;font-size:12px}.chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}.tablewrap{overflow:auto;width:100%}table{border-collapse:collapse;width:100%;min-width:560px}th,td{padding:13px 12px;text-align:right;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}th{color:var(--muted);font-weight:700}td strong{font-size:13px}.tag{padding:4px 8px;border-radius:20px;background:var(--surface2);font-size:10px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1.25fr .75fr;gap:15px}.panel{padding:18px}.panelTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.panelTitle h3{font-size:16px;margin:0}.select{border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:10px;padding:9px 11px;max-width:100%}.chartArea{height:245px;position:relative}.chartArea canvas{width:100%;height:100%;display:block}.chartHint{font-size:11px;color:var(--muted);margin-top:8px}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:6px;margin-bottom:11px}.field label{font-size:12px;color:var(--muted)}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--text);padding:11px;outline:none}.field input:focus,.field select:focus{border-color:var(--brand)}.result{background:var(--surface2);border:1px dashed var(--line);padding:14px;border-radius:13px;margin-top:10px}.result strong{display:block;font-size:20px;overflow-wrap:anywhere}.result small{color:var(--muted)}.newsGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.newsItem{padding:15px;display:flex;flex-direction:column;gap:9px;min-height:150px}.newsSource{font-size:10px;color:var(--brand);font-weight:800}.newsTitle{font-size:13px;line-height:1.9;font-weight:700}.newsDate{font-size:10px;color:var(--muted);margin-top:auto}.newsItem a:hover .newsTitle{color:var(--brand)}.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}.footer{margin-top:25px;padding:26px 0 35px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.footerGrid{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.footer a{color:var(--brand)}.disclaimer{background:var(--surface2);padding:12px 14px;border-radius:12px;margin-top:14px;line-height:1.9}.seo-copy .panel{line-height:2}.seo-copy h2{font-size:19px;margin:0 0 10px}.seo-copy h3{font-size:15px;margin:18px 0 6px}.seo-copy p{font-size:13px;color:var(--muted);margin:8px 0}.hidden{display:none!important}.loading{opacity:.6}.muted{color:var(--muted)}
+    @media(max-width:850px){.nav{gap:10px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.newsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:560px){.wrap{padding:0 13px}.topinner{min-height:60px}.brand{font-size:18px}.nav{display:none}.hero{padding-top:18px}.heroBox{padding:23px 19px;border-radius:21px}.hero h1{font-size:25px}.sectionHead{align-items:start;flex-direction:column}.stats{gap:9px}.asset{padding:12px}.assetPrice{font-size:17px}.newsGrid{grid-template-columns:1fr}.panel{padding:14px}.chartArea{height:210px}.formrow{grid-template-columns:1fr 1fr}.toolbar{width:100%}.toolbar .select{flex:1}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  </style>
+  <script type="application/ld+json">
+  [
+    {
+      "@context":"https://schema.org",
+      "@type":"WebSite",
+      "name":"بازارنما",
+      "url":"https://bazarnama.github.io/",
+      "inLanguage":"fa-IR",
+      "description":"نمایش و مقایسه نرخ روز ارزهای خارجی، طلا و سکه و رمزارزها همراه با نمودار قیمت و ماشین‌حساب تبدیل ارز.",
+      "about":[
+        {"@type":"Thing","name":"قیمت دلار و نرخ ارز"},
+        {"@type":"Thing","name":"قیمت طلا و سکه"},
+        {"@type":"Thing","name":"قیمت ارز دیجیتال و رمزارز"}
+      ]
+    },
+    {
+      "@context":"https://schema.org",
+      "@type":"WebPage",
+      "name":"قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما",
+      "url":"https://bazarnama.github.io/",
+      "inLanguage":"fa-IR",
+      "description":"جدول قیمت دلار، یورو، پوند و درهم، طلای ۱۸ عیار و سکه، بیت‌کوین و اتریوم به همراه نمودار و ماشین‌حساب تبدیل ارز.",
+      "isPartOf":{"@type":"WebSite","name":"بازارنما","url":"https://bazarnama.github.io/"}
+    }
+  ]
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topinner">
+      <a class="brand" href="#home" aria-label="بازارنما - صفحه اصلی"><span class="brandmark">ب</span><span>بازارنما</span></a>
+      <nav class="nav" aria-label="ناوبری اصلی">
+        <a href="#markets">قیمت‌ها</a><a href="/currency.html">قیمت ارز</a><a href="/gold.html">طلا و سکه</a><a href="/crypto.html">ارز دیجیتال</a><a href="#chart">نمودار</a><a href="#converter">تبدیل ارز</a><a href="#news">اخبار</a>
+      </nav>
+      <button class="iconbtn" id="themeBtn" aria-label="تغییر حالت شب و روز" title="حالت شب و روز">☾</button>
+    </div>
+  </header>
+
+  <main id="home" class="wrap">
+    <section class="hero">
+      <div class="heroBox"><div class="heroContent">
+        <div class="eyebrow">نمای روز بازارهای مالی؛ ارز، طلا و رمزارز</div>
+        <h1>قیمت روز دلار، طلا و ارز دیجیتال؛ نرخ ارزهای بازار</h1>
+        <p>قیمت دلار و ارزهای خارجی، طلای ۱۸ عیار و سکه، بیت‌کوین و اتریوم را در یک صفحه دنبال کن؛ تغییرات و نمودار قیمت را ببین و از ماشین‌حساب تبدیل ارز استفاده کن.</p>
+        <div class="heroActions"><a class="btn light" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a></div>
+      </div></div>
+    </section>
+
+    <section id="markets" class="section">
+      <div class="sectionHead"><div><h2>نمای کلی بازار</h2><div class="sub">با بازکردن صفحه یا زدن دکمه بروزرسانی، قیمت‌ها دوباره از منابع آنلاین دریافت می‌شوند.</div></div>
+        <div class="toolbar"><button class="smallbtn" id="refreshBtn">↻ بروزرسانی</button><span class="tag" id="updateLabel">در انتظار دریافت</span></div>
+      </div>
+      <div class="status" id="marketStatus" aria-live="polite">در حال دریافت اطلاعات بازار…</div>
+      <div class="chips" id="filters">
+        <button class="chip active" data-filter="all">همه</button><button class="chip" data-filter="currency">ارز</button><button class="chip" data-filter="gold">طلا و سکه</button><button class="chip" data-filter="crypto">رمزارز</button><button class="chip" data-filter="energy">انرژی</button><button class="chip" data-filter="favorites">★ علاقه‌مندی‌ها</button>
+      </div>
+      <div class="stats" id="assetCards" style="margin-top:13px"><div class="empty">در حال بارگذاری قیمت‌ها…</div></div>
+    </section>
+
+    <section id="converter" class="section">
+      <div class="sectionHead"><div><h2>ماشین‌حساب تبدیل ارز</h2><div class="sub">محاسبه بر پایه نرخ‌های دریافت‌شده؛ نرخ بازار آزاد با نرخ مرجع جهانی متفاوت است.</div></div></div>
+      <div class="panel">
+        <div class="formrow">
+          <div class="field"><label for="amount">مقدار</label><input id="amount" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
+          <div class="field"><label for="fromCurrency">از</label><select id="fromCurrency"><option value="USD">دلار آمریکا</option><option value="IRT">تومان</option><option value="EUR">یورو</option><option value="GBP">پوند</option><option value="AED">درهم</option><option value="USDT">تتر</option></select></div>
+          <div class="field"><label for="toCurrency">به</label><select id="toCurrency"><option value="IRT">تومان</option><option value="USD">دلار آمریکا</option><option value="EUR">یورو</option><option value="GBP">پوند</option><option value="AED">درهم</option><option value="USDT">تتر</option></select></div>
+          <div class="field"><label>&nbsp;</label><button class="btn" id="swapBtn" style="background:var(--surface2);color:var(--text);border:1px solid var(--line)">⇄ جابجایی ارزها</button></div>
+        </div>
+        <div class="result" aria-live="polite"><small id="conversionNote">نتیجه تبدیل</small><strong id="conversionResult">دریافت نرخ‌ها…</strong><small id="conversionSource"></small></div>
+      </div>
+    </section>
+
+    <section id="currency-guide" class="section seo-copy">
+      <div class="panel">
+        <h2>قیمت دلار امروز و نرخ ارزهای خارجی در بازارنما</h2>
+        <p>در بازارنما قیمت دلار آمریکا، یورو، پوند و درهم را همراه با واحد، درصد تغییر و زمان آخرین داده ببین. جدول و نمودار قیمت ارز به همراه ماشین‌حساب تبدیل، امکان بررسی و مقایسه نرخ‌ها را در یک صفحه فراهم می‌کنند.</p>
+        <p>قیمت‌ها ممکن است با توجه به زمان انتشار، نوع بازار و نرخ خرید یا فروش در منابع مختلف تفاوت داشته باشند. زمان داده را بررسی کن و برای معامله، نرخ نهایی را از مرجع مربوط استعلام بگیر.</p>
+      </div>
+    </section>
+
+    <section id="gold-guide" class="section seo-copy">
+      <div class="panel">
+        <h2>قیمت طلا امروز، طلای ۱۸ عیار و قیمت سکه</h2>
+        <p>قیمت طلای ۱۸ عیار، سکه امامی، نیم‌سکه، ربع‌سکه و اونس جهانی را در بازارنما دنبال کن. واحد و زمان آخرین داده کنار قیمت‌ها نمایش داده می‌شود تا مقایسه ساده‌تر باشد.</p>
+        <p>قیمت طلای داخلی، اونس جهانی و انواع سکه بر اساس واحد و شرایط بازار متفاوت‌اند؛ هنگام مقایسه به واحد، زمان ثبت و منبع قیمت توجه کن.</p>
+      </div>
+    </section>
+
+    <section id="crypto-guide" class="section seo-copy">
+      <div class="panel">
+        <h2>قیمت ارز دیجیتال امروز؛ بیت‌کوین و اتریوم</h2>
+        <p>قیمت بیت‌کوین (BTC) و اتریوم (ETH) را در کنار تغییرات و نمودارهای در دسترس بازارنما بررسی کن. این بخش برای پیگیری قیمت ارز دیجیتال و مقایسه روند رمزارزهای منتخب طراحی شده است.</p>
+        <p>قیمت‌ها ممکن است با دلار یا تتر نمایش داده شوند؛ به واحد و زمان داده توجه کن. بازار رمزارز نوسان دارد و اطلاعات این صفحه صرفاً برای آگاهی عمومی است، نه توصیه خرید یا فروش.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div></div>
+      <div class="panel tablewrap"><table><thead><tr><th>دارایی</th><th>قیمت</th><th>واحد</th><th>تغییر ۲۴ ساعته</th><th>وضعیت</th></tr></thead><tbody id="priceRows"><tr><td colspan="5" class="empty">در انتظار دریافت اطلاعات…</td></tr></tbody></table></div>
+    </section>
+
+    <section id="chart" class="section">
+      <div class="sectionHead"><div><h2>نمودار تغییرات قیمت</h2><div class="sub">تاریخچه روزانه منبع بازار؛ نمودار در صورت وجود داده تاریخی رسم می‌شود.</div></div></div>
+      <div class="panel">
+        <div class="panelTitle"><h3>روند قیمت</h3><div class="toolbar"><select id="chartAsset" class="select" aria-label="انتخاب دارایی"><option value="usd">دلار آمریکا</option><option value="gold-18k">طلای ۱۸ عیار</option><option value="coin-emami">سکه امامی</option><option value="btc">بیت‌کوین</option><option value="eth">اتریوم</option><option value="xau">اونس طلا</option></select><select id="chartRange" class="select" aria-label="بازه نمودار"><option value="7">۷ روز</option><option value="30" selected>۳۰ روز</option><option value="90">۹۰ روز</option></select></div></div>
+        <div class="chartArea"><canvas id="priceChart" aria-label="نمودار تغییرات قیمت" role="img"></canvas></div>
+        <div class="chartHint" id="chartHint">برای نمایش نمودار، تاریخچه در حال دریافت است.</div>
+      </div>
+    </section>
+
+
+
+    <section id="news" class="section">
+      <div class="sectionHead"><div><h2>تازه‌ترین اخبار اقتصادی</h2><div class="sub">عنوان و پیوند خبر از خوراک خبری؛ برای خواندن متن کامل وارد وب‌سایت ناشر شو.</div></div><button class="smallbtn" id="newsRefresh">↻ بروزرسانی خبرها</button></div>
+      <div class="status" id="newsStatus" aria-live="polite">در حال دریافت خبرها…</div>
+      <div class="newsGrid" id="newsList"><div class="empty">در حال بارگذاری خبرها…</div></div>
+    </section>
+
+    <div class="disclaimer muted" style="font-size:11px">یادآوری: اطلاعات این وب‌سایت صرفاً برای آگاهی عمومی است و توصیه خرید یا فروش نیست. نرخ‌ها ممکن است با تأخیر منتشر شوند یا در زمان اختلال منبع در دسترس نباشند. داده‌های بازار ایران به تومان نمایش داده می‌شوند؛ برای رمزارز و کالا، واحد کنار قیمت را بررسی کن.</div>
+  </main>
+
+  <footer class="footer"><div class="wrap footerGrid"><div><strong>بازارنما</strong><br>نمای بازارهای مالی در یک نگاه<br><a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a></div><div>منابع داده: <a href="https://nerkhara.com/en/api/" target="_blank" rel="noopener">NerkhAra</a> · <a href="https://coinmarketcap.com/api/documentation/pro-api-reference/keyless-public-api" target="_blank" rel="noopener">CoinMarketCap</a> · <a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a></div><div>© <span id="year"></span> بازارنما</div></div></footer>
+
+<script>
+(() => {
+  'use strict';
+  const API = 'https://nerkhara.com/api/v1';
+  const NEWS_FEED = 'https://news.google.com/rss/search?q=%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF+%D8%A7%DB%8C%D8%B1%D8%A7%D9%86+OR+%D8%A7%D8%B1%D8%B2+OR+%D8%B7%D9%84%D8%A7+OR+%D8%A8%D9%88%D8%B1%D8%B3&hl=fa&gl=IR&ceid=IR:fa';
+  const assets = [
+    {id:'usd',name:'دلار آمریکا',category:'currency',unit:'تومان'},
+    {id:'eur',name:'یورو',category:'currency',unit:'تومان'},
+    {id:'gbp',name:'پوند انگلیس',category:'currency',unit:'تومان'},
+    {id:'aed',name:'درهم امارات',category:'currency',unit:'تومان'},
+    {id:'gold-18k',name:'طلای ۱۸ عیار',category:'gold',unit:'تومان / گرم'},
+    {id:'coin-emami',name:'سکه امامی',category:'gold',unit:'تومان'},
+    {id:'coin-half',name:'نیم سکه',category:'gold',unit:'تومان'},
+    {id:'coin-quarter',name:'ربع سکه',category:'gold',unit:'تومان'},
+    {id:'xau',name:'اونس جهانی طلا',category:'gold',unit:'دلار'},
+    {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر'},
+    {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر'},
+    {id:'brent',name:'نفت برنت',category:'energy',unit:'دلار / بشکه'},
+    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'}
+  ];
+  const $ = id => document.getElementById(id);
+  let market = new Map();
+  let filter = 'all';
+  let favorites = new Set();
+  let fxDaily = {};
+  let lastHistoryKey = '';
+  let loadingMarket = false;
+  const MARKET_CACHE_KEY = 'bazarnama-market-cache-v1';
+  const MARKET_CACHE_TIME_KEY = 'bazarnama-market-cache-time-v1';
+  const MARKET_FETCH_TIME_KEY = 'bazarnama-market-fetch-time-v1';
+
+  function readStorage(key, fallback) { try { const v=localStorage.getItem(key); return v===null?fallback:JSON.parse(v); } catch { return fallback; } }
+  function saveStorage(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch {} }
+  function fmt(value, digits) {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return 'ناموجود';
+    return new Intl.NumberFormat('fa-IR',{maximumFractionDigits:digits ?? (value<10?4:0)}).format(value);
+  }
+  function safeText(value) { return String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function unitLabel(unit) { return ({IRT:'تومان',USD:'دلار',USDT:'تتر'})[unit] || unit || '—'; }
+  function dateLabel(value) {
+    if (!value) return 'زمان نامشخص';
+    const d=new Date(value.endsWith && !value.endsWith('Z') ? value+'Z' : value);
+    return Number.isNaN(d.getTime()) ? safeText(value) : d.toLocaleString('fa-IR',{dateStyle:'short',timeStyle:'short'});
+  }
+  function changeMarkup(value) {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return '<span class="change neutral">تغییر نامشخص</span>';
+    const cls=value>0?'up':value<0?'down':'neutral';
+    const sign=value>0?'+':'';
+    const arrow=value>0?'▲':value<0?'▼':'•';
+    return `<span class="change ${cls}">${arrow} ${sign}${fmt(value,2)}٪</span>`;
+  }
+  function currentPrice(item) {
+    const p=market.get(item.id);
+    if (!p || typeof p.price !== 'number' || !Number.isFinite(p.price)) return '—';
+    return fmt(p.price);
+  }
+  function visibleAssets() {
+    return assets.filter(a => filter==='all' || (filter==='favorites'?favorites.has(a.id):a.category===filter));
+  }
+  function iconMarkup(id) {
+    const symbols = {usd:'$',eur:'€',gbp:'£',aed:'د', 'gold-18k':'Au','coin-emami':'●','coin-half':'½','coin-quarter':'¼',xau:'Au',btc:'₿',eth:'Ξ',brent:'B',wti:'W'};
+    const tones = {usd:'currency',eur:'currency',gbp:'currency',aed:'currency','gold-18k':'gold','coin-emami':'gold','coin-half':'gold','coin-quarter':'gold',xau:'gold',btc:'crypto',eth:'crypto',brent:'energy',wti:'energy'};
+    const symbol = symbols[id] || '•';
+    return `<span class="assetIcon ${tones[id] || 'currency'}" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="16.2" stroke="currentColor" stroke-opacity=".28" stroke-width="1.4"/><circle cx="20" cy="20" r="12.5" stroke="currentColor" stroke-opacity=".18" stroke-width=".8"/><text x="20" y="25.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="${symbol.length>1?12:19}" font-weight="800" fill="currentColor">${symbol}</text><path d="M29.5 9.5l1.8-1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>`;
+  }
+  function renderAssets() {
+    const list=visibleAssets();
+    $('assetCards').innerHTML=list.length?list.map(a=>{
+      const p=market.get(a.id); const ok=p && typeof p.price==='number';
+      const fav=favorites.has(a.id);
+      const stale=p?.stale===true;
+      const unit=ok?unitLabel(p.unit):a.unit;
+      const time=p?.updated_utc || p?.as_of || null;
+      const source=p?.sources ? `${fmt(p.sources)} منبع` : '';
+      return `<article class="card asset"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<span class="assetName">${a.name}</span></div><button class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی':time?dateLabel(time):'منتظر داده'} ${source?' · '+source:''}</div></article>`;
+    }).join(''):'<div class="empty" style="grid-column:1/-1">هنوز موردی در این بخش وجود ندارد. با ستاره کنار دارایی‌ها، علاقه‌مندی اضافه کن.</div>';
+    $('priceRows').innerHTML=list.length?list.map(a=>{
+      const p=market.get(a.id); const ok=p&&typeof p.price==='number';
+      return `<tr><td><span class="assetIdentity">${iconMarkup(a.id)}<strong>${a.name}</strong></span></td><td>${ok?fmt(p.price):'—'}</td><td>${ok?unitLabel(p.unit):a.unit}</td><td>${ok?changeMarkup(p.change_pct):'—'}</td><td><span class="tag">${!ok?'ناموجود':p.stale?'داده قدیمی':'دریافت‌شده'}</span></td></tr>`;
+    }).join(''):'<tr><td colspan="5" class="empty">موردی در این فهرست نیست.</td></tr>';
+  }
+  function renderFilters() {
+    document.querySelectorAll('#filters .chip').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+  }
+  async function fetchJSON(url,timeout=12000) {
+    const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),timeout);
+    try { const r=await fetch(url,{cache:'no-store',signal:controller.signal,headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error('HTTP '+r.status); return await r.json(); }
+    finally { clearTimeout(timer); }
+  }
+  async function fetchCryptoExternal() {
+    // Public, keyless CoinMarketCap endpoint. If unavailable, keep NerkhAra's crypto quote.
+    const url='https://pro-api.coinmarketcap.com/public-api/v2/simple/price?symbol=BTC,ETH&convert=USD';
+    try {
+      const payload=await fetchJSON(url,10000);
+      const root=payload?.data || payload;
+      for (const symbol of ['BTC','ETH']) {
+        let node=root?.[symbol];
+        if (Array.isArray(node)) node=node[0];
+        const price=node?.quote?.USD?.price ?? node?.price ?? node?.USD;
+        if (typeof price==='number' && Number.isFinite(price)) {
+          const id=symbol.toLowerCase();
+          const old=market.get(id) || {};
+          market.set(id,{...old,price,unit:'USD',externalSource:'CoinMarketCap',externalUpdated:payload.status?.timestamp || null});
+        }
+      }
+    } catch (e) { console.warn('CoinMarketCap unavailable; using available primary feed.',e); }
+  }
+  async function fetchFrankfurter() {
+    try {
+      const data=await fetchJSON('https://api.frankfurter.dev/v2/rates?base=EUR&quotes=USD,GBP',10000);
+      if (Array.isArray(data)) data.forEach(row=>{ if(row.quote && typeof row.rate==='number') fxDaily[row.quote]=row.rate; });
+      else if(data?.rates) fxDaily=data.rates;
+    } catch(e) { console.warn('Frankfurter reference rates unavailable',e); }
+  }
+  async function refreshMarket() {
+    if (loadingMarket) return;
+    loadingMarket = true;
+    const refreshButton = $('refreshBtn');
+    const originalButtonText = refreshButton.textContent;
+    refreshButton.disabled = true;
+    refreshButton.textContent = 'در حال دریافت…';
+    refreshButton.setAttribute('aria-busy', 'true');
+    $('marketStatus').textContent = 'در حال درخواست تازه از منبع قیمت‌ها…';
+    $('marketStatus').className = 'status';
+    try {
+      // no-store asks the browser not to reuse its HTTP cache. It cannot make
+      // the provider publish newer figures before its own update cycle.
+      const payload = await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 15000);
+      if (!Array.isArray(payload.items)) throw new Error('ساختار داده بازار معتبر نیست');
+
+      const receivedAt = new Date().toISOString();
+      const nextMarket = new Map(payload.items
+        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price))
+        .map(item => [item.id, { ...item }]));
+      if (!nextMarket.size) throw new Error('هیچ قیمت معتبری از منبع دریافت نشد');
+      market = nextMarket;
+
+      // Optional supplementary feeds must not prevent the primary market feed
+      // from being displayed if one of them is unavailable.
+      await Promise.allSettled([fetchCryptoExternal(), fetchFrankfurter()]);
+      saveStorage(MARKET_CACHE_KEY, [...market.values()]);
+      saveStorage(MARKET_CACHE_TIME_KEY, payload.generated_utc || null);
+      saveStorage(MARKET_FETCH_TIME_KEY, receivedAt);
+      renderAssets();
+
+      const availableCount = assets.filter(asset => {
+        const item = market.get(asset.id);
+        return item && typeof item.price === 'number' && Number.isFinite(item.price);
+      }).length;
+      const staleCount = assets.filter(asset => market.get(asset.id)?.stale === true).length;
+      $('marketStatus').textContent = `${fmt(availableCount)} از ${fmt(assets.length)} دارایی قیمت دارند؛ ${fmt(staleCount)} مورد طبق اعلام منبع قدیمی‌اند. برای قیمت‌های تازه‌تر دوباره تلاش کن؛ زمان انتشار داده به منبع بستگی دارد.`;
+      $('marketStatus').className = staleCount ? 'status' : 'status ok';
+      $('updateLabel').textContent = payload.generated_utc
+        ? 'زمان تولید داده منبع: ' + dateLabel(payload.generated_utc)
+        : 'زمان تولید داده از سوی منبع اعلام نشده';
+      updateConverter();
+    } catch (error) {
+      console.error('Market refresh failed:', error);
+      // Values shown from local storage are useful as a fallback, but must
+      // never be presented as freshly verified after a failed network request.
+      if (market.size) {
+        market = new Map([...market.entries()].map(([id, item]) => [id, { ...item, stale: true }]));
+        $('marketStatus').textContent = 'اتصال به منبع برقرار نشد؛ قیمت‌های ذخیره‌شده نمایش داده می‌شوند و ممکن است قدیمی باشند.';
+      } else {
+        $('marketStatus').textContent = 'دریافت قیمت‌ها ناموفق بود. اتصال اینترنت را بررسی کن و دوباره تلاش کن.';
+      }
+      $('marketStatus').className = 'status error';
+      const sourceTime = readStorage(MARKET_CACHE_TIME_KEY, null);
+      const fetchTime = readStorage(MARKET_FETCH_TIME_KEY, null);
+      $('updateLabel').textContent = sourceTime
+        ? 'زمان داده ذخیره‌شده از منبع: ' + dateLabel(sourceTime)
+        : fetchTime ? 'آخرین تلاش برای دریافت: ' + dateLabel(fetchTime) : 'هنوز داده‌ای دریافت نشده';
+      renderAssets();
+      updateConverter();
+    } finally {
+      loadingMarket = false;
+      refreshButton.disabled = false;
+      refreshButton.textContent = originalButtonText;
+      refreshButton.removeAttribute('aria-busy');
+    }
+  }
+  function ratesInToman() {
+    const result={IRT:1};
+    const ids={USD:'usd',EUR:'eur',GBP:'gbp',AED:'aed',USDT:'usdt'};
+    Object.entries(ids).forEach(([code,id])=>{const p=market.get(id);if(p&&typeof p.price==='number'&&p.price>0)result[code]=p.price;});
+    // Frankfurter is a daily reference-rate fallback, not the Tehran free-market quote.
+    // Its EUR base gives USD-per-EUR and GBP-per-EUR.
+    if (!result.EUR && result.USD && typeof fxDaily.USD==='number' && fxDaily.USD>0) result.EUR=result.USD*fxDaily.USD;
+    if (!result.GBP && result.EUR && typeof fxDaily.GBP==='number' && fxDaily.GBP>0) result.GBP=result.EUR/fxDaily.GBP;
+    if (!result.USD && result.EUR && typeof fxDaily.USD==='number' && fxDaily.USD>0) result.USD=result.EUR/fxDaily.USD;
+    return result;
+  }
+  function updateConverter() {
+    const amount=Number($('amount').value); const from=$('fromCurrency').value; const to=$('toCurrency').value; const rates=ratesInToman();
+    if(!Number.isFinite(amount)||amount<0){$('conversionResult').textContent='مقدار معتبر وارد کن';return;}
+    if(!rates[from]||!rates[to]) {
+      $('conversionResult').textContent='نرخ یکی از ارزها در دسترس نیست';
+      $('conversionSource').textContent='ابتدا قیمت‌های بازار را بروزرسانی کن.';
+      return;
+    }
+    const result=amount*rates[from]/rates[to];
+    $('conversionResult').textContent=fmt(result, result<10?4:2)+' '+(to==='IRT'?'تومان':to);
+    $('conversionNote').textContent=fmt(amount,4)+' '+from+' برابر است با';
+    $('conversionSource').textContent='بر پایه نرخ‌های بازار NerkhAra؛ نرخ‌ها ممکن است با بازار لحظه‌ای اختلاف داشته باشند.';
+  }
+  function parseHistory(payload) {
+    let arr=Array.isArray(payload)?payload:(payload?.items||payload?.history||payload?.data||payload?.points||[]);
+    if(!Array.isArray(arr) && arr && typeof arr==='object') arr=Object.values(arr);
+    if(!Array.isArray(arr)) return [];
+    return arr.map(row=>{
+      if(Array.isArray(row)) return {date:row[0],price:Number(row[1])};
+      return {date:row.date||row.day||row.timestamp||row.time||row.as_of,price:Number(row.price??row.value??row.close)};
+    }).filter(x=>x.date && Number.isFinite(x.price)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  }
+  function drawChart(points) {
+    const canvas=$('priceChart'); const rect=canvas.getBoundingClientRect(); const dpr=Math.max(1,window.devicePixelRatio||1);
+    canvas.width=Math.max(300,Math.floor(rect.width*dpr)); canvas.height=Math.max(170,Math.floor(rect.height*dpr));
+    const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    const w=rect.width,h=rect.height; ctx.clearRect(0,0,w,h);
+    const css=getComputedStyle(document.body); const muted=css.getPropertyValue('--muted').trim(); const line=css.getPropertyValue('--line').trim(); const brand=css.getPropertyValue('--brand').trim();
+    if(points.length<2){$('chartHint').textContent='برای این دارایی هنوز تاریخچه کافی دریافت نشده است.';return;}
+    const values=points.map(p=>p.price); let min=Math.min(...values),max=Math.max(...values); if(min===max){min*=.98;max*=1.02;}
+    const pad={l:12,r:12,t:15,b:27}; const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+    ctx.strokeStyle=line;ctx.lineWidth=1;ctx.font='10px Tahoma';ctx.fillStyle=muted;ctx.textAlign='left';
+    for(let i=0;i<4;i++){const y=pad.t+ch*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(max-(max-min)*i/3,0),pad.l+3,y-4);}
+    const coords=points.map((p,i)=>({x:pad.l+(i/(points.length-1))*cw,y:pad.t+(max-p.price)/(max-min)*ch}));
+    const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,brand+'44');grad.addColorStop(1,brand+'00');
+    ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(coords[coords.length-1].x,h-pad.b);ctx.lineTo(coords[0].x,h-pad.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle=brand;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
+    ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText(String(points[0].date).slice(0,10),pad.l,h-7);ctx.textAlign='right';ctx.fillText(String(points[points.length-1].date).slice(0,10),w-pad.r,h-7);
+    const delta=((values[values.length-1]-values[0])/values[0])*100;
+    $('chartHint').textContent=`${fmt(points.length)} نقطه تاریخی · تغییر در بازه انتخابی: ${delta>0?'+':''}${fmt(delta,2)}٪ · تاریخچه روزانه`;
+  }
+  async function loadChart() {
+    const id=$('chartAsset').value; const days=Number($('chartRange').value); const key=id+'-'+days;
+    if(key===lastHistoryKey) return; lastHistoryKey=key;
+    $('chartHint').textContent='در حال دریافت تاریخچه…';
+    try {
+      const payload=await fetchJSON(API+'/history/'+encodeURIComponent(id)+'.json',15000);
+      let points=parseHistory(payload);
+      if(points.length) points=points.slice(-days);
+      drawChart(points);
+    } catch(e) {
+      console.warn('History unavailable',e); $('chartHint').textContent='تاریخچه این دارایی فعلاً در دسترس نیست؛ قیمت لحظه‌ای همچنان جداگانه نمایش داده می‌شود.';
+      const canvas=$('priceChart'); const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+  }
+  async function fetchNews() {
+    $('newsStatus').textContent='در حال دریافت خبرهای اقتصادی…'; $('newsList').innerHTML='<div class="empty">در حال بارگذاری…</div>';
+    try {
+      let items=[];
+      const rssUrl='https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(NEWS_FEED);
+      try { const j=await fetchJSON(rssUrl,12000); if(j.status==='ok'&&Array.isArray(j.items)) items=j.items; } catch(e) { console.warn('RSS JSON service unavailable',e); }
+      if(!items.length) {
+        const proxy='https://proxy.cors.dev/'+NEWS_FEED;
+        const response=await fetch(proxy,{cache:'no-store'}); if(!response.ok) throw new Error('Feed unavailable');
+        const xml=await response.text(); const doc=new DOMParser().parseFromString(xml,'text/xml');
+        items=Array.from(doc.querySelectorAll('item, entry')).map(node=>({title:node.querySelector('title')?.textContent||'',link:node.querySelector('link')?.getAttribute('href')||node.querySelector('link')?.textContent||'',pubDate:node.querySelector('pubDate, published, updated')?.textContent||''}));
+      }
+      items=items.filter(x=>x.title&&/^https:\/\//i.test(x.link||'')).slice(0,9);
+      if(!items.length) throw new Error('No news items');
+      $('newsList').innerHTML=items.map(item=>{
+        const source=item.author||item.source||'منبع خبری';
+        const d=item.pubDate?new Date(item.pubDate):null;
+        const date=d&&!Number.isNaN(d.getTime())?d.toLocaleString('fa-IR',{dateStyle:'medium'}):'تاریخ نامشخص';
+        return `<article class="card newsItem"><div class="newsSource">${safeText(source)}</div><a href="${safeText(item.link)}" target="_blank" rel="noopener noreferrer"><div class="newsTitle">${safeText(item.title)}</div></a><div class="newsDate">${date} · مشاهده در منبع</div></article>`;
+      }).join('');
+      $('newsStatus').textContent='خبرها از خوراک Google News گردآوری شده‌اند؛ برای متن کامل روی عنوان خبر بزن.';
+      $('newsStatus').className='status ok';
+    } catch(e) {
+      console.warn('News unavailable',e);
+      $('newsStatus').textContent='دریافت خودکار خبرها ناموفق بود. می‌توانی خبرها را از لینک منبع باز کنی.';
+      $('newsStatus').className='status error';
+      $('newsList').innerHTML='<div class="empty" style="grid-column:1/-1">خبرها موقتاً بارگذاری نشدند. <a style="color:var(--brand)" target="_blank" rel="noopener" href="https://news.google.com/search?q=%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF+%D8%A7%DB%8C%D8%B1%D8%A7%D9%86&hl=fa&gl=IR&ceid=IR%3Afa">مشاهده اخبار اقتصادی در گوگل نیوز</a></div>';
+    }
+  }
+  function setTheme(theme) { document.documentElement.dataset.theme=theme; saveStorage('bazarnama-theme',theme); $('themeBtn').textContent=theme==='dark'?'☀':'☾'; $('themeBtn').setAttribute('aria-label',theme==='dark'?'فعال‌کردن حالت روشن':'فعال‌کردن حالت شب'); if(lastHistoryKey) {lastHistoryKey='';loadChart();} }
+
+  // Init saved preferences
+  favorites=new Set(readStorage('bazarnama-favorites',[]));
+  setTheme(readStorage('bazarnama-theme',window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+  $('year').textContent=new Date().getFullYear();
+  $('themeBtn').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+  $('refreshBtn').addEventListener('click',refreshMarket);
+  $('newsRefresh').addEventListener('click',fetchNews);
+  $('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;renderFilters();renderAssets();});
+  $('assetCards').addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;const id=b.dataset.star;if(favorites.has(id))favorites.delete(id);else favorites.add(id);saveStorage('bazarnama-favorites',[...favorites]);renderAssets();});
+  ['amount','fromCurrency','toCurrency'].forEach(id=>$(id).addEventListener('input',updateConverter));
+  $('swapBtn').addEventListener('click',()=>{const a=$('fromCurrency').value;$('fromCurrency').value=$('toCurrency').value;$('toCurrency').value=a;updateConverter();});
+  $('chartAsset').addEventListener('change',()=>{lastHistoryKey='';loadChart();});
+  $('chartRange').addEventListener('change',()=>{lastHistoryKey='';loadChart();});
+  let resizeTimer; window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{lastHistoryKey='';loadChart();},180);});
+
+  const cachedMarket = readStorage(MARKET_CACHE_KEY, []);
+  if (Array.isArray(cachedMarket) && cachedMarket.length) {
+    // Cached quotes are explicitly marked stale until a successful live fetch.
+    market = new Map(cachedMarket.filter(item => item && item.id)
+      .map(item => [item.id, { ...item, stale: true }]));
+    const cachedAt = readStorage(MARKET_CACHE_TIME_KEY, null);
+    $('updateLabel').textContent = cachedAt
+      ? 'زمان داده ذخیره‌شده از منبع: ' + dateLabel(cachedAt)
+      : 'قیمت‌های ذخیره‌شده؛ زمان منبع نامشخص';
+    $('marketStatus').textContent = 'قیمت‌های ذخیره‌شده فعلاً نمایش داده شده‌اند؛ در حال بررسی منبع آنلاین…';
+  }
+  renderFilters();renderAssets();refreshMarket();fetchNews();loadChart();
+  // Prices are requested on page entry and on manual refresh; no automatic market polling is used.
+  setInterval(fetchNews,30*60*1000);
+})();
+</script>
+</body>
+</html>
