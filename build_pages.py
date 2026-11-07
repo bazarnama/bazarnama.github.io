@@ -6,11 +6,7 @@ import re, json, html, pathlib, datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent
 BASE = "https://bazarnama.github.io"
-_currency_html = (ROOT / "currency.html").read_text(encoding="utf-8")
-_glass_match = re.search(r'<style\b[^>]*id="glass"[^>]*>(.*?)</style>', _currency_html, re.S | re.I)
-if not _glass_match:
-    raise RuntimeError("Liquid-glass CSS block (style id=glass) was not found in currency.html")
-GLASS = _glass_match.group(1)
+GLASS = (ROOT / "glass.css").read_text(encoding="utf-8")
 STYLE = re.search(r"<style>(.*?)</style>", (ROOT / "currency.html").read_text(encoding="utf-8"), re.S).group(1)
 
 A = [
@@ -31,32 +27,6 @@ A = [
 ]
 CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","energy":"/#markets"}
 CATN = {"currency":"قیمت ارز","gold":"طلا و سکه","crypto":"ارز دیجیتال","energy":"نفت"}
-
-# Asset-specific educational content: explain what the displayed quote represents
-# without presenting it as a guaranteed executable trading price or advice.
-DETAILS = {
- "usd": ("نرخ دلار در بازار داخلی می‌تواند از عرضه و تقاضا، شرایط اقتصادی، سیاست‌های ارزی و انتظارات بازار تأثیر بگیرد. اختلاف نرخ خرید و فروش و تفاوت منابع نیز ممکن است باعث شود عددهای منتشرشده یکسان نباشند.", "این صفحه نرخ دلار آمریکا را به تومان نشان می‌دهد. هنگام مقایسه، زمان به‌روزرسانی و منبع داده را هم بررسی کن؛ نرخ‌های اعلامی منابع مختلف ممکن است با قیمت معامله در یک صرافی یا بازار تفاوت داشته باشند.", "چرا نرخ دلار در منابع مختلف فرق می‌کند؟", "زمان ثبت داده، روش گردآوری، نرخ خرید یا فروش و شرایط هر بازار می‌تواند باعث اختلاف شود. برای مقایسه، واحد و زمان داده را یکسان در نظر بگیر."),
- "eur": ("نرخ یورو در بازار داخلی می‌تواند از تغییرات ارزش یورو در برابر ارزهای دیگر، نرخ تبدیل در بازار داخلی، عرضه و تقاضا و شرایط اقتصادی اثر بگیرد. نرخ مرجع جهانی لزوماً با نرخ معامله در بازار داخلی برابر نیست.", "عدد این صفحه بر حسب تومان نمایش داده می‌شود. برای مقایسه نرخ یورو در روزهای مختلف، تغییرات را همراه با زمان ثبت و منبع داده بررسی کن.", "چرا نرخ یورو داخلی با نرخ جهانی فرق دارد؟", "نرخ جهانی معمولاً نسبت تبدیل ارزها را نشان می‌دهد؛ نرخ داخلی می‌تواند علاوه بر آن از شرایط عرضه و تقاضا، هزینه تبدیل و اختلاف خرید و فروش اثر بگیرد."),
- "gbp": ("قیمت پوند در بازار داخلی از ارزش پوند در بازارهای جهانی و شرایط تبدیل آن به تومان اثر می‌گیرد. عرضه و تقاضا، هزینه تبدیل و اختلاف نرخ خرید و فروش نیز می‌توانند بر عدد نهایی اثر بگذارند.", "این صفحه نرخ پوند انگلیس را به تومان نمایش می‌دهد. هنگام بررسی روند، تاریخچه نمودار را در کنار زمان آخرین داده و منبع آن بخوان.", "آیا نرخ پوند در همه منابع یکسان است؟", "خیر؛ منبع داده، زمان به‌روزرسانی و نرخ خرید یا فروش می‌تواند باعث اختلاف شود. این صفحه یک نرخ مرجع از داده منبع نمایش می‌دهد، نه تضمین قیمت معامله."),
- "aed": ("درهم امارات در بازار داخلی از نرخ تبدیل ارز، روابط تجاری و مسافرتی، عرضه و تقاضا و شرایط بازار ارز تأثیر می‌گیرد. نرخ‌های اعلامی ممکن است با توجه به زمان و منبع متفاوت باشند.", "قیمت درهم در این صفحه به تومان است. هنگام مقایسه با نرخ‌های دیگر، واحد پول و زمان آخرین به‌روزرسانی را کنترل کن.", "چرا قیمت درهم ممکن است تغییر کند؟", "تغییر نرخ تبدیل ارز، شرایط عرضه و تقاضا و اختلاف نرخ خرید و فروش از عواملی هستند که می‌توانند قیمت اعلامی را تغییر دهند."),
- "usdt": ("تتر (USDT) رمزارزی با هدف دنبال‌کردن ارزش دلار آمریکاست؛ بااین‌حال قیمت بازار آن می‌تواند در بعضی زمان‌ها اندکی با یک دلار تفاوت داشته باشد. در بازار داخلی، نرخ تبدیل به تومان و شرایط عرضه و تقاضا نیز مهم‌اند.", "این صفحه نرخ تتر را به تومان نشان می‌دهد، نه نرخ تضمین‌شده بازخرید. پیش از مقایسه، جفت معاملاتی، واحد قیمت و زمان داده را بررسی کن.", "چرا قیمت تتر همیشه دقیقاً برابر یک دلار نیست؟", "قیمت معاملاتی می‌تواند بر اثر عرضه و تقاضا، نقدشوندگی، اختلاف خرید و فروش و شرایط هر پلتفرم کمی از یک دلار فاصله بگیرد."),
- "gold-18k": ("قیمت هر گرم طلای ۱۸ عیار معمولاً از ارزش اونس جهانی طلا، نرخ ارز و عیار طلا اثر می‌گیرد. هزینه‌های بازار و اختلاف قیمت خرید و فروش نیز ممکن است بر قیمت نهایی مصنوعات یا معاملات اثر داشته باشند.", "واحد نرخ این صفحه تومان برای هر گرم است. قیمت خام هر گرم را با قیمت نهایی زیورآلات یکی ندان؛ اجرت، سود و مالیات احتمالی می‌توانند جداگانه محاسبه شوند.", "آیا قیمت هر گرم با قیمت نهایی زیورآلات یکی است؟", "خیر؛ قیمت اعلامی طلا لزوماً شامل اجرت ساخت، سود فروشنده یا مالیات احتمالی نیست. شرایط خرید را جداگانه بررسی کن."),
- "coin-emami": ("قیمت سکه امامی علاوه بر ارزش طلای موجود در سکه، از عرضه و تقاضا و حباب یا صرف بازار نیز تأثیر می‌گیرد. به همین دلیل ممکن است تغییر قیمت سکه با تغییر طلای خام یکسان نباشد.", "برای تحلیل قیمت سکه، نرخ طلای داخلی، اونس جهانی، نرخ ارز و فاصله قیمت بازار با ارزش طلای سکه را جدا از هم در نظر بگیر.", "چرا قیمت سکه امامی با ارزش طلای آن برابر نیست؟", "قیمت بازار می‌تواند شامل حباب یا صرف ناشی از عرضه و تقاضا باشد؛ بنابراین ممکن است از ارزش محاسباتی طلای سکه بیشتر یا کمتر شود."),
- "coin-half": ("قیمت نیم‌سکه به ارزش طلای آن محدود نیست و از عرضه و تقاضای بازار و حباب احتمالی نیز اثر می‌گیرد. اندازه حباب در انواع مختلف سکه لزوماً یکسان نیست.", "نرخ این صفحه قیمت بازار نیم‌سکه را به تومان نمایش می‌دهد. آن را با ارزش طلای سکه و قیمت انواع دیگر سکه یکسان فرض نکن.", "آیا قیمت نیم‌سکه دقیقاً نصف سکه امامی است؟", "نه لزوماً؛ علاوه بر تفاوت وزن، عرضه و تقاضا و حباب بازار می‌توانند باعث شوند قیمت نیم‌سکه دقیقاً نصف قیمت سکه امامی نباشد."),
- "coin-quarter": ("قیمت ربع‌سکه از ارزش طلای آن و شرایط عرضه و تقاضا در بازار اثر می‌گیرد. به دلیل تفاوت اندازه و تقاضا، حباب ربع‌سکه ممکن است با انواع دیگر سکه فرق داشته باشد.", "این صفحه نرخ بازار ربع‌سکه را به تومان نمایش می‌دهد. برای مقایسه، زمان داده و اختلاف آن با قیمت سایر انواع سکه را بررسی کن.", "چرا قیمت ربع‌سکه متناسب با وزن آن نیست؟", "قیمت بازار فقط به وزن طلا وابسته نیست؛ عرضه و تقاضا و حباب احتمالی نیز در قیمت معامله نقش دارند."),
- "xau": ("اونس جهانی طلا یک معیار بین‌المللی برای قیمت طلاست و معمولاً به دلار برای هر اونس تروا اعلام می‌شود. تغییرات عرضه و تقاضای جهانی، نرخ بهره، ارزش دلار و شرایط اقتصادی می‌توانند بر آن اثر بگذارند.", "واحد این صفحه دلار برای هر اونس تروا است. اونس تروا حدود ۳۱٫۱۰۳۵ گرم است و نباید آن را با اونس معمولی یا قیمت هر گرم طلای ۱۸ عیار اشتباه گرفت.", "هر اونس طلا چند گرم است؟", "اونس تروا که در بازار فلزات گران‌بها استفاده می‌شود تقریباً ۳۱٫۱۰۳۵ گرم است؛ این واحد با اونس معمولی تفاوت دارد."),
- "btc": ("قیمت بیت‌کوین در بازار جهانی بر پایه عرضه و تقاضا، نقدشوندگی، شرایط اقتصاد کلان و اخبار مرتبط با بازار دارایی‌های دیجیتال تغییر می‌کند. نوسان آن می‌تواند در بازه‌های کوتاه قابل توجه باشد.", "نرخ این صفحه بر حسب تتر نمایش داده می‌شود. قیمت جفت BTC/USDT را با قیمت بیت‌کوین به تومان یا دلار بدون توجه به واحد مقایسه نکن.", "چرا قیمت بیت‌کوین در پلتفرم‌ها متفاوت است؟", "تفاوت نقدشوندگی، حجم معاملات، جفت معاملاتی و زمان به‌روزرسانی می‌تواند باعث اختلاف جزئی بین قیمت‌های نمایش‌داده‌شده شود."),
- "eth": ("قیمت اتریوم از شرایط کلی بازار رمزارزها، عرضه و تقاضا، فعالیت اکوسیستم اتریوم و شرایط اقتصاد کلان اثر می‌گیرد. قیمت آن ممکن است مستقل از بیت‌کوین نیز نوسان داشته باشد.", "نرخ این صفحه بر حسب تتر است. هنگام بررسی نمودار، واحد قیمت و بازه زمانی انتخاب‌شده را ثابت نگه دار تا مقایسه معنادار باشد.", "قیمت اتریوم با چه واحدی نمایش داده می‌شود؟", "در این صفحه قیمت اتریوم بر حسب تتر (ETH/USDT) نمایش داده می‌شود؛ این نرخ را با قیمت تومانی یا دلاری بدون تبدیل واحد مقایسه نکن."),
- "brent": ("نفت برنت یکی از شاخص‌های مرجع قیمت‌گذاری نفت خام در بازارهای جهانی است. عرضه تولیدکنندگان، تقاضای جهانی، موجودی‌ها، رویدادهای ژئوپلیتیکی و شرایط حمل‌ونقل می‌توانند بر قیمت آن اثر بگذارند.", "واحد نرخ این صفحه دلار برای هر بشکه است. قیمت شاخص برنت با قیمت نهایی هر محموله یا فرآورده نفتی یکسان نیست.", "آیا قیمت برنت قیمت همه انواع نفت است؟", "خیر؛ برنت یک شاخص مرجع است. انواع نفت خام با توجه به کیفیت، محل تحویل و شرایط بازار می‌توانند قیمت متفاوتی داشته باشند."),
- "wti": ("نفت WTI شاخصی برای نفت خام سبک و کم‌گوگرد در بازار آمریکا است. عرضه و تقاضا، موجودی‌های نفتی، ظرفیت انتقال و شرایط بازار جهانی می‌توانند بر قیمت آن اثر بگذارند.", "قیمت WTI در این صفحه به دلار برای هر بشکه نمایش داده می‌شود. آن را با قیمت برنت یا قیمت فرآورده‌های نفتی یکسان در نظر نگیر.", "تفاوت WTI و برنت چیست؟", "هر دو شاخص نفت خام هستند، اما به انواع نفت و بازارهای مرجع متفاوتی مربوط‌اند؛ کیفیت نفت، محل تحویل و شرایط عرضه و تقاضا می‌تواند باعث اختلاف قیمت شود.")
-}
-
-RELATED = {
- "usd":["eur","aed","usdt","gold-18k"], "eur":["gbp","usd","aed"], "gbp":["eur","usd","aed"], "aed":["usd","eur","gbp"],
- "usdt":["usd","btc","eth"], "gold-18k":["xau","coin-emami","usd"], "coin-emami":["gold-18k","coin-half","coin-quarter"],
- "coin-half":["coin-emami","coin-quarter","gold-18k"], "coin-quarter":["coin-emami","coin-half","gold-18k"], "xau":["gold-18k","usd","brent"],
- "btc":["eth","usdt","usd"], "eth":["btc","usdt","usd"], "brent":["wti","usd","xau"], "wti":["brent","usd","xau"]
-}
 
 HEAD_COMMON = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">'
 SW = "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script>"
@@ -132,7 +102,12 @@ async function load(){
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
-  $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
+  const sourceUrls={'NerkhAra':'https://nerkhara.com/en/api/','Iran Market Data':'https://iran-market.github.io/'};
+  const info=$('sourceInfo'); info.replaceChildren(document.createTextNode('منبع: '));
+  const addSource=(label)=>{const url=sourceUrls[label];if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label;a.style.textDecoration='underline';a.style.color='var(--accent,#087e6e)';info.append(a);}else{info.append(document.createTextNode(label));}};
+  addSource(source);
+  if(x.secondary_source){info.append(document.createTextNode(' · منبع مقایسه: '));addSource(x.secondary_source);}
+  info.append(document.createTextNode(' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'')));
   $('status').textContent=x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
@@ -203,28 +178,20 @@ def asset_page(a):
     id_, name, h1, cat, unit, blurb = a
     title = f"{h1} | بازارنما"
     desc = f"{h1}؛ نرخ لحظه‌ای {name} به {unit} همراه با درصد تغییر 24 ساعته، زمان آخرین داده و منبع قیمت در بازارنما."
-    factors, reading, faq_q, faq_a = DETAILS[id_]
-    by_id = {item[0]: item for item in A}
-    related_ids = [x for x in RELATED.get(id_, []) if x in by_id]
-    rel = "".join(f'<a href="/price-{x}.html">قیمت {html.escape(by_id[x][1])}</a>' for x in related_ids)
-    other_ids = [o[0] for o in A if o[3] != cat and o[0] not in related_ids][:4]
-    others = "".join(f'<a href="/price-{x}.html">قیمت {html.escape(by_id[x][1])}</a>' for x in other_ids)
+    rel = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] == cat and o[0] != id_)
+    others = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] != cat)
     body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1>{html.escape(h1)}</h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/#alerts">هشدار قیمت</a></div></section>
 <section class="panel"><h2>نرخ {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر 24 ساعته</small><b id="chg">…</b></div><div><small>زمان داده</small><b id="time" style="font-size:15px">…</b></div></div><p id="sourceInfo" class="muted" aria-live="polite">منبع و زمان آخرین به‌روزرسانی در حال دریافت…</p><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
-<section class="panel"><h2>نمودار تاریخی {html.escape(name)}</h2><div class="toolbar" style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0"><button class="smallbtn active" type="button" data-range="7">7 روز</button><button class="smallbtn" type="button" data-range="30">30 روز</button><button class="smallbtn" type="button" data-range="90">3 ماه</button><button class="smallbtn" type="button" data-range="365">1 سال</button><button class="smallbtn" type="button" data-range="0">همه</button></div><canvas id="historyChart" aria-label="نمودار تاریخی قیمت {html.escape(name)}" style="display:block;width:100%;height:260px"></canvas><p id="chartHint" class="muted" aria-live="polite">در حال دریافت تاریخچه…</p></section>
-<section class="panel"><h2>چه عواملی بر {html.escape(h1.replace(' امروز',''))} اثر می‌گذارند؟</h2><p>{html.escape(factors)}</p><h3>واحد و نحوه خواندن نرخ</h3><p>{html.escape(reading)}</p></section>
-<section class="panel"><h2>پرسش متداول درباره {html.escape(name)}</h2><h3>{html.escape(faq_q)}</h3><p>{html.escape(faq_a)}</p><h3>آیا قیمت نمایش‌داده‌شده قیمت قطعی معامله است؟</h3><p>خیر. این عدد بر پایه داده منبع نمایش داده می‌شود و ممکن است با قیمت نهایی خرید یا فروش در بازار یا پلتفرم‌های مختلف تفاوت داشته باشد. همیشه واحد، منبع و زمان آخرین داده را بررسی کن. این اطلاعات توصیه خرید یا فروش نیست.</p><p>روش جمع‌آوری داده‌ها و محدودیت‌های آن در <a href="/about.html">درباره بازارنما</a> توضیح داده شده است.</p></section>
-<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>بازارهای دیگر</h3><div class="rel">{others}</div></section>"""
-    crumbs = [
-        {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"}
-    ]
-    if CAT[cat] != "/#markets":
-        crumbs.append({"@type": "ListItem", "position": 2, "name": CATN[cat], "item": BASE + CAT[cat]})
-    crumbs.append({"@type": "ListItem", "position": len(crumbs) + 1, "name": name, "item": f"{BASE}/price-{id_}.html"})
+<section class="panel"><h2>نمودار تاریخی {html.escape(name)}</h2><div class="toolbar" style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0"><button class="smallbtn active" type="button" data-range="7">7 روز</button><button class="smallbtn" type="button" data-range="30">30 روز</button><button class="smallbtn" type="button" data-range="90">3 ماه</button><button class="smallbtn" type="button" data-range="365">1 سال</button><button class="smallbtn" type="button" data-range="0">همه</button></div><canvas id="historyChart" aria-label="نمودار تاریخی قیمت" style="display:block;width:100%;height:260px"></canvas><p id="chartHint" class="muted" aria-live="polite">در حال دریافت تاریخچه…</p></section>
+<section class="panel"><h2>نکاتی درباره {html.escape(name)}</h2><p>{html.escape(blurb)}</p><p>قیمت نمایش‌داده‌شده نرخ تقریبی بازار بر پایه داده منبع است و ممکن است با قیمت نهایی معامله در صرافی، بازار یا فروشگاه تفاوت داشته باشد. همیشه واحد قیمت ({html.escape(unit)}) و زمان ثبت داده را کنار عدد بررسی کن. اطلاعات این صفحه توصیه خرید یا فروش نیست.</p><p>برای دیدن سایر قیمت‌ها و ماشین‌حساب تبدیل، به <a href="/#chart">صفحه اصلی</a> برو. روش جمع‌آوری داده‌ها در <a href="/about.html">درباره بازارنما</a> توضیح داده شده است.</p></section>
+<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div></section>"""
     ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "WebPage", "name": title, "url": f"{BASE}/price-{id_}.html", "inLanguage": "fa-IR", "description": desc,
          "isPartOf": {"@type": "WebSite", "name": "بازارنما", "url": BASE + "/"}},
-        {"@type": "BreadcrumbList", "itemListElement": crumbs}]}
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
+            {"@type": "ListItem", "position": 2, "name": CATN[cat], "item": BASE + CAT[cat] if CAT[cat].startswith("/") and not CAT[cat].startswith("/#") else BASE + "/"},
+            {"@type": "ListItem", "position": 3, "name": name, "item": f"{BASE}/price-{id_}.html"}]}]}
     return page(title, desc, f"/price-{id_}.html", body, ld, ASSET_JS.replace("__ID__", json.dumps(id_)))
 
 
@@ -241,14 +208,11 @@ def main():
     for a in A:
         (ROOT / f"price-{a[0]}.html").write_text(finalize(asset_page(a)), encoding="utf-8")
     (ROOT / "about.html").write_text(finalize(about()), encoding="utf-8")
-    # Do not publish a synthetic lastmod timestamp for every URL on each build.
-    # Google recommends lastmod only when it reflects a real, significant page update.
+    today = datetime.date.today().isoformat()
     urls = ["/", "/currency.html", "/gold.html", "/crypto.html", "/about.html"] + [f"/price-{a[0]}.html" for a in A]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
-        f"  <url><loc>{BASE}{u}</loc></url>\n" for u in urls) + "</urlset>\n"
+        f"  <url><loc>{BASE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sm, encoding="utf-8")
-    robots = "User-agent: *\nAllow: /\n\nSitemap: " + BASE + "/sitemap.xml\n"
-    (ROOT / "robots.txt").write_text(robots, encoding="utf-8")
     import re as _re
     glass = '<style id="glass">' + GLASS + '</style>'
     for f in ROOT.glob("*.html"):

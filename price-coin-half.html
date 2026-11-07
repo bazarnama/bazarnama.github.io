@@ -142,7 +142,12 @@ async function load(){
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
-  $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
+  const sourceUrls={'NerkhAra':'https://nerkhara.com/en/api/','Iran Market Data':'https://iran-market.github.io/'};
+  const info=$('sourceInfo'); info.replaceChildren(document.createTextNode('منبع: '));
+  const addSource=(label)=>{const url=sourceUrls[label];if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label;a.style.textDecoration='underline';a.style.color='var(--accent,#087e6e)';info.append(a);}else{info.append(document.createTextNode(label));}};
+  addSource(source);
+  if(x.secondary_source){info.append(document.createTextNode(' · منبع مقایسه: '));addSource(x.secondary_source);}
+  info.append(document.createTextNode(' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'')));
   $('status').textContent=x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
