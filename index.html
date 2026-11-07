@@ -335,10 +335,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const fav=favorites.has(a.id);
       const stale=p?.stale===true;
       const unit=ok?unitLabel(p.unit):a.unit;
-      const time=p?.updated_utc || p?.as_of || null;
-      const source=p?.derived?'محاسبه‌شده':(p?.source || (p?.sources ? `${fmt(p.sources)} منبع` : 'منبع اصلی'));
+      const time=p?.source_updated_utc || p?.updated_utc || p?.as_of || null;
+      const source=p?.source_name || p?.source || (p?.derived?'محاسبه‌شده':(p?.sources ? `${fmt(p.sources)} منبع` : 'منبع اصلی'));
       const methodText=p?.method==='derived'?' · محاسبه‌شده':'';
-      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی':time?dateLabel(time):'منتظر داده'} · ${safeText(source+methodText)}</div></article>`;
+      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی · ':''}${time?dateLabel(time):'زمان نامشخص'} · ${safeText(source+methodText)}</div></article>`;
     }).join(''):'<div class="empty" style="grid-column:1/-1">هنوز موردی در این بخش وجود ندارد. با ستاره کنار دارایی‌ها، علاقه‌مندی اضافه کن.</div>';
     $('priceRows').innerHTML=list.length?list.map(a=>{
       const p=market.get(a.id); const ok=p&&typeof p.price==='number';
@@ -445,7 +445,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
       const receivedAt = new Date().toISOString();
       const nextMarket = new Map(payload.items
-        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price))
+        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price) && !(['eur','gbp','aed'].includes(item.id) && (item.method==='derived' || item.derived)))
         .map(item => [item.id, { ...item, source:item.source || 'NerkhAra' }]));
       if (!nextMarket.size) throw new Error('هیچ قیمت معتبری از منبع دریافت نشد');
       market = nextMarket;
@@ -482,7 +482,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       // Values shown from local storage are useful as a fallback, but must
       // never be presented as freshly verified after a failed network request.
       if (market.size) {
-        market = new Map([...market.entries()].map(([id, item]) => [id, { ...item, stale: item.source!=='CoinGecko' }]));
+        market = new Map([...market.entries()].filter(([id,item])=>!(['eur','gbp','aed'].includes(id)&&(item.method==='derived'||item.derived))).map(([id, item]) => [id, { ...item, stale: item.source!=='CoinGecko' }]));
         $('marketStatus').textContent = 'اتصال به منبع برقرار نشد؛ قیمت‌های ذخیره‌شده نمایش داده می‌شوند و ممکن است قدیمی باشند.';
       } else {
         $('marketStatus').textContent = 'دریافت قیمت‌ها ناموفق بود. اتصال اینترنت را بررسی کن و دوباره تلاش کن.';
