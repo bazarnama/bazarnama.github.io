@@ -1,22 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://bazarnama.github.io/</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/currency.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/gold.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/crypto.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/about.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-usd.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-eur.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-gbp.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-aed.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-usdt.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-gold-18k.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-coin-emami.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-coin-half.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-coin-quarter.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-xau.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-btc.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-eth.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-brent.html</loc><lastmod>2026-11-07</lastmod></url>
-  <url><loc>https://bazarnama.github.io/price-wti.html</loc><lastmod>2026-11-07</lastmod></url>
-</urlset>
+<ns0:urlset xmlns:ns0="http://www.sitemaps.org/schemas/sitemap/0.9"><ns0:url><ns0:loc>https://bazarnama.github.io/</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/currency.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/gold.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/crypto.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/about.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-usd.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-eur.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-gbp.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-aed.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-usdt.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-gold-18k.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-coin-emami.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-coin-half.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-coin-quarter.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-xau.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-btc.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-eth.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-brent.html</ns0:loc></ns0:url><ns0:url><ns0:loc>https://bazarnama.github.io/price-wti.html</ns0:loc></ns0:url></ns0:urlset>
