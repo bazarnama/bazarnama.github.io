@@ -11,9 +11,9 @@ Sources
   2) Frankfurter (ECB)             - global FX cross rates per 1 USD (used for pound, euro,
                                      lira, yuan ... when the market feed has no value)
   3) CoinGecko (public endpoint)   - backup BTC / ETH / USDT prices in USD
-  4) Stooq CSV (no key)            - delayed futures prices for Brent / WTI / natural gas
+  4) Stooq CSV (no key)            - delayed futures prices for Brent / WTI
   5) EIA Open Data (US gov, needs a free key in env EIA_API_KEY) - external reference for
-     Brent, WTI and Henry Hub natural gas (daily); also fills them when the primary feed lacks them
+     Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
 import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib
@@ -37,7 +37,7 @@ NAMES = {
     "usd": "دلار آمریکا", "eur": "یورو", "gbp": "پوند انگلیس", "aed": "درهم امارات", "usdt": "تتر",
     "gold-18k": "طلای 18 عیار", "coin-emami": "سکه امامی", "coin-half": "نیم‌سکه",
     "coin-quarter": "ربع‌سکه", "xau": "اونس جهانی طلا", "btc": "بیت‌کوین",
-    "eth": "اتریوم", "natgas": "گاز طبیعی", "brent": "نفت برنت", "wti": "نفت WTI",
+    "eth": "اتریوم", "brent": "نفت برنت", "wti": "نفت WTI",
 }
 
 
@@ -95,14 +95,12 @@ def fetch_coingecko():
 EIA_SERIES = [  # (id, route, series code, unit)
     ("brent", "petroleum/pri/spt", "RBRTE", "USD"),
     ("wti", "petroleum/pri/spt", "RWTC", "USD"),
-    ("natgas", "natural-gas/pri/fut", "RNGWHHD", "USD"),
 ]
 
 
 STOOQ_SYMBOLS = {  # id -> candidate symbols (first plausible one wins), plausible price range
     "brent": (["cb.f", "lco.f"], 10, 400),
     "wti": (["cl.f"], 10, 400),
-    "natgas": (["ng.f"], 0.5, 40),
 }
 
 
@@ -240,7 +238,7 @@ def main():
         payload["external_energy"] = eia
     if stooq:
         payload["delayed_energy"] = stooq
-    for pid in ("brent", "wti", "natgas"):
+    for pid in ("brent", "wti"):
         cur = by_id.get(pid)
         has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
         if has:

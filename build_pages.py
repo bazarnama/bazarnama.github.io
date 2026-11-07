@@ -23,7 +23,6 @@ A = [
  ("btc","بیت‌کوین","قیمت بیت‌کوین امروز","crypto","تتر","بیت‌کوین قدیمی‌ترین و شناخته‌شده‌ترین رمزارز است و قیمت آن در طول روز می‌تواند نوسان زیادی داشته باشد."),
  ("eth","اتریوم","قیمت اتریوم امروز","crypto","تتر","اتریوم دومین رمزارز بزرگ بازار و بستر بسیاری از قراردادهای هوشمند است."),
  ("brent","نفت برنت","قیمت نفت برنت امروز","energy","دلار / بشکه","نفت برنت یکی از دو شاخص اصلی قیمت نفت خام در جهان است و بر حسب دلار برای هر بشکه اعلام می‌شود."),
- ("natgas","گاز طبیعی","قیمت گاز طبیعی امروز","energy","دلار / MMBtu","گاز طبیعی (شاخص هنری هاب آمریکا) مهم‌ترین شاخص قیمت گاز در جهان است و بر حسب دلار برای هر میلیون واحد حرارتی بریتانیایی (MMBtu) اعلام می‌شود."),
  ("wti","نفت WTI","قیمت نفت WTI امروز","energy","دلار / بشکه","نفت WTI شاخص قیمت نفت خام آمریکا است و معمولاً با برنت مقایسه می‌شود."),
 ]
 CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","energy":"/#markets"}
@@ -71,7 +70,7 @@ function tl(v){if(!v)return 'نامشخص';const s=String(v),d=new Date(s.endsWi
 async function load(){
  try{const data=await getPrices();const x=(data.items||[]).find(i=>i&&i.id===ID);
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';const ss=data.source_status;let why='قیمتی از منبع دریافت نشد.';
-   if(ss){const bits=[];bits.push('منبع اصلی: '+(ss.primary?'پاسخ داد ولی این مورد را نداشت':'پاسخ نداد'));if(ID==='brent'||ID==='wti'||ID==='natgas'){bits.push('Stooq: '+((ss.stooq||[]).includes(ID)?'دارد':'قیمتی نداد'));bits.push('EIA: '+(ss.eia_key_set?((ss.eia||[]).includes(ID)?'دارد':'قیمتی نداد'):'کلید EIA_API_KEY تنظیم نشده'));}why+=' ('+bits.join(' · ')+')';}
+   if(ss){const bits=[];bits.push('منبع اصلی: '+(ss.primary?'پاسخ داد ولی این مورد را نداشت':'پاسخ نداد'));if(ID==='brent'||ID==='wti'){bits.push('Stooq: '+((ss.stooq||[]).includes(ID)?'دارد':'قیمتی نداد'));bits.push('EIA: '+(ss.eia_key_set?((ss.eia||[]).includes(ID)?'دارد':'قیمتی نداد'):'کلید EIA_API_KEY تنظیم نشده'));}why+=' ('+bits.join(' · ')+')';}
    $('status').textContent=why;return;}
   $('price').textContent=fmt(x.price);$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
