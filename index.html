@@ -156,11 +156,12 @@ table{border-collapse:separate;border-spacing:0}
       <div class="panel">
         <div class="formrow">
           <div class="field"><label for="amount">مقدار</label><input id="amount" type="number" min="0" step="any" value="1" inputmode="decimal"></div>
-          <div class="field"><label for="fromCurrency">از</label><select id="fromCurrency"><option value="USD">دلار آمریکا</option><option value="IRT">تومان</option><option value="EUR">یورو</option><option value="GBP">پوند</option><option value="AED">درهم</option><option value="USDT">تتر</option></select></div>
-          <div class="field"><label for="toCurrency">به</label><select id="toCurrency"><option value="IRT">تومان</option><option value="USD">دلار آمریکا</option><option value="EUR">یورو</option><option value="GBP">پوند</option><option value="AED">درهم</option><option value="USDT">تتر</option></select></div>
-          <div class="field"><label>&nbsp;</label><button type="button" class="btn" id="swapBtn" style="background:var(--surface2);color:var(--text);border:1px solid var(--line)">⇄ جابجایی ارزها</button></div>
+          <div class="field"><label for="fromCurrency">از</label><select id="fromCurrency"></select></div>
+          <div class="field"><label for="toCurrency">به</label><select id="toCurrency"></select></div>
+          <div class="field"><label>&nbsp;</label><button type="button" class="btn" id="swapBtn" style="background:var(--surface2);color:var(--text);border:1px solid var(--line)">⇄ جابجایی</button></div>
         </div>
-        <div class="result" aria-live="polite"><small id="conversionNote">نتیجه تبدیل</small><strong id="conversionResult">دریافت نرخ‌ها…</strong><small id="conversionSource"></small></div>
+        <div class="chips" id="amountChips" style="margin-top:10px"><button type="button" class="chip" data-amt="1">1</button><button type="button" class="chip" data-amt="10">10</button><button type="button" class="chip" data-amt="100">100</button><button type="button" class="chip" data-amt="1000">1,000</button><button type="button" class="chip" data-amt="1000000">1,000,000</button></div>
+        <div class="result" aria-live="polite"><small id="conversionNote">نتیجه تبدیل</small><strong id="conversionResult">دریافت نرخ‌ها…</strong><small id="conversionRate"></small><small id="conversionSource"></small><div style="margin-top:8px"><button type="button" class="smallbtn" id="copyResult">کپی نتیجه</button></div></div>
       </div>
     </section>
 
@@ -215,7 +216,7 @@ table{border-collapse:separate;border-spacing:0}
     <section id="chart" class="section">
       <div class="sectionHead"><div><h2>نمودار تغییرات قیمت</h2><div class="sub">تاریخچه روزانه منبع بازار؛ نمودار در صورت وجود داده تاریخی رسم می‌شود.</div></div></div>
       <div class="panel">
-        <div class="panelTitle"><h3>روند قیمت</h3><div class="toolbar"><button class="smallbtn" id="chartRefresh">↻ تلاش دوباره</button><select id="chartAsset" class="select" aria-label="انتخاب دارایی"><option value="usd">دلار آمریکا</option><option value="gold-18k">طلای 18 عیار</option><option value="coin-emami">سکه امامی</option><option value="btc">بیت‌کوین</option><option value="eth">اتریوم</option><option value="xau">اونس طلا</option></select><select id="chartRange" class="select" aria-label="بازه نمودار"><option value="7">7 روز</option><option value="30" selected>30 روز</option><option value="90">90 روز</option></select></div></div>
+        <div class="panelTitle"><h3>روند قیمت</h3><div class="toolbar"><button class="smallbtn" id="chartRefresh">↻ تلاش دوباره</button><select id="chartAsset" class="select" aria-label="انتخاب دارایی"><option value="usd">دلار آمریکا</option><option value="eur">یورو</option><option value="gbp">پوند انگلیس</option><option value="aed">درهم امارات</option><option value="usdt">تتر</option><option value="gold-18k">طلای 18 عیار</option><option value="coin-emami">سکه امامی</option><option value="coin-half">نیم‌سکه</option><option value="coin-quarter">ربع‌سکه</option><option value="btc">بیت‌کوین</option><option value="eth">اتریوم</option><option value="xau">اونس طلا</option></select><select id="chartRange" class="select" aria-label="بازه نمودار"><option value="h24">ساعتی · 24 ساعت</option><option value="h72">ساعتی · 3 روز</option><option value="h168">ساعتی · 7 روز</option><option value="7">روزانه · 7 روز</option><option value="30" selected>روزانه · 30 روز</option><option value="90">روزانه · 90 روز</option></select></div></div>
         <div class="chartArea"><canvas id="priceChart" aria-label="نمودار تغییرات قیمت" role="img"></canvas></div>
         <div class="chartHint" id="chartHint">برای نمایش نمودار، تاریخچه در حال دریافت است.</div>
       </div>
@@ -232,7 +233,7 @@ table{border-collapse:separate;border-spacing:0}
     <div class="disclaimer muted" style="font-size:11px">یادآوری: اطلاعات این وب‌سایت صرفاً برای آگاهی عمومی است و توصیه خرید یا فروش نیست. نرخ‌ها ممکن است با تأخیر منتشر شوند یا در زمان اختلال منبع در دسترس نباشند. داده‌های بازار ایران به تومان نمایش داده می‌شوند؛ برای رمزارز و کالا، واحد کنار قیمت را بررسی کن.</div>
   </main>
 
-  <footer class="footer"><div class="wrap footerGrid"><div><strong>بازارنما</strong><br>نمای بازارهای مالی در یک نگاه<br><a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/about.html">درباره و روش کار</a></div><div>منابع داده: <a href="https://nerkhara.com/en/api/" target="_blank" rel="noopener">NerkhAra</a> · <a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a></div><div>© <span id="year"></span> بازارنما</div></div></footer>
+  <footer class="footer"><div class="wrap footerGrid"><div><strong>بازارنما</strong><br>نمای بازارهای مالی در یک نگاه<br><a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/about.html">درباره و روش کار</a></div><div>منابع داده: <a href="https://nerkhara.com/en/api/" target="_blank" rel="noopener">NerkhAra</a> · <a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a> · <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a></div><div>© <span id="year"></span> بازارنما</div></div></footer>
 
 <script>
 (() => {
@@ -243,6 +244,7 @@ table{border-collapse:separate;border-spacing:0}
     {id:'eur',name:'یورو',category:'currency',unit:'تومان'},
     {id:'gbp',name:'پوند انگلیس',category:'currency',unit:'تومان'},
     {id:'aed',name:'درهم امارات',category:'currency',unit:'تومان'},
+    {id:'usdt',name:'تتر',category:'currency',unit:'تومان'},
     {id:'gold-18k',name:'طلای 18 عیار',category:'gold',unit:'تومان / گرم'},
     {id:'coin-emami',name:'سکه امامی',category:'gold',unit:'تومان'},
     {id:'coin-half',name:'نیم سکه',category:'gold',unit:'تومان'},
@@ -257,7 +259,8 @@ table{border-collapse:separate;border-spacing:0}
   let market = new Map();
   let filter = 'all';
   let favorites = new Set();
-  let fxDaily = {};
+  let fxUsd = {};
+  let fxDate = '';
   let lastHistoryKey = '';
   let loadingMarket = false;
   let loadingNews = false;
@@ -294,7 +297,7 @@ table{border-collapse:separate;border-spacing:0}
     return assets.filter(a => filter==='all' || (filter==='favorites'?favorites.has(a.id):a.category===filter));
   }
   function iconMarkup(id) {
-    const bg = {usd:['#34c98a','#0a7650'],eur:['#5b8cff','#1c3ea6'],gbp:['#9b6cff','#46269e'],aed:['#19c2ae','#0a6761'],
+    const bg = {usd:['#34c98a','#0a7650'],eur:['#5b8cff','#1c3ea6'],gbp:['#9b6cff','#46269e'],aed:['#19c2ae','#0a6761'],usdt:['#35c9a6','#12705b'],
       'gold-18k':['#fbdc7a','#c48410'],'coin-emami':['#f8d35c','#b5750a'],'coin-half':['#f8d35c','#b5750a'],'coin-quarter':['#f8d35c','#b5750a'],
       xau:['#efc24f','#8a5805'],btc:['#ffa62e','#d4680a'],eth:['#8c9bff','#3a49c4'],brent:['#4b5262','#10131a'],wti:['#6a7484','#1f242d']};
     const txt = (t,size) => `<text x="20" y="${size>16?28:25}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${size}" font-weight="800" fill="#fff">${t}</text>`;
@@ -306,7 +309,7 @@ table{border-collapse:separate;border-spacing:0}
       'coin-half':ring+'<path d="M20 13.4a6.6 6.6 0 0 0 0 13.2z" fill="#fff"/>',
       'coin-quarter':ring+'<path d="M20 20v-6.6A6.6 6.6 0 0 0 13.4 20z" fill="#fff"/>',
       xau:'<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.2" stroke-opacity=".9"/>'+txt('Au',12.5),
-      btc:txt('₿',24), eth:'<path d="M20 7.5 29 21l-9 5.2L11 21z" fill="#fff"/><path d="M20 28.4 29 23l-9 9.6L11 23z" fill="#fff" fill-opacity=".72"/>',
+      btc:txt('₿',24), usdt:txt('₮',24), eth:'<path d="M20 7.5 29 21l-9 5.2L11 21z" fill="#fff"/><path d="M20 28.4 29 23l-9 9.6L11 23z" fill="#fff" fill-opacity=".72"/>',
       brent:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#12151c">B</text>',
       wti:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#1f242d">W</text>'
     }[id] || txt('•',22);
@@ -343,18 +346,20 @@ table{border-collapse:separate;border-spacing:0}
       const d=await fetchJSON('/data/prices.json',8000);
       if (d && Array.isArray(d.items) && d.items.length) {
         old=d;
-        if (d.fetched_utc && Date.now()-Date.parse(d.fetched_utc) < 20*60*1000) return d;
+        if (d.primary_ok!==false && d.fetched_utc && Date.now()-Date.parse(d.fetched_utc) < 20*60*1000) return d;
       }
     } catch {}
     try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 15000); }
     catch (e) { if (old) return {...old, items:old.items.map(i=>({...i,stale:true}))}; throw e; }
   }
-  async function fetchFrankfurter() {
-    try {
-      const data=await fetchJSON('https://api.frankfurter.dev/v2/rates?base=EUR&quotes=USD,GBP',10000);
-      if (Array.isArray(data)) data.forEach(row=>{ if(row.quote && typeof row.rate==='number') fxDaily[row.quote]=row.rate; });
-      else if(data?.rates) fxDaily=data.rates;
-    } catch(e) { console.warn('Frankfurter reference rates unavailable',e); }
+  // fxUsd[CODE] = units of CODE per 1 USD (global reference rates, daily).
+  // Comes from data/prices.json (built by GitHub Actions, so it also works where Frankfurter is blocked).
+  async function ensureFx(payload) {
+    if (payload && payload.fx_usd && typeof payload.fx_usd==='object') { fxUsd=payload.fx_usd; fxDate=payload.fx_date||''; return; }
+    if (Object.keys(fxUsd).length) return;
+    for (const url of ['https://api.frankfurter.dev/v1/latest?base=USD','https://api.frankfurter.app/latest?from=USD']) {
+      try { const d=await fetchJSON(url,10000); if (d && d.rates) { fxUsd={...d.rates,USD:1}; fxDate=d.date||''; return; } } catch(e) { console.warn('FX source unavailable',url,e); }
+    }
   }
   async function refreshMarket() {
     if (loadingMarket) return;
@@ -398,7 +403,7 @@ table{border-collapse:separate;border-spacing:0}
         ? 'زمان تولید داده منبع: ' + dateLabel(payload.generated_utc)
         : 'زمان تولید داده از سوی منبع اعلام نشده';
       updateConverter();
-      fetchFrankfurter().then(updateConverter);
+      ensureFx(payload).then(updateConverter);
     } catch (error) {
       console.error('Market refresh failed:', error);
       // Values shown from local storage are useful as a fallback, but must
@@ -424,29 +429,75 @@ table{border-collapse:separate;border-spacing:0}
       refreshButton.removeAttribute('aria-busy');
     }
   }
-  function ratesInToman() {
-    const result={IRT:1};
-    const ids={USD:'usd',EUR:'eur',GBP:'gbp',AED:'aed',USDT:'usdt'};
-    Object.entries(ids).forEach(([code,id])=>{const p=market.get(id);if(p&&typeof p.price==='number'&&p.price>0)result[code]=p.price;});
-    // Frankfurter is a daily reference-rate fallback, not the Tehran free-market quote.
-    // Its EUR base gives USD-per-EUR and GBP-per-EUR.
-    if (!result.EUR && result.USD && typeof fxDaily.USD==='number' && fxDaily.USD>0) result.EUR=result.USD*fxDaily.USD;
-    if (!result.GBP && result.EUR && typeof fxDaily.GBP==='number' && fxDaily.GBP>0) result.GBP=result.EUR/fxDaily.GBP;
-    if (!result.USD && result.EUR && typeof fxDaily.USD==='number' && fxDaily.USD>0) result.USD=result.EUR/fxDaily.USD;
-    return result;
+  // ---------- Currency converter ----------
+  // Every unit is converted through its value in Toman.
+  const CONV = [
+    {g:'پول ایران',c:'IRT',n:'تومان'},{g:'پول ایران',c:'IRR',n:'ریال'},
+    {g:'ارزها',c:'USD',n:'دلار آمریکا'},{g:'ارزها',c:'EUR',n:'یورو'},{g:'ارزها',c:'GBP',n:'پوند انگلیس'},{g:'ارزها',c:'AED',n:'درهم امارات'},
+    {g:'ارزها',c:'TRY',n:'لیر ترکیه'},{g:'ارزها',c:'CNY',n:'یوان چین'},{g:'ارزها',c:'CAD',n:'دلار کانادا'},{g:'ارزها',c:'AUD',n:'دلار استرالیا'},
+    {g:'ارزها',c:'JPY',n:'ین ژاپن'},{g:'ارزها',c:'CHF',n:'فرانک سوئیس'},{g:'ارزها',c:'INR',n:'روپیه هند'},{g:'ارزها',c:'KRW',n:'وون کره'},
+    {g:'ارز دیجیتال',c:'USDT',n:'تتر'},{g:'ارز دیجیتال',c:'BTC',n:'بیت‌کوین'},{g:'ارز دیجیتال',c:'ETH',n:'اتریوم'},
+    {g:'طلا و سکه',c:'GOLD18',n:'طلای 18 عیار (گرم)'},{g:'طلا و سکه',c:'EMAMI',n:'سکه امامی'},{g:'طلا و سکه',c:'HALF',n:'نیم‌سکه'},
+    {g:'طلا و سکه',c:'QUARTER',n:'ربع‌سکه'},{g:'طلا و سکه',c:'XAU',n:'اونس جهانی طلا'}
+  ];
+  const CONV_NAME=Object.fromEntries(CONV.map(x=>[x.c,x.n]));
+  const MARKET_ID={USD:'usd',EUR:'eur',GBP:'gbp',AED:'aed',USDT:'usdt',GOLD18:'gold-18k',EMAMI:'coin-emami',HALF:'coin-half',QUARTER:'coin-quarter'};
+  const okPrice=p=>p&&typeof p.price==='number'&&Number.isFinite(p.price)&&p.price>0;
+  // returns {v: toman per 1 unit, kind:'market'|'derived', how:string} or null
+  function tomanRate(code) {
+    if (code==='IRT') return {v:1,kind:'market'};
+    if (code==='IRR') return {v:0.1,kind:'market'};
+    const usd=market.get('usd'); const usdT=okPrice(usd)?usd.price:null;
+    const direct=market.get(MARKET_ID[code]);
+    if (MARKET_ID[code] && okPrice(direct) && (direct.unit==='IRT'||direct.unit==null)) return direct.derived?{v:direct.price,kind:'derived',how:'محاسبه از نرخ دلار بازار و نرخ جهانی'}:{v:direct.price,kind:'market'};
+    if (code==='XAU') { const p=market.get('xau'); return okPrice(p)&&usdT?{v:p.price*usdT,kind:'market'}:null; }
+    if (code==='BTC'||code==='ETH') {
+      const p=market.get(code.toLowerCase()); if(!okPrice(p)) return null;
+      const t=market.get('usdt'); const base=p.unit==='USD'?usdT:(okPrice(t)?t.price:usdT);
+      return base?{v:p.price*base,kind:'derived',how:'قیمت جهانی × نرخ '+(p.unit==='USD'?'دلار':'تتر')}:null;
+    }
+    if (code==='USDT') return usdT?{v:usdT,kind:'derived',how:'برابر نرخ دلار'}:null;
+    if (!usdT) return null;
+    let per=fxUsd[code];                                   // units of CODE per 1 USD
+    if (!(per>0) && code==='AED') per=3.6725;               // AED is officially pegged to USD
+    if (per>0) return {v:usdT/per,kind:'derived',how:'نرخ دلار بازار ÷ نرخ جهانی '+code+(code==='AED'&&!(fxUsd.AED>0)?' (ثابت رسمی)':'')};
+    return null;
+  }
+  function convFmt(x) {
+    if (!Number.isFinite(x)) return '—';
+    const a=Math.abs(x);
+    return fmt(x, a>=1000?0:a>=1?2:a>=0.01?4:8);
+  }
+  function buildConverter() {
+    const groups=[...new Set(CONV.map(x=>x.g))];
+    const html=groups.map(g=>`<optgroup label="${g}">`+CONV.filter(x=>x.g===g).map(x=>`<option value="${x.c}">${x.n}</option>`).join('')+'</optgroup>').join('');
+    $('fromCurrency').innerHTML=html; $('toCurrency').innerHTML=html;
+    const saved=readStorage('bazarnama-conv-v2',{});
+    $('fromCurrency').value=CONV_NAME[saved.from]?saved.from:'USD';
+    $('toCurrency').value=CONV_NAME[saved.to]?saved.to:'IRT';
+    if (Number.isFinite(saved.amount)&&saved.amount>0) $('amount').value=saved.amount;
   }
   function updateConverter() {
-    const amount=Number($('amount').value); const from=$('fromCurrency').value; const to=$('toCurrency').value; const rates=ratesInToman();
-    if(!Number.isFinite(amount)||amount<0){$('conversionResult').textContent='مقدار معتبر وارد کن';return;}
-    if(!rates[from]||!rates[to]) {
-      $('conversionResult').textContent='نرخ یکی از ارزها در دسترس نیست';
-      $('conversionSource').textContent='ابتدا قیمت‌های بازار را بروزرسانی کن.';
+    const raw=$('amount').value.trim(); const amount=Number(raw); const from=$('fromCurrency').value; const to=$('toCurrency').value;
+    const out=$('conversionResult'), note=$('conversionNote'), src=$('conversionSource'), rateLine=$('conversionRate');
+    rateLine.textContent='';
+    if(raw===''||!Number.isFinite(amount)||amount<0){out.textContent='مقدار معتبر وارد کن';note.textContent='';src.textContent='';return;}
+    saveStorage('bazarnama-conv-v2',{from,to,amount});
+    const rf=tomanRate(from), rt=tomanRate(to);
+    if(!rf||!rt){
+      out.textContent='نرخ یکی از موارد در دسترس نیست';
+      note.textContent=CONV_NAME[from]+' ← '+CONV_NAME[to];
+      src.textContent=!market.size?'ابتدا قیمت‌های بازار را بروزرسانی کن.':'برای '+CONV_NAME[!rf?from:to]+' فعلاً نه قیمت بازار و نه نرخ مرجع جهانی دریافت شده است؛ چند دقیقه بعد دوباره تلاش کن.';
       return;
     }
-    const result=amount*rates[from]/rates[to];
-    $('conversionResult').textContent=fmt(result, result<10?4:2)+' '+(to==='IRT'?'تومان':to);
-    $('conversionNote').textContent=fmt(amount,4)+' '+from+' برابر است با';
-    $('conversionSource').textContent='بر پایه نرخ‌های بازار NerkhAra؛ نرخ‌ها ممکن است با بازار لحظه‌ای اختلاف داشته باشند.';
+    const result=amount*rf.v/rt.v;
+    out.textContent=convFmt(result)+' '+CONV_NAME[to];
+    note.textContent=convFmt(amount)+' '+CONV_NAME[from]+' برابر است با';
+    const one=rf.v/rt.v;
+    rateLine.textContent='1 '+CONV_NAME[from]+' = '+convFmt(one)+' '+CONV_NAME[to]+'  ·  1 '+CONV_NAME[to]+' = '+convFmt(1/one)+' '+CONV_NAME[from];
+    const notes=[]; [[from,rf],[to,rt]].forEach(([c,r])=>{ if(r.kind==='derived') notes.push(CONV_NAME[c]+': '+r.how); });
+    const stale=[from,to].some(c=>{const p=market.get(MARKET_ID[c]||c.toLowerCase()); return p&&p.stale;});
+    src.textContent=(notes.length?'محاسبه‌شده، نه قیمت مستقیم بازار آزاد — '+notes.join(' | ')+(fxDate?' (نرخ جهانی: '+fxDate+')':'')+'. ':'بر پایه نرخ‌های بازار NerkhAra. ')+(stale?'⚠ بخشی از داده قدیمی است. ':'')+'نرخ‌ها ممکن است با بازار لحظه‌ای اختلاف داشته باشند.';
   }
   function parseHistory(payload) {
     let arr=Array.isArray(payload)?payload:(payload?.items||payload?.history||payload?.data||payload?.points||[]);
@@ -457,13 +508,13 @@ table{border-collapse:separate;border-spacing:0}
       return {date:row.date||row.day||row.timestamp||row.time||row.as_of,price:Number(row.price??row.value??row.close)};
     }).filter(x=>x.date && Number.isFinite(x.price)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   }
-  function drawChart(points) {
+  function drawChart(points, hourly) {
     const canvas=$('priceChart'); const rect=canvas.getBoundingClientRect(); const dpr=Math.max(1,window.devicePixelRatio||1);
     canvas.width=Math.max(300,Math.floor(rect.width*dpr)); canvas.height=Math.max(170,Math.floor(rect.height*dpr));
     const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
     const w=rect.width,h=rect.height; ctx.clearRect(0,0,w,h);
     const css=getComputedStyle(document.body); const muted=css.getPropertyValue('--muted').trim(); const line=css.getPropertyValue('--line').trim(); const brand=css.getPropertyValue('--brand').trim();
-    if(points.length<2){$('chartHint').textContent='برای این دارایی هنوز تاریخچه کافی دریافت نشده است.';return;}
+    if(points.length<2){$('chartHint').textContent=hourly?'تاریخچه ساعتی از زمان فعال‌شدن ذخیره‌ساز شروع می‌شود و با گذشت ساعت‌ها کامل می‌شود؛ هنوز نقطه کافی نیست.':'برای این دارایی هنوز تاریخچه کافی دریافت نشده است.';return;}
     const values=points.map(p=>p.price); let min=Math.min(...values),max=Math.max(...values); if(min===max){min*=.98;max*=1.02;}
     const pad={l:12,r:12,t:15,b:27}; const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
     ctx.strokeStyle=line;ctx.lineWidth=1;ctx.font='10px Tahoma';ctx.fillStyle=muted;ctx.textAlign='left';
@@ -472,21 +523,28 @@ table{border-collapse:separate;border-spacing:0}
     const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,brand+'44');grad.addColorStop(1,brand+'00');
     ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(coords[coords.length-1].x,h-pad.b);ctx.lineTo(coords[0].x,h-pad.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
     ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle=brand;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
-    ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText(String(points[0].date).slice(0,10),pad.l,h-7);ctx.textAlign='right';ctx.fillText(String(points[points.length-1].date).slice(0,10),w-pad.r,h-7);
+    ctx.fillStyle=muted;ctx.textAlign='left';const lbl=d=>hourly?new Date(d).toLocaleString('fa-IR-u-nu-latn',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tehran'}):String(d).slice(0,10);ctx.fillText(lbl(points[0].date),pad.l,h-7);ctx.textAlign='right';ctx.fillText(lbl(points[points.length-1].date),w-pad.r,h-7);
     const delta=((values[values.length-1]-values[0])/values[0])*100;
-    $('chartHint').textContent=`${fmt(points.length)} نقطه تاریخی · تغییر در بازه انتخابی: ${delta>0?'+':''}${fmt(delta,2)}٪ · تاریخچه روزانه`;
+    $('chartHint').textContent=`${fmt(points.length)} نقطه تاریخی · تغییر در بازه انتخابی: ${delta>0?'+':''}${fmt(delta,2)}٪ · تاریخچه ${hourly?'ساعتی (ساخته‌شده توسط بازارنما)':'روزانه'}`;
   }
   async function loadChart() {
-    const id=$('chartAsset').value; const days=Number($('chartRange').value); const key=id+'-'+days;
+    const id=$('chartAsset').value; const rangeVal=$('chartRange').value; const hourly=rangeVal[0]==='h'; const days=hourly?Number(rangeVal.slice(1)):Number(rangeVal); const key=id+'-'+rangeVal;
     if(key===lastHistoryKey) return; lastHistoryKey=key;
     $('chartHint').textContent='در حال دریافت تاریخچه…';
     try {
-      const payload=await fetchJSON(API+'/history/'+encodeURIComponent(id)+'.json',15000);
-      let points=parseHistory(payload);
-      if(points.length) points=points.slice(-days);
-      drawChart(points);
+      let points;
+      if (hourly) {
+        const h=await fetchJSON('/data/history.json?refresh='+Math.floor(Date.now()/600000),10000);
+        const series=(h&&h.series&&h.series[id])||[];
+        points=series.map(r=>({date:new Date(r[0]*1000).toISOString(),price:Number(r[1])})).filter(p=>Number.isFinite(p.price)).slice(-days);
+      } else {
+        const payload=await fetchJSON(API+'/history/'+encodeURIComponent(id)+'.json',15000);
+        points=parseHistory(payload);
+        if(points.length) points=points.slice(-days);
+      }
+      drawChart(points,hourly);
     } catch(e) {
-      console.warn('History unavailable',e); lastHistoryKey=''; $('chartHint').textContent='تاریخچه این دارایی فعلاً در دسترس نیست؛ برای تلاش دوباره دکمه بالا را بزن.';
+      console.warn('History unavailable',e); lastHistoryKey=''; $('chartHint').textContent=hourly?'تاریخچه ساعتی هنوز ساخته نشده است؛ بعد از اجرای اکشن «Update prices» و گذشت چند ساعت پر می‌شود.':'تاریخچه این دارایی فعلاً در دسترس نیست؛ برای تلاش دوباره دکمه بالا را بزن.';
       const canvas=$('priceChart'); const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
     }
   }
@@ -537,7 +595,10 @@ table{border-collapse:separate;border-spacing:0}
   $('assetCards').addEventListener('click',e=>{if(e.target.closest('[data-star],a'))return;const c=e.target.closest('[data-href]');if(c)location.href=c.dataset.href;});
   $('assetCards').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-href]'))location.href=e.target.dataset.href;});
   $('assetCards').addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;const id=b.dataset.star;if(favorites.has(id))favorites.delete(id);else favorites.add(id);saveStorage('bazarnama-favorites',[...favorites]);renderAssets();});
+  buildConverter();
   ['amount','fromCurrency','toCurrency'].forEach(id=>$(id).addEventListener('input',updateConverter));
+  $('amountChips').addEventListener('click',e=>{const b=e.target.closest('[data-amt]');if(!b)return;$('amount').value=b.dataset.amt;updateConverter();});
+  $('copyResult').addEventListener('click',async()=>{const t=$('conversionResult').textContent;try{await navigator.clipboard.writeText(t);$('copyResult').textContent='کپی شد ✓';}catch{$('copyResult').textContent='کپی نشد';}setTimeout(()=>{$('copyResult').textContent='کپی نتیجه';},1500);});
   $('swapBtn').addEventListener('click',()=>{const a=$('fromCurrency').value;$('fromCurrency').value=$('toCurrency').value;$('toCurrency').value=a;updateConverter();});
   $('chartRefresh').addEventListener('click',()=>{lastHistoryKey='';loadChart();});
   $('chartAsset').addEventListener('change',()=>{lastHistoryKey='';loadChart();});

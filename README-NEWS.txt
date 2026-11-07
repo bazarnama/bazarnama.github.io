@@ -23,3 +23,5 @@ GitHub Pages به‌تنهایی امکان اجرای زمان‌بندی‌ش�
 - scripts/build_pages.py: ساخت صفحه جدا برای هر دارایی (price-*.html)، about.html و sitemap.xml
   (بعد از هر تغییر در لیست دارایی‌ها اجرا شود: python scripts/build_pages.py)
 - manifest.webmanifest و sw.js: نصب به‌صورت اپلیکیشن (PWA)
+- data/history.json: تاریخچه ساعتی (هر ساعت یک نقطه، ۱۴ روز) که اسکریپت update_prices.py می‌سازد
+- منبع‌های قیمت: NerkhAra (اصلی)، Frankfurter (نرخ جهانی ارز)، CoinGecko (پشتیبان بیت‌کوین/اتریوم)
