@@ -209,13 +209,40 @@ def fetch_iran_market():
         return {}
 
 
-def fetch_alanchand_aed():
-    """Last-resort direct AED quote from AlanChand's public Iran-market page.
 
-    This reads the displayed Tehran free-market price; it does not calculate AED
-    from USD. The page timestamp is checked before accepting the quote.
-    """
-    url = "https://alanchand.com/currencies-price/aed"
+def jalali_to_gregorian(jy, jm, jd):
+    """Convert a Jalali calendar date to a Gregorian date."""
+    jy += 1595
+    days = -355668 + 365 * jy + (jy // 33) * 8 + ((jy % 33 + 3) // 4) + jd
+    if jm < 7:
+        days += (jm - 1) * 31
+    else:
+        days += (jm - 7) * 30 + 186
+    gy = 400 * (days // 146097)
+    days %= 146097
+    if days > 36524:
+        gy += 100 * ((days - 1) // 36524)
+        days = (days - 1) % 36524
+        if days >= 365:
+            days += 1
+    gy += 4 * (days // 1461)
+    days %= 1461
+    if days > 365:
+        gy += (days - 1) // 365
+        days = (days - 1) % 365
+    gd = days + 1
+    leap = (gy % 4 == 0 and gy % 100 != 0) or gy % 400 == 0
+    month_days = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    gm = 1
+    while gm <= 12 and gd > month_days[gm - 1]:
+        gd -= month_days[gm - 1]
+        gm += 1
+    return datetime.date(gy, gm, gd)
+
+
+def fetch_arzhaam_aed():
+    """Read the publicly displayed AED market quote and its source timestamp."""
+    url = "https://arzhaam.ir/rates/aed"
     try:
         req = urllib.request.Request(url, headers={
             "Accept": "text/html,application/xhtml+xml",
@@ -223,42 +250,44 @@ def fetch_alanchand_aed():
         })
         with urllib.request.urlopen(req, timeout=20) as response:
             page = response.read().decode("utf-8", "replace")
-        # Strip markup and scripts before extracting the human-visible price.
         page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
-        text = html.unescape(re.sub(r"<[^>]+>", " ", page))
-        text = re.sub(r"\s+", " ", text)
-        digit_map = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
-        text = text.translate(digit_map)
+        visible = html.unescape(re.sub(r"<[^>]+>", " ", page))
+        visible = re.sub(r"\s+", " ", visible)
+        digits = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+        visible = visible.translate(digits).replace("٬", ",").replace("٫", ".")
 
-        price_match = re.search(r"قیمت\s*فروش\s*درهم\s*[:：]?\s*([0-9][0-9,٬٫.]*)", text)
-        time_match = re.search(r"آخرین\s*بروز\s*رسانی\s*[:：]?\s*([0-2]?[0-9]):([0-5][0-9])", text)
+        # The first visible price is the current AED quote, in toman.
+        price_match = re.search(r"([0-9][0-9,]*[0-9]|[0-9]+)\s*تومان", visible)
+        time_match = re.search(
+            r"آخرین\s*به[\u200c ]?روزرسانی\s*[:：]?\s*(\d{1,2})\s+([آ-ی]+)\s+(\d{4})[،, ]+\s*(\d{1,2}):(\d{2})",
+            visible,
+        )
         if not price_match or not time_match:
-            raise ValueError("could not parse the visible AED price and update time")
-
-        price = float(re.sub(r"[,٬٫.]", "", price_match.group(1)))
+            raise ValueError("could not parse public AED price and timestamp")
+        price = float(price_match.group(1).replace(",", ""))
         if not (1000 <= price <= 10_000_000):
             raise ValueError("AED price outside plausible bounds")
 
-        tehran = datetime.datetime.now(ZoneInfo("Asia/Tehran"))
-        hour, minute = int(time_match.group(1)), int(time_match.group(2))
-        if hour > 23:
-            raise ValueError("invalid Tehran update hour")
-        updated = tehran.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        if updated - tehran > datetime.timedelta(minutes=5):
-            updated -= datetime.timedelta(days=1)
-        age = (tehran - updated).total_seconds()
-        if age < -300 or age > 3 * 60 * 60:
-            raise ValueError("AlanChand AED quote is stale")
+        months = {"فروردین": 1, "اردیبهشت": 2, "خرداد": 3, "تیر": 4, "مرداد": 5,
+                  "شهریور": 6, "مهر": 7, "آبان": 8, "آذر": 9, "دی": 10,
+                  "بهمن": 11, "اسفند": 12}
+        day, month_name, year, hour, minute = time_match.groups()
+        if month_name not in months or int(hour) > 23:
+            raise ValueError("invalid Jalali timestamp")
+        gregorian = jalali_to_gregorian(int(year), months[month_name], int(day))
+        tehran = datetime.datetime.combine(gregorian, datetime.time(int(hour), int(minute)), ZoneInfo("Asia/Tehran"))
+        age = (datetime.datetime.now(ZoneInfo("Asia/Tehran")) - tehran).total_seconds()
+        if age < -300 or age > 6 * 60 * 60:
+            raise ValueError("Arzhaam AED quote is stale")
 
         return {"aed": {
-            "price": price, "unit": "IRT", "source_name": "AlanChand",
-            "source_updated_utc": updated.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "price": price, "unit": "IRT", "source_name": "Arzhaam",
+            "source_updated_utc": tehran.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "source_checked_utc": now_iso(), "method": "direct", "stale": False,
         }}
     except Exception as e:  # noqa: BLE001
-        print("AlanChand AED fallback failed:", type(e).__name__, file=sys.stderr)
+        print("Arzhaam AED fallback failed:", type(e).__name__, file=sys.stderr)
         return {}
-
 
 def select_currency_quotes(items, secondary):
     """Compare two independent quotes; reject derived EUR/GBP/AED values."""
@@ -447,10 +476,13 @@ def main():
 
     fx, fx_date = fetch_fx()
     iran_direct = fetch_iran_market()
-    # Iran Market Data currently omits AED. Use AlanChand's direct Tehran quote
-    # only for AED when the first independent source has no fresh AED record.
+    # The public Iran Market Data feed currently omits AED. Use Arzhaam's
+    # published market quote as the independent AED fallback.
+    arzhaam_aed_used = False
     if "aed" not in iran_direct:
-        iran_direct.update(fetch_alanchand_aed())
+        arzhaam_quote = fetch_arzhaam_aed()
+        arzhaam_aed_used = "aed" in arzhaam_quote
+        iran_direct.update(arzhaam_quote)
     cg = fetch_coingecko()
     eia = fetch_eia()
     stooq = fetch_stooq()
@@ -537,7 +569,7 @@ def main():
 
     currency_checks = select_currency_quotes(items, iran_direct)
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(k for k, v in iran_direct.items() if v.get("source_name") == "Iran Market Data"),
-                                 "alanchand_aed": "aed" in iran_direct and iran_direct["aed"].get("source_name") == "AlanChand",
+                                 "arzhaam_aed": arzhaam_aed_used,
                                  "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
                                 "stooq": sorted(stooq), "eia": sorted(eia), "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
