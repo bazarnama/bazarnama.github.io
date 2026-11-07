@@ -6,24 +6,38 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: bazarnama-import
+  cancel-in-progress: false
+
 jobs:
   import:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract uploaded project ZIP into repository root
+      - name: Verify and extract project ZIP
         run: |
-          test -f bazarnama-root-ready.zip
-          mkdir -p /tmp/bazarnama-import
-          unzip -oq bazarnama-root-ready.zip -d /tmp/bazarnama-import
-          rsync -a --exclude='.git/' --exclude='.github/workflows/' /tmp/bazarnama-import/ ./
-          rm -f bazarnama-root-ready.zip
+          test -f bazarnama-final.zip || { echo 'bazarnama-final.zip is missing from the repository root'; exit 1; }
+          unzip -t bazarnama-final.zip
+          mkdir -p .bazarnama-import
+          unzip -oq bazarnama-final.zip -d .bazarnama-import
+          rsync -a --exclude='.git/' --exclude='.github/workflows/' .bazarnama-import/ ./
+          rm -rf .bazarnama-import
+          rm -f bazarnama-final.zip
 
-      - name: Commit imported project
+      - name: Commit imported website files (keep workflow files untouched)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Import corrected Bazarnama project" || echo "No changes to commit"
-          git push
+          if git diff --cached --quiet; then
+            echo 'No website file changes to import.'
+            exit 0
+          fi
+          git commit -m "Import Bazarnama website files"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
