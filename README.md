@@ -1,1 +1,13 @@
-# amirhafezgoudarzi90-pixel.github.io
+# بازارنما
+
+سایت ایستا روی GitHub Pages.
+
+## به‌روزرسانی داده‌ها
+GitHub Actions در `.github/workflows/update-prices.yml` تقریباً هر ۱۰ دقیقه `update_prices.py` را اجرا می‌کند. اسکریپت نرخ‌ها، تاریخچه و فایل‌های API را در مخزن ذخیره می‌کند.
+
+## API عمومی
+- آخرین نرخ‌ها: `/api/v1/latest.json`
+- فهرست endpointها: `/api/v1/index.json`
+- تاریخچه هر دارایی: `/api/v1/history/{asset_id}.json`
+
+تاریخچه در `data/history.json` نگه‌داری می‌شود و در اجراهای بعدی حذف یا کوتاه نمی‌شود. نرخ‌های ارز بازار آزاد از منبع اصلی و یک منبع مستقل مستقیم کنترل می‌شوند؛ نرخ مشتق‌شده از دلار برای یورو، پوند و درهم نمایش داده نمی‌شود.
