@@ -25,3 +25,5 @@ GitHub Pages به‌تنهایی امکان اجرای زمان‌بندی‌ش�
 - manifest.webmanifest و sw.js: نصب به‌صورت اپلیکیشن (PWA)
 - data/history.json: تاریخچه ساعتی (هر ساعت یک نقطه، ۱۴ روز) که اسکریپت update_prices.py می‌سازد
 - منبع‌های قیمت: NerkhAra (اصلی)، Frankfurter (نرخ جهانی ارز)، CoinGecko (پشتیبان بیت‌کوین/اتریوم)
+- انرژی: برای منبع خارجی EIA، کلید رایگان را در GitHub: Settings > Secrets and variables > Actions با نام EIA_API_KEY ذخیره کنید (اختیاری؛ بدون آن، فقط منبع اصلی استفاده می‌شود)
+- نفت و گاز: منبع Stooq (بدون کلید، با تأخیر چند دقیقه) + EIA (روزانه)

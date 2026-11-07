@@ -62,3 +62,9 @@ table{border-collapse:separate;border-spacing:0}
  main.wrap:not(#home){width:min(1120px,100%)}
  .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
+
+/* no blue box around items you click/tap; keyboard focus stays visible */
+*{-webkit-tap-highlight-color:transparent}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
+:focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}

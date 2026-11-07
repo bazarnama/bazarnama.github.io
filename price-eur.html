@@ -82,12 +82,19 @@ table{border-collapse:separate;border-spacing:0}
  main.wrap:not(#home){width:min(1120px,100%)}
  .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
 }
+
+/* no blue box around items you click/tap; keyboard focus stays visible */
+*{-webkit-tap-highlight-color:transparent}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
+:focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | قیمت ارز</div><h1>قیمت یورو امروز</h1><p>یورو ارز مشترک بسیاری از کشورهای اروپایی است و برای پرداخت‌ها و سفرهای اروپایی بیشتر از دلار مورد توجه قرار می‌گیرد.</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/#alerts">هشدار قیمت</a></div></section>
 <section class="panel"><h2>نرخ یورو</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">تومان</b></div><div><small>تغییر ۲۴ ساعته</small><b id="chg">…</b></div><div><small>زمان آخرین داده</small><b id="time" style="font-size:15px">…</b></div><div><small>تعداد منابع</small><b id="src" style="font-size:15px">…</b></div></div><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نکاتی درباره یورو</h2><p>یورو ارز مشترک بسیاری از کشورهای اروپایی است و برای پرداخت‌ها و سفرهای اروپایی بیشتر از دلار مورد توجه قرار می‌گیرد.</p><p>قیمت نمایش‌داده‌شده نرخ تقریبی بازار بر پایه داده منبع است و ممکن است با قیمت نهایی معامله در صرافی، بازار یا فروشگاه تفاوت داشته باشد. همیشه واحد قیمت (تومان) و زمان ثبت داده را کنار عدد بررسی کن. اطلاعات این صفحه توصیه خرید یا فروش نیست.</p><p>برای دیدن نمودار تاریخی و ماشین‌حساب تبدیل، به <a href="/#chart">صفحه اصلی</a> برو. روش جمع‌آوری داده‌ها در <a href="/about.html">درباره بازارنما</a> توضیح داده شده است.</p></section>
-<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel"><a href="/price-usd.html">دلار آمریکا</a><a href="/price-gbp.html">پوند انگلیس</a><a href="/price-aed.html">درهم امارات</a><a href="/price-usdt.html">تتر</a></div><h3>سایر بازارها</h3><div class="rel"><a href="/price-gold-18k.html">طلای 18 عیار</a><a href="/price-coin-emami.html">سکه امامی</a><a href="/price-coin-half.html">نیم‌سکه</a><a href="/price-coin-quarter.html">ربع‌سکه</a><a href="/price-xau.html">اونس جهانی طلا</a><a href="/price-btc.html">بیت‌کوین</a><a href="/price-eth.html">اتریوم</a><a href="/price-brent.html">نفت برنت</a><a href="/price-wti.html">نفت WTI</a></div></section>
+<section class="panel" id="srcPanel" hidden><h2>منابع قیمت</h2><div id="srcBody"></div></section>
+<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel"><a href="/price-usd.html">دلار آمریکا</a><a href="/price-gbp.html">پوند انگلیس</a><a href="/price-aed.html">درهم امارات</a><a href="/price-usdt.html">تتر</a></div><h3>سایر بازارها</h3><div class="rel"><a href="/price-gold-18k.html">طلای 18 عیار</a><a href="/price-coin-emami.html">سکه امامی</a><a href="/price-coin-half.html">نیم‌سکه</a><a href="/price-coin-quarter.html">ربع‌سکه</a><a href="/price-xau.html">اونس جهانی طلا</a><a href="/price-btc.html">بیت‌کوین</a><a href="/price-eth.html">اتریوم</a><a href="/price-brent.html">نفت برنت</a><a href="/price-natgas.html">گاز طبیعی</a><a href="/price-wti.html">نفت WTI</a></div></section>
 <footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/about.html">درباره بازارنما و روش کار</a></footer>
 </main><script>(()=>{'use strict';const root=document.documentElement,btn=document.getElementById('themeBtn');
 function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textContent=t==='dark'?'☀':'☾';if(s){try{localStorage.setItem('bazarnama-theme',JSON.stringify(t))}catch(e){}}}
@@ -106,6 +113,13 @@ async function load(){
   $('price').textContent=fmt(x.price);$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.updated_utc||x.as_of);$('src').textContent=x.sources?fmt(x.sources)+' منبع':'نامشخص';
+  const rows=[],ext=data.external_energy&&data.external_energy[ID];
+  const mainSrc=x.derived?'محاسبه‌شده از نرخ دلار بازار و نرخ جهانی ارز':x.backup_source==='coingecko'?'CoinGecko (منبع پشتیبان)':x.backup_source==='eia'?'EIA آمریکا (منبع پشتیبان)':x.backup_source==='stooq'?'Stooq (منبع پشتیبان، با تأخیر)':'NerkhAra (منبع اصلی)';
+  rows.push(['منبع نمایش‌داده‌شده',mainSrc,fmt(x.price)+' '+(UNITS[x.unit]||x.unit||'')]);
+  const st=data.delayed_energy&&data.delayed_energy[ID];
+  if(st&&x.backup_source!=='stooq'){const d2=typeof x.price==='number'&&x.unit===st.unit?((x.price-st.price)/st.price*100):null;rows.push(['منبع خارجی: Stooq (قرارداد آتی، با تأخیر چند دقیقه)',(st.date||'')+' '+(st.time||''),fmt(st.price)+' '+(UNITS[st.unit]||st.unit)+(d2!==null?' · اختلاف '+(d2>0?'+':'')+fmt(d2,2)+'٪':'')]);}
+  if(ext&&!(x.backup_source==='eia')){const diff=typeof x.price==='number'&&x.unit===ext.unit?((x.price-ext.price)/ext.price*100):null;rows.push(['منبع خارجی: EIA آمریکا (روزانه، با تأخیر)',ext.date,fmt(ext.price)+' '+(UNITS[ext.unit]||ext.unit)+(diff!==null?' · اختلاف '+(diff>0?'+':'')+fmt(diff,2)+'٪':'')]);}
+  if(rows.length>1||x.derived||x.backup_source){$('srcBody').innerHTML='<table style="width:100%;border-collapse:collapse">'+rows.map(r=>'<tr><td style="padding:6px 0;border-top:1px solid var(--line)">'+r[0]+'</td><td style="padding:6px 8px;border-top:1px solid var(--line);color:var(--muted)">'+r[1]+'</td><td style="padding:6px 0;border-top:1px solid var(--line);font-weight:700">'+r[2]+'</td></tr>').join('')+'</table>';$('srcPanel').hidden=false;}
   $('status').textContent=x.stale?'اتصال به منبع برقرار نشد؛ آخرین قیمت ذخیره‌شده نمایش داده می‌شود و ممکن است قدیمی باشد.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}}
 load();setInterval(load,5*60*1000);})();</script><script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script></body></html>

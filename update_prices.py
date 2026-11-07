@@ -11,9 +11,12 @@ Sources
   2) Frankfurter (ECB)             - global FX cross rates per 1 USD (used for pound, euro,
                                      lira, yuan ... when the market feed has no value)
   3) CoinGecko (public endpoint)   - backup BTC / ETH / USDT prices in USD
+  4) Stooq CSV (no key)            - delayed futures prices for Brent / WTI / natural gas
+  5) EIA Open Data (US gov, needs a free key in env EIA_API_KEY) - external reference for
+     Brent, WTI and Henry Hub natural gas (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, sys, time, urllib.request, datetime, pathlib
+import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
 FX_URLS = [
@@ -34,7 +37,7 @@ NAMES = {
     "usd": "دلار آمریکا", "eur": "یورو", "gbp": "پوند انگلیس", "aed": "درهم امارات", "usdt": "تتر",
     "gold-18k": "طلای 18 عیار", "coin-emami": "سکه امامی", "coin-half": "نیم‌سکه",
     "coin-quarter": "ربع‌سکه", "xau": "اونس جهانی طلا", "btc": "بیت‌کوین",
-    "eth": "اتریوم", "brent": "نفت برنت", "wti": "نفت WTI",
+    "eth": "اتریوم", "natgas": "گاز طبیعی", "brent": "نفت برنت", "wti": "نفت WTI",
 }
 
 
@@ -89,6 +92,67 @@ def fetch_coingecko():
     return out
 
 
+EIA_SERIES = [  # (id, route, series code, unit)
+    ("brent", "petroleum/pri/spt", "RBRTE", "USD"),
+    ("wti", "petroleum/pri/spt", "RWTC", "USD"),
+    ("natgas", "natural-gas/pri/fut", "RNGWHHD", "USD"),
+]
+
+
+STOOQ_SYMBOLS = {  # id -> candidate symbols (first plausible one wins), plausible price range
+    "brent": (["cb.f", "lco.f"], 10, 400),
+    "wti": (["cl.f"], 10, 400),
+    "natgas": (["ng.f"], 0.5, 40),
+}
+
+
+def fetch_stooq():
+    """Delayed futures prices (a few minutes to ~20 min late) from Stooq CSV. No key needed."""
+    out = {}
+    for pid, (symbols, lo, hi) in STOOQ_SYMBOLS.items():
+        for sym in symbols:
+            try:
+                req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv",
+                                             headers={"User-Agent": "bazarnama-updater"})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    lines = r.read().decode("utf-8", "replace").strip().splitlines()
+                if len(lines) < 2:
+                    continue
+                head = [h.strip().lower() for h in lines[0].split(",")]
+                row = dict(zip(head, [c.strip() for c in lines[1].split(",")]))
+                price = float(row["close"])
+                if not (lo <= price <= hi):
+                    continue
+                out[pid] = {"price": price, "unit": "USD", "date": row.get("date"), "time": row.get("time"),
+                            "symbol": sym, "source": "Stooq"}
+                break
+            except Exception as e:  # noqa: BLE001
+                print("Stooq failed for", pid, sym, type(e).__name__, file=sys.stderr)
+    return out
+
+
+def fetch_eia():
+    """Daily Brent / WTI / Henry Hub from the US EIA. Returns {id: {...}} (empty without a key)."""
+    key = os.environ.get("EIA_API_KEY", "").strip()
+    if not key:
+        print("EIA_API_KEY not set; skipping EIA.")
+        return {}
+    out = {}
+    for pid, route, code, unit in EIA_SERIES:
+        q = urllib.parse.urlencode([
+            ("api_key", key), ("frequency", "daily"), ("data[0]", "value"), ("facets[series][]", code),
+            ("sort[0][column]", "period"), ("sort[0][direction]", "desc"), ("length", "5")])
+        try:
+            rows = get_json(f"https://api.eia.gov/v2/{route}/data/?{q}")["response"]["data"]
+            vals = [(r["period"], float(r["value"])) for r in rows if r.get("value") not in (None, "")]
+            if vals:
+                chg = (vals[0][1] - vals[1][1]) / vals[1][1] * 100 if len(vals) > 1 and vals[1][1] else None
+                out[pid] = {"price": vals[0][1], "unit": unit, "date": vals[0][0], "change_pct": chg, "source": "EIA"}
+        except Exception as e:  # noqa: BLE001  (never print the URL: it contains the key)
+            print("EIA failed for", pid, type(e).__name__, file=sys.stderr)
+    return out
+
+
 def build_summary(payload):
     rows = []
     for i in payload["items"]:
@@ -136,6 +200,8 @@ def main():
 
     fx, fx_date = fetch_fx()
     cg = fetch_coingecko()
+    eia = fetch_eia()
+    stooq = fetch_stooq()
 
     if primary:
         payload = primary
@@ -168,6 +234,32 @@ def main():
     if "usdt_usd" in cg:
         payload["usdt_usd"] = cg["usdt_usd"]["price"]  # USDT in USD (for reference)
 
+    # energy: Stooq (delayed, fresher) and EIA (daily) are shown as references; they also
+    # fill the value when the primary feed has none (Stooq first, then EIA).
+    if eia:
+        payload["external_energy"] = eia
+    if stooq:
+        payload["delayed_energy"] = stooq
+    for pid in ("brent", "wti", "natgas"):
+        cur = by_id.get(pid)
+        has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
+        if has:
+            continue
+        if pid in stooq:
+            e = stooq[pid]
+            row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": None,
+                   "updated_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True}
+        elif pid in eia:
+            e = eia[pid]
+            row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
+                   "updated_utc": e["date"] + "T00:00:00Z", "sources": 1, "backup_source": "eia"}
+        else:
+            continue
+        if cur:
+            items[items.index(cur)] = row
+        else:
+            items.append(row)
+
     if fx:
         payload["fx_usd"] = fx
         payload["fx_date"] = fx_date
@@ -198,7 +290,7 @@ def main():
     s = build_summary(payload)
     if s:
         SUMMARY.write_text(json.dumps(s, ensure_ascii=False), encoding="utf-8")
-    print("Updated", OUT, "primary_ok =", payload["primary_ok"], "fx =", bool(fx), "coingecko =", sorted(cg))
+    print("Updated", OUT, "primary_ok =", payload["primary_ok"], "fx =", bool(fx), "coingecko =", sorted(cg), "stooq =", sorted(stooq), "eia =", sorted(eia))
     return 0
 
 

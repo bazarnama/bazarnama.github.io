@@ -23,6 +23,7 @@ A = [
  ("btc","بیت‌کوین","قیمت بیت‌کوین امروز","crypto","تتر","بیت‌کوین قدیمی‌ترین و شناخته‌شده‌ترین رمزارز است و قیمت آن در طول روز می‌تواند نوسان زیادی داشته باشد."),
  ("eth","اتریوم","قیمت اتریوم امروز","crypto","تتر","اتریوم دومین رمزارز بزرگ بازار و بستر بسیاری از قراردادهای هوشمند است."),
  ("brent","نفت برنت","قیمت نفت برنت امروز","energy","دلار / بشکه","نفت برنت یکی از دو شاخص اصلی قیمت نفت خام در جهان است و بر حسب دلار برای هر بشکه اعلام می‌شود."),
+ ("natgas","گاز طبیعی","قیمت گاز طبیعی امروز","energy","دلار / MMBtu","گاز طبیعی (شاخص هنری هاب آمریکا) مهم‌ترین شاخص قیمت گاز در جهان است و بر حسب دلار برای هر میلیون واحد حرارتی بریتانیایی (MMBtu) اعلام می‌شود."),
  ("wti","نفت WTI","قیمت نفت WTI امروز","energy","دلار / بشکه","نفت WTI شاخص قیمت نفت خام آمریکا است و معمولاً با برنت مقایسه می‌شود."),
 ]
 CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","energy":"/#markets"}
@@ -60,7 +61,7 @@ def page(title, desc, path, body, ld, script=""):
 """
 
 
-ASSET_JS = """const ID=%s,UNITS={IRT:'تومان',USD:'دلار',USDT:'تتر'};
+ASSET_JS = """const ID=__ID__,UNITS={IRT:'تومان',USD:'دلار',USDT:'تتر'};
 const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:d??(v<10?4:0)}).format(v);
 const $=id=>document.getElementById(id);
 async function getPrices(){let old=null;try{const r=await fetch('/data/prices.json',{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<20*60*1000)return d;}}}catch(e){}
@@ -73,6 +74,13 @@ async function load(){
   $('price').textContent=fmt(x.price);$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.updated_utc||x.as_of);$('src').textContent=x.sources?fmt(x.sources)+' منبع':'نامشخص';
+  const rows=[],ext=data.external_energy&&data.external_energy[ID];
+  const mainSrc=x.derived?'محاسبه‌شده از نرخ دلار بازار و نرخ جهانی ارز':x.backup_source==='coingecko'?'CoinGecko (منبع پشتیبان)':x.backup_source==='eia'?'EIA آمریکا (منبع پشتیبان)':x.backup_source==='stooq'?'Stooq (منبع پشتیبان، با تأخیر)':'NerkhAra (منبع اصلی)';
+  rows.push(['منبع نمایش‌داده‌شده',mainSrc,fmt(x.price)+' '+(UNITS[x.unit]||x.unit||'')]);
+  const st=data.delayed_energy&&data.delayed_energy[ID];
+  if(st&&x.backup_source!=='stooq'){const d2=typeof x.price==='number'&&x.unit===st.unit?((x.price-st.price)/st.price*100):null;rows.push(['منبع خارجی: Stooq (قرارداد آتی، با تأخیر چند دقیقه)',(st.date||'')+' '+(st.time||''),fmt(st.price)+' '+(UNITS[st.unit]||st.unit)+(d2!==null?' · اختلاف '+(d2>0?'+':'')+fmt(d2,2)+'٪':'')]);}
+  if(ext&&!(x.backup_source==='eia')){const diff=typeof x.price==='number'&&x.unit===ext.unit?((x.price-ext.price)/ext.price*100):null;rows.push(['منبع خارجی: EIA آمریکا (روزانه، با تأخیر)',ext.date,fmt(ext.price)+' '+(UNITS[ext.unit]||ext.unit)+(diff!==null?' · اختلاف '+(diff>0?'+':'')+fmt(diff,2)+'٪':'')]);}
+  if(rows.length>1||x.derived||x.backup_source){$('srcBody').innerHTML='<table style="width:100%;border-collapse:collapse">'+rows.map(r=>'<tr><td style="padding:6px 0;border-top:1px solid var(--line)">'+r[0]+'</td><td style="padding:6px 8px;border-top:1px solid var(--line);color:var(--muted)">'+r[1]+'</td><td style="padding:6px 0;border-top:1px solid var(--line);font-weight:700">'+r[2]+'</td></tr>').join('')+'</table>';$('srcPanel').hidden=false;}
   $('status').textContent=x.stale?'اتصال به منبع برقرار نشد؛ آخرین قیمت ذخیره‌شده نمایش داده می‌شود و ممکن است قدیمی باشد.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}}
 load();setInterval(load,5*60*1000);"""
@@ -87,6 +95,7 @@ def asset_page(a):
     body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1>{html.escape(h1)}</h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/#alerts">هشدار قیمت</a></div></section>
 <section class="panel"><h2>نرخ {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر ۲۴ ساعته</small><b id="chg">…</b></div><div><small>زمان آخرین داده</small><b id="time" style="font-size:15px">…</b></div><div><small>تعداد منابع</small><b id="src" style="font-size:15px">…</b></div></div><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نکاتی درباره {html.escape(name)}</h2><p>{html.escape(blurb)}</p><p>قیمت نمایش‌داده‌شده نرخ تقریبی بازار بر پایه داده منبع است و ممکن است با قیمت نهایی معامله در صرافی، بازار یا فروشگاه تفاوت داشته باشد. همیشه واحد قیمت ({html.escape(unit)}) و زمان ثبت داده را کنار عدد بررسی کن. اطلاعات این صفحه توصیه خرید یا فروش نیست.</p><p>برای دیدن نمودار تاریخی و ماشین‌حساب تبدیل، به <a href="/#chart">صفحه اصلی</a> برو. روش جمع‌آوری داده‌ها در <a href="/about.html">درباره بازارنما</a> توضیح داده شده است.</p></section>
+<section class="panel" id="srcPanel" hidden><h2>منابع قیمت</h2><div id="srcBody"></div></section>
 <section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div></section>"""
     ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "WebPage", "name": title, "url": f"{BASE}/price-{id_}.html", "inLanguage": "fa-IR", "description": desc,
@@ -95,7 +104,7 @@ def asset_page(a):
             {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
             {"@type": "ListItem", "position": 2, "name": CATN[cat], "item": BASE + CAT[cat] if CAT[cat].startswith("/") and not CAT[cat].startswith("/#") else BASE + "/"},
             {"@type": "ListItem", "position": 3, "name": name, "item": f"{BASE}/price-{id_}.html"}]}]}
-    return page(title, desc, f"/price-{id_}.html", body, ld, ASSET_JS % json.dumps(id_))
+    return page(title, desc, f"/price-{id_}.html", body, ld, ASSET_JS.replace("__ID__", json.dumps(id_)))
 
 
 def about():
@@ -116,6 +125,13 @@ def main():
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{BASE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sm, encoding="utf-8")
+    import re as _re
+    glass = '<style id="glass">' + GLASS + '</style>'
+    for f in ROOT.glob("*.html"):
+        t = f.read_text(encoding="utf-8")
+        t2 = _re.sub(r'<style id="glass">.*?</style>', lambda m: glass, t, flags=_re.S)
+        if t2 != t:
+            f.write_text(t2, encoding="utf-8")
     print("built", len(A), "asset pages")
 
 
