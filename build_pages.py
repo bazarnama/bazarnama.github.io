@@ -6,7 +6,11 @@ import re, json, html, pathlib, datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent
 BASE = "https://bazarnama.github.io"
-GLASS = (ROOT / "glass.css").read_text(encoding="utf-8")
+_currency_html = (ROOT / "currency.html").read_text(encoding="utf-8")
+_glass_match = re.search(r'<style\b[^>]*id="glass"[^>]*>(.*?)</style>', _currency_html, re.S | re.I)
+if not _glass_match:
+    raise RuntimeError("Liquid-glass CSS block (style id=glass) was not found in currency.html")
+GLASS = _glass_match.group(1)
 STYLE = re.search(r"<style>(.*?)</style>", (ROOT / "currency.html").read_text(encoding="utf-8"), re.S).group(1)
 
 A = [
@@ -208,6 +212,8 @@ def main():
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{BASE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sm, encoding="utf-8")
+    robots = "User-agent: *\nAllow: /\n\nSitemap: " + BASE + "/sitemap.xml\n"
+    (ROOT / "robots.txt").write_text(robots, encoding="utf-8")
     import re as _re
     glass = '<style id="glass">' + GLASS + '</style>'
     for f in ROOT.glob("*.html"):
