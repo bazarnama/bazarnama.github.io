@@ -1,0 +1,49 @@
+name: Clean stray files (run once by hand)
+
+# Removes leftover files that nothing uses (old copies at the repo root, cache folders,
+# broken file names). Run it once from Actions -> "Clean stray files" -> Run workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove stray files
+        run: |
+          python3 - <<'PY'
+          import os, subprocess
+          raw = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          exact = {"prices.json", "news.json", "history.json", "update-news.yml", "update-prices.yml", "favicon.png."}
+          doomed = []
+          for b in raw:
+              if not b:
+                  continue
+              name = os.fsdecode(b)
+              top = "/" not in name
+              if name in exact or name.startswith("__pycache__/") or name.endswith(".pyc"):
+                  doomed.append(name)
+              elif top and name.lower().endswith(".md") and name != "README.md":
+                  doomed.append(name)          # stray notes such as "بازارنما (1).md" and its broken-encoding twin
+          for name in doomed:
+              print("remove:", name)
+              subprocess.run(["git", "rm", "-q", "--", name], check=True)
+          print(len(doomed), "files removed")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then
+            echo "Nothing to clean."
+            exit 0
+          fi
+          git commit -m "Remove unused stray files"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
