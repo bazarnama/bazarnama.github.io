@@ -11,13 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Extract uploaded project ZIP into repository root
         run: |
           test -f bazarnama-root-ready.zip
           mkdir -p /tmp/bazarnama-import
           unzip -oq bazarnama-root-ready.zip -d /tmp/bazarnama-import
-          rsync -a --exclude='.git/' /tmp/bazarnama-import/ ./
+          rsync -a --exclude='.git/' --exclude='.github/workflows/' /tmp/bazarnama-import/ ./
           rm -f bazarnama-root-ready.zip
+
       - name: Commit imported project
         run: |
           git config user.name "github-actions[bot]"
