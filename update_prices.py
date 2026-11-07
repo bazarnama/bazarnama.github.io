@@ -16,7 +16,8 @@ Sources
      Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib
+import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib, re, html
+from zoneinfo import ZoneInfo
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
 SECONDARY_IRAN_MARKET = "https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json"
@@ -208,6 +209,57 @@ def fetch_iran_market():
         return {}
 
 
+def fetch_alanchand_aed():
+    """Last-resort direct AED quote from AlanChand's public Iran-market page.
+
+    This reads the displayed Tehran free-market price; it does not calculate AED
+    from USD. The page timestamp is checked before accepting the quote.
+    """
+    url = "https://alanchand.com/currencies-price/aed"
+    try:
+        req = urllib.request.Request(url, headers={
+            "Accept": "text/html,application/xhtml+xml",
+            "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
+        })
+        with urllib.request.urlopen(req, timeout=20) as response:
+            page = response.read().decode("utf-8", "replace")
+        # Strip markup and scripts before extracting the human-visible price.
+        page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
+        text = html.unescape(re.sub(r"<[^>]+>", " ", page))
+        text = re.sub(r"\s+", " ", text)
+        digit_map = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+        text = text.translate(digit_map)
+
+        price_match = re.search(r"قیمت\s*فروش\s*درهم\s*[:：]?\s*([0-9][0-9,٬٫.]*)", text)
+        time_match = re.search(r"آخرین\s*بروز\s*رسانی\s*[:：]?\s*([0-2]?[0-9]):([0-5][0-9])", text)
+        if not price_match or not time_match:
+            raise ValueError("could not parse the visible AED price and update time")
+
+        price = float(re.sub(r"[,٬٫.]", "", price_match.group(1)))
+        if not (1000 <= price <= 10_000_000):
+            raise ValueError("AED price outside plausible bounds")
+
+        tehran = datetime.datetime.now(ZoneInfo("Asia/Tehran"))
+        hour, minute = int(time_match.group(1)), int(time_match.group(2))
+        if hour > 23:
+            raise ValueError("invalid Tehran update hour")
+        updated = tehran.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        if updated - tehran > datetime.timedelta(minutes=5):
+            updated -= datetime.timedelta(days=1)
+        age = (tehran - updated).total_seconds()
+        if age < -300 or age > 3 * 60 * 60:
+            raise ValueError("AlanChand AED quote is stale")
+
+        return {"aed": {
+            "price": price, "unit": "IRT", "source_name": "AlanChand",
+            "source_updated_utc": updated.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "source_checked_utc": now_iso(), "method": "direct", "stale": False,
+        }}
+    except Exception as e:  # noqa: BLE001
+        print("AlanChand AED fallback failed:", type(e).__name__, file=sys.stderr)
+        return {}
+
+
 def select_currency_quotes(items, secondary):
     """Compare two independent quotes; reject derived EUR/GBP/AED values."""
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
@@ -232,7 +284,8 @@ def select_currency_quotes(items, secondary):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
                            "updated_utc": chosen.get("source_updated_utc"),
-                           "sources": 1, "backup_source": "iran-market-data",
+                           "sources": 1,
+                           "backup_source": str(chosen.get("source_name", "Iran Market Data")).lower().replace(" ", "-"),
                            "source_selection": "secondary-direct"})
             if primary:
                 items[items.index(primary)] = chosen
@@ -245,7 +298,7 @@ def select_currency_quotes(items, secondary):
             primary["source_checked_utc"] = now_iso()
             primary["source_selection"] = "primary-aggregated"
             if a_ok:
-                primary["secondary_source"] = "Iran Market Data"
+                primary["secondary_source"] = alt.get("source_name", "Iran Market Data")
                 primary["secondary_price"] = alt["price"]
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
                 # Large disagreement is retained as a quality flag; don't silently average markets.
@@ -394,6 +447,10 @@ def main():
 
     fx, fx_date = fetch_fx()
     iran_direct = fetch_iran_market()
+    # Iran Market Data currently omits AED. Use AlanChand's direct Tehran quote
+    # only for AED when the first independent source has no fresh AED record.
+    if "aed" not in iran_direct:
+        iran_direct.update(fetch_alanchand_aed())
     cg = fetch_coingecko()
     eia = fetch_eia()
     stooq = fetch_stooq()
@@ -462,10 +519,10 @@ def main():
     # Fill currencies the market feed lacks from USD market price x global FX (flagged derived).
     usd = by_id.get("usd")
     if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and fx:
-        for pid, code in (("eur", "EUR"), ("gbp", "GBP"), ("aed", "AED")):
+        for pid, code in (("eur", "EUR"), ("gbp", "GBP")):
             cur = by_id.get(pid)
             has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
-            per = fx.get(code) or (3.6725 if code == "AED" else None)
+            per = fx.get(code)
             if not has and per:
                 row = {"id": pid, "price": round(usd["price"] / per), "unit": usd.get("unit", "IRT"),
                        "change_pct": None, "updated_utc": usd.get("updated_utc"), "sources": 0,
@@ -479,7 +536,9 @@ def main():
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
     currency_checks = select_currency_quotes(items, iran_direct)
-    payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(iran_direct), "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
+    payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(k for k, v in iran_direct.items() if v.get("source_name") == "Iran Market Data"),
+                                 "alanchand_aed": "aed" in iran_direct and iran_direct["aed"].get("source_name") == "AlanChand",
+                                 "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
                                 "stooq": sorted(stooq), "eia": sorted(eia), "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
     OUT.parent.mkdir(parents=True, exist_ok=True)
