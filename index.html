@@ -147,9 +147,8 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <div class="eyebrow">نمای روز بازارهای مالی؛ ارز، طلا و رمزارز</div>
         <h1>قیمت روز دلار، طلا و ارز دیجیتال؛ نرخ ارزهای بازار</h1>
         <p>قیمت دلار و ارزهای خارجی، طلای 18 عیار و سکه، بیت‌کوین و اتریوم را در یک صفحه دنبال کن؛ تغییرات و نمودار قیمت را ببین و از ماشین‌حساب تبدیل ارز استفاده کن.</p>
-        <div class="heroActions"><a class="btn light" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="#chart">نمودار</a><a class="btn ghost" href="/currency.html">ارز</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a></div>
+        <div class="heroActions"><a class="btn light" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a></div>
       </div></div>
-    
     </section>
 
     <section id="markets" class="section">
@@ -163,18 +162,6 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       <div class="stats" id="assetCards" style="margin-top:13px"><div class="empty">در حال بارگذاری قیمت‌ها…</div></div>
     </section>
 
-    <section id="chart" class="section heroChart">
-      <div class="sectionHead"><div><h2>نمودار تغییرات قیمت</h2><div class="sub">تاریخچه روزانه منبع بازار؛ نمودار در صورت وجود داده تاریخی رسم می‌شود.</div></div></div>
-      <div class="panel">
-        <div class="panelTitle"><h3>روند قیمت</h3><div class="toolbar"><button type="button" class="smallbtn" id="chartRefresh">↻ تلاش دوباره</button><select id="chartAsset" class="select" aria-label="انتخاب دارایی"><option value="usd">دلار آمریکا</option><option value="eur">یورو</option><option value="gbp">پوند انگلیس</option><option value="aed">درهم امارات</option><option value="usdt">تتر</option><option value="gold-18k">طلای 18 عیار</option><option value="coin-emami">سکه امامی</option><option value="coin-half">نیم‌سکه</option><option value="coin-quarter">ربع‌سکه</option><option value="btc">بیت‌کوین</option><option value="eth">اتریوم</option><option value="xau">اونس طلا</option></select><select id="chartRange" class="select" aria-label="بازه نمودار"><option value="h24">ساعتی · 24 ساعت</option><option value="h72">ساعتی · 3 روز</option><option value="h168">ساعتی · 7 روز</option><option value="7">روزانه · 7 روز</option><option value="30" selected>روزانه · 30 روز</option><option value="90">روزانه · 90 روز</option></select></div></div>
-        <div class="chartArea"><canvas id="priceChart" aria-label="نمودار تغییرات قیمت" role="img"></canvas></div>
-        <div class="chartHint" id="chartHint">برای نمایش نمودار، تاریخچه در حال دریافت است.</div>
-      </div>
-    </section>
-
-
-
-
     <section id="converter" class="section">
       <div class="sectionHead"><div><h2>ماشین‌حساب تبدیل ارز</h2><div class="sub">محاسبه بر پایه نرخ‌های دریافت‌شده؛ نرخ بازار آزاد با نرخ مرجع جهانی متفاوت است.</div></div></div>
       <div class="panel">
@@ -187,12 +174,6 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <div class="chips" id="amountChips" style="margin-top:10px"><button type="button" class="chip" data-amt="1">1</button><button type="button" class="chip" data-amt="10">10</button><button type="button" class="chip" data-amt="100">100</button><button type="button" class="chip" data-amt="1000">1,000</button><button type="button" class="chip" data-amt="1000000">1,000,000</button></div>
         <div class="result" aria-live="polite"><small id="conversionNote">نتیجه تبدیل</small><strong id="conversionResult">دریافت نرخ‌ها…</strong><small id="conversionRate"></small><small id="conversionSource"></small><div style="margin-top:8px"><button type="button" class="smallbtn" id="copyResult">کپی نتیجه</button></div></div>
       </div>
-    </section>
-
-    
-    <section class="section">
-      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div></div>
-      <div class="panel tablewrap"><table><thead><tr><th>دارایی</th><th>قیمت</th><th>واحد</th><th>تغییر 24 ساعته</th><th>وضعیت</th></tr></thead><tbody id="priceRows"><tr><td colspan="5" class="empty">در انتظار دریافت اطلاعات…</td></tr></tbody></table></div>
     </section>
 
     <section id="summary" class="section" hidden>
@@ -238,7 +219,19 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       </div>
     </section>
 
+    <section class="section">
+      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div></div>
+      <div class="panel tablewrap"><table><thead><tr><th>دارایی</th><th>قیمت</th><th>واحد</th><th>تغییر 24 ساعته</th><th>وضعیت</th></tr></thead><tbody id="priceRows"><tr><td colspan="5" class="empty">در انتظار دریافت اطلاعات…</td></tr></tbody></table></div>
+    </section>
 
+    <section id="chart" class="section">
+      <div class="sectionHead"><div><h2>نمودار تغییرات قیمت</h2><div class="sub">تاریخچه روزانه منبع بازار؛ نمودار در صورت وجود داده تاریخی رسم می‌شود.</div></div></div>
+      <div class="panel">
+        <div class="panelTitle"><h3>روند قیمت</h3><div class="toolbar"><button type="button" class="smallbtn" id="chartRefresh">↻ تلاش دوباره</button><select id="chartAsset" class="select" aria-label="انتخاب دارایی"><option value="usd">دلار آمریکا</option><option value="eur">یورو</option><option value="gbp">پوند انگلیس</option><option value="aed">درهم امارات</option><option value="usdt">تتر</option><option value="gold-18k">طلای 18 عیار</option><option value="coin-emami">سکه امامی</option><option value="coin-half">نیم‌سکه</option><option value="coin-quarter">ربع‌سکه</option><option value="btc">بیت‌کوین</option><option value="eth">اتریوم</option><option value="xau">اونس طلا</option></select><select id="chartRange" class="select" aria-label="بازه نمودار"><option value="h24">ساعتی · 24 ساعت</option><option value="h72">ساعتی · 3 روز</option><option value="h168">ساعتی · 7 روز</option><option value="7">روزانه · 7 روز</option><option value="30" selected>روزانه · 30 روز</option><option value="90">روزانه · 90 روز</option></select></div></div>
+        <div class="chartArea"><canvas id="priceChart" aria-label="نمودار تغییرات قیمت" role="img"></canvas></div>
+        <div class="chartHint" id="chartHint">برای نمایش نمودار، تاریخچه در حال دریافت است.</div>
+      </div>
+    </section>
 
 
 
@@ -342,10 +335,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const fav=favorites.has(a.id);
       const stale=p?.stale===true;
       const unit=ok?unitLabel(p.unit):a.unit;
-      const time=p?.source_updated_utc || p?.updated_utc || p?.as_of || null;
-      const source=p?.source_name || p?.source || (p?.derived?'محاسبه‌شده':(p?.sources ? `${fmt(p.sources)} منبع` : 'منبع اصلی'));
+      const time=p?.updated_utc || p?.as_of || null;
+      const source=p?.derived?'محاسبه‌شده':(p?.source || (p?.sources ? `${fmt(p.sources)} منبع` : 'منبع اصلی'));
       const methodText=p?.method==='derived'?' · محاسبه‌شده':'';
-      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی · ':''}${time?dateLabel(time):'زمان نامشخص'} · ${safeText(source+methodText)}</div></article>`;
+      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی':time?dateLabel(time):'منتظر داده'} · ${safeText(source+methodText)}</div></article>`;
     }).join(''):'<div class="empty" style="grid-column:1/-1">هنوز موردی در این بخش وجود ندارد. با ستاره کنار دارایی‌ها، علاقه‌مندی اضافه کن.</div>';
     $('priceRows').innerHTML=list.length?list.map(a=>{
       const p=market.get(a.id); const ok=p&&typeof p.price==='number';
@@ -366,8 +359,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const d=await fetchJSON('/data/prices.json',8000);
       if (d && Array.isArray(d.items) && d.items.length) {
         old=d;
-        const stamp=d.fetched_at_utc||d.fetched_utc||d.generated_utc;
-        if (stamp && Date.now()-Date.parse(stamp) < 20*60*1000) return d;
+        if (d.primary_ok!==false && d.fetched_utc && Date.now()-Date.parse(d.fetched_utc) < 20*60*1000) return d;
       }
     } catch {}
     try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 15000); }
@@ -453,7 +445,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
       const receivedAt = new Date().toISOString();
       const nextMarket = new Map(payload.items
-        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price) && !(['eur','gbp','aed'].includes(item.id) && (item.method==='derived' || item.derived)))
+        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price))
         .map(item => [item.id, { ...item, source:item.source || 'NerkhAra' }]));
       if (!nextMarket.size) throw new Error('هیچ قیمت معتبری از منبع دریافت نشد');
       market = nextMarket;
@@ -490,7 +482,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       // Values shown from local storage are useful as a fallback, but must
       // never be presented as freshly verified after a failed network request.
       if (market.size) {
-        market = new Map([...market.entries()].filter(([id,item])=>!(['eur','gbp','aed'].includes(id)&&(item.method==='derived'||item.derived))).map(([id, item]) => [id, { ...item, stale: item.source!=='CoinGecko' }]));
+        market = new Map([...market.entries()].map(([id, item]) => [id, { ...item, stale: item.source!=='CoinGecko' }]));
         $('marketStatus').textContent = 'اتصال به منبع برقرار نشد؛ قیمت‌های ذخیره‌شده نمایش داده می‌شوند و ممکن است قدیمی باشند.';
       } else {
         $('marketStatus').textContent = 'دریافت قیمت‌ها ناموفق بود. اتصال اینترنت را بررسی کن و دوباره تلاش کن.';
@@ -540,8 +532,8 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     if (code==='USDT') return usdT?{v:usdT,kind:'derived',how:'برابر نرخ دلار'}:null;
     if (!usdT) return null;
     let per=fxUsd[code];                                   // units of CODE per 1 USD
-    if (code==='AED') return null; // require a direct Iranian market quote; do not estimate from the USD peg
-    if (per>0) return {v:usdT/per,kind:'derived',how:'نرخ دلار بازار ÷ نرخ جهانی '+code};
+    if (!(per>0) && code==='AED') per=3.6725;               // AED is officially pegged to USD
+    if (per>0) return {v:usdT/per,kind:'derived',how:'نرخ دلار بازار ÷ نرخ جهانی '+code+(code==='AED'&&!(fxUsd.AED>0)?' (ثابت رسمی)':'')};
     return null;
   }
   function convFmt(x) {

@@ -16,13 +16,9 @@ Sources
      Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib, re, html
-from zoneinfo import ZoneInfo
+import json, os, sys, time, urllib.parse, urllib.request, datetime, pathlib
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
-SECONDARY_IRAN_MARKET = "https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json"
-DIRECT_CURRENCY_IDS = {"usd": "USD_IRR_FREE", "eur": "EUR_IRR_FREE", "gbp": "GBP_IRR_FREE", "aed": "AED_IRR_FREE"}
-SITE_ASSETS = {"usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "coin-half", "coin-quarter", "xau", "btc", "eth", "brent", "wti"}
 FX_URLS = [
     "https://api.frankfurter.dev/v1/latest?base=USD",
     "https://api.frankfurter.app/latest?from=USD",
@@ -35,7 +31,7 @@ ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "data" / "prices.json"
 HIST = ROOT / "data" / "history.json"
 SUMMARY = ROOT / "data" / "summary.json"
-HIST_MAX = None  # preserve the full series; old points are never discarded
+HIST_MAX = 24 * 14  # keep 14 days of hourly points
 
 NAMES = {
     "usd": "دلار آمریکا", "eur": "یورو", "gbp": "پوند انگلیس", "aed": "درهم امارات", "usdt": "تتر",
@@ -155,268 +151,6 @@ def fetch_eia():
     return out
 
 
-
-def parse_timestamp(value):
-    """Parse ISO strings or Unix timestamps to epoch seconds."""
-    if isinstance(value, (int, float)):
-        return float(value) / 1000 if value > 10**12 else float(value)
-    if not isinstance(value, str) or not value.strip():
-        return None
-    raw = value.strip()
-    try:
-        dt = datetime.datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=datetime.timezone.utc)
-        return dt.timestamp()
-    except ValueError:
-        return None
-
-
-def fetch_iran_market():
-    """Independent direct Iranian free-market quotes for USD/EUR/GBP/AED."""
-    try:
-        payload = get_json(SECONDARY_IRAN_MARKET)
-        rows = payload.get("data") if isinstance(payload, dict) else None
-        if not isinstance(rows, list):
-            raise ValueError("unexpected Iran Market Data response")
-        result = {}
-        for pid, symbol in DIRECT_CURRENCY_IDS.items():
-            row = next((r for r in rows if isinstance(r, dict) and
-                        str(r.get("symbol") or r.get("id") or "").upper() == symbol), None)
-            if not row:
-                continue
-            try:
-                price = float(row.get("price"))
-            except (TypeError, ValueError):
-                continue
-            if price <= 0:
-                continue
-            stamp_raw = row.get("updated_utc") or row.get("updated_at") or row.get("timestamp") or payload.get("generated_utc") or payload.get("updated_at")
-            stamp = parse_timestamp(stamp_raw)
-            if stamp is None:
-                continue
-            age = time.time() - stamp
-            if age < -300 or age > 2 * 60 * 60:
-                continue
-            result[pid] = {
-                "price": price, "unit": "IRT", "source_name": "Iran Market Data",
-                "source_updated_utc": datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "source_checked_utc": now_iso(), "method": "direct", "stale": False,
-            }
-        return result
-    except Exception as e:  # noqa: BLE001
-        print("Iran Market Data failed:", type(e).__name__, file=sys.stderr)
-        return {}
-
-
-
-def jalali_to_gregorian(jy, jm, jd):
-    """Convert a Jalali calendar date to a Gregorian date."""
-    jy += 1595
-    days = -355668 + 365 * jy + (jy // 33) * 8 + ((jy % 33 + 3) // 4) + jd
-    if jm < 7:
-        days += (jm - 1) * 31
-    else:
-        days += (jm - 7) * 30 + 186
-    gy = 400 * (days // 146097)
-    days %= 146097
-    if days > 36524:
-        gy += 100 * ((days - 1) // 36524)
-        days = (days - 1) % 36524
-        if days >= 365:
-            days += 1
-    gy += 4 * (days // 1461)
-    days %= 1461
-    if days > 365:
-        gy += (days - 1) // 365
-        days = (days - 1) % 365
-    gd = days + 1
-    leap = (gy % 4 == 0 and gy % 100 != 0) or gy % 400 == 0
-    month_days = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    gm = 1
-    while gm <= 12 and gd > month_days[gm - 1]:
-        gd -= month_days[gm - 1]
-        gm += 1
-    return datetime.date(gy, gm, gd)
-
-
-def fetch_arzhaam_aed():
-    """Read the publicly displayed AED market quote and its source timestamp."""
-    url = "https://arzhaam.ir/rates/aed"
-    try:
-        req = urllib.request.Request(url, headers={
-            "Accept": "text/html,application/xhtml+xml",
-            "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
-        })
-        with urllib.request.urlopen(req, timeout=20) as response:
-            page = response.read().decode("utf-8", "replace")
-        page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
-        visible = html.unescape(re.sub(r"<[^>]+>", " ", page))
-        visible = re.sub(r"\s+", " ", visible)
-        digits = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
-        visible = visible.translate(digits).replace("٬", ",").replace("٫", ".")
-
-        # The first visible price is the current AED quote, in toman.
-        price_match = re.search(r"([0-9][0-9,]*[0-9]|[0-9]+)\s*تومان", visible)
-        time_match = re.search(
-            r"آخرین\s*به[\u200c ]?روزرسانی\s*[:：]?\s*(\d{1,2})\s+([آ-ی]+)\s+(\d{4})[،, ]+\s*(\d{1,2}):(\d{2})",
-            visible,
-        )
-        if not price_match or not time_match:
-            raise ValueError("could not parse public AED price and timestamp")
-        price = float(price_match.group(1).replace(",", ""))
-        if not (1000 <= price <= 10_000_000):
-            raise ValueError("AED price outside plausible bounds")
-
-        months = {"فروردین": 1, "اردیبهشت": 2, "خرداد": 3, "تیر": 4, "مرداد": 5,
-                  "شهریور": 6, "مهر": 7, "آبان": 8, "آذر": 9, "دی": 10,
-                  "بهمن": 11, "اسفند": 12}
-        day, month_name, year, hour, minute = time_match.groups()
-        if month_name not in months or int(hour) > 23:
-            raise ValueError("invalid Jalali timestamp")
-        gregorian = jalali_to_gregorian(int(year), months[month_name], int(day))
-        tehran = datetime.datetime.combine(gregorian, datetime.time(int(hour), int(minute)), ZoneInfo("Asia/Tehran"))
-        age = (datetime.datetime.now(ZoneInfo("Asia/Tehran")) - tehran).total_seconds()
-        if age < -300 or age > 6 * 60 * 60:
-            raise ValueError("Arzhaam AED quote is stale")
-
-        return {"aed": {
-            "price": price, "unit": "IRT", "source_name": "Arzhaam",
-            "source_updated_utc": tehran.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "source_checked_utc": now_iso(), "method": "direct", "stale": False,
-        }}
-    except Exception as e:  # noqa: BLE001
-        print("Arzhaam AED fallback failed:", type(e).__name__, file=sys.stderr)
-        return {}
-
-def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
-    by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
-    checks = {}
-    for pid in DIRECT_CURRENCY_IDS:
-        primary = by_id.get(pid)
-        alt = secondary.get(pid)
-        p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and primary.get("method") != "derived" and
-                    not primary.get("derived"))
-        a_ok = bool(alt and isinstance(alt.get("price"), (int, float)))
-        discrepancy = None
-        if p_ok and a_ok and primary.get("price"):
-            discrepancy = abs(float(primary["price"]) - float(alt["price"])) / float(primary["price"]) * 100
-        checks[pid] = {
-            "primary_available": p_ok, "secondary_available": a_ok,
-            "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
-            "threshold_pct": 5.0,
-        }
-        # Direct independent quote is preferred over a derived cross-rate.
-        if a_ok and (not p_ok):
-            chosen = dict(alt)
-            chosen.update({"id": pid, "change_pct": None,
-                           "updated_utc": chosen.get("source_updated_utc"),
-                           "sources": 1,
-                           "backup_source": str(chosen.get("source_name", "Iran Market Data")).lower().replace(" ", "-"),
-                           "source_selection": "secondary-direct"})
-            if primary:
-                items[items.index(primary)] = chosen
-            else:
-                items.append(chosen)
-            by_id[pid] = chosen
-        elif p_ok:
-            primary["source_name"] = primary.get("source_name") or "NerkhAra"
-            primary["source_updated_utc"] = primary.get("source_updated_utc") or primary.get("updated_utc") or primary.get("as_of")
-            primary["source_checked_utc"] = now_iso()
-            primary["source_selection"] = "primary-aggregated"
-            if a_ok:
-                primary["secondary_source"] = alt.get("source_name", "Iran Market Data")
-                primary["secondary_price"] = alt["price"]
-                primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
-                # Large disagreement is retained as a quality flag; don't silently average markets.
-                primary["discrepancy_warning"] = discrepancy is not None and discrepancy > 5.0
-        elif primary and pid in ("eur", "gbp", "aed") and (primary.get("method") == "derived" or primary.get("derived")):
-            # Never publish a dollar-cross calculation as a direct Iranian free-market quote.
-            items.remove(primary)
-        elif primary:
-            primary["stale"] = True
-            primary["source_name"] = primary.get("source_name") or "NerkhAra"
-            primary["source_updated_utc"] = primary.get("updated_utc") or primary.get("as_of")
-    return checks
-
-
-def normalize_history(payload):
-    """Accept common public JSON history shapes and return sorted [epoch, price] points."""
-    rows = None
-    if isinstance(payload, list):
-        rows = payload
-    elif isinstance(payload, dict):
-        for key in ("data", "history", "points", "items", "rates", "series"):
-            if isinstance(payload.get(key), list):
-                rows = payload[key]
-                break
-        if rows is None and isinstance(payload.get("data"), dict):
-            rows = payload["data"].get("points") or payload["data"].get("history")
-    if not isinstance(rows, list):
-        return []
-    out = []
-    for row in rows:
-        stamp = price = None
-        if isinstance(row, (list, tuple)) and len(row) >= 2:
-            stamp, price = row[0], row[1]
-        elif isinstance(row, dict):
-            stamp = row.get("timestamp") or row.get("time") or row.get("date") or row.get("day")
-            price = row.get("price") or row.get("value") or row.get("close") or row.get("rate")
-        ts = parse_timestamp(stamp)
-        try:
-            value = float(price)
-        except (TypeError, ValueError):
-            continue
-        if ts is not None and value > 0:
-            out.append([int(ts), value])
-    return sorted({p[0]: p for p in out}.values(), key=lambda p: p[0])
-
-
-def seed_history(series, ids, seeded, attempts):
-    """Import long-term daily history once per symbol; retry failed imports every six hours."""
-    now = time.time()
-    for pid in ids:
-        if pid in seeded:
-            continue
-        last_try = parse_timestamp(attempts.get(pid))
-        if last_try is not None and now - last_try < 6 * 60 * 60:
-            continue
-        attempts[pid] = now_iso()
-        try:
-            payload = get_json(f"https://nerkhara.com/api/v1/history/{urllib.parse.quote(pid)}.json")
-            imported = normalize_history(payload)
-            if imported:
-                merged = {int(p[0]): [int(p[0]), float(p[1])] for p in series.get(pid, [])}
-                merged.update({int(p[0]): [int(p[0]), float(p[1])] for p in imported})
-                series[pid] = sorted(merged.values(), key=lambda p: p[0])
-                seeded.add(pid)
-                print("Seeded history", pid, len(imported))
-        except Exception as e:  # noqa: BLE001
-            print("History seed failed for", pid, type(e).__name__, file=sys.stderr)
-
-
-def write_api_files(payload, history):
-    api = ROOT / "api" / "v1"
-    (api / "history").mkdir(parents=True, exist_ok=True)
-    latest = {"api": "bazarnama/v1", "generated_utc": payload.get("generated_utc"),
-              "fetched_utc": payload.get("fetched_utc"), "items": payload.get("items", [])}
-    (api / "latest.json").write_text(json.dumps(latest, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    (api / "index.json").write_text(json.dumps({
-        "api": "bazarnama/v1",
-        "latest": "/api/v1/latest.json",
-        "history_pattern": "/api/v1/history/{asset_id}.json",
-        "assets": sorted(set([x.get("id") for x in payload.get("items", []) if x.get("id")])),
-        "history_assets": sorted(history.get("series", {}).keys()),
-        "updated_utc": payload.get("fetched_utc")
-    }, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    for pid, points in history.get("series", {}).items():
-        obj = {"api": "bazarnama/v1", "id": pid, "unit": next((x.get("unit") for x in payload.get("items", []) if x.get("id") == pid), None),
-               "updated_utc": payload.get("fetched_utc"), "points": [{"timestamp": p[0], "price": p[1]} for p in points]}
-        (api / "history" / f"{pid}.json").write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-
-
 def build_summary(payload):
     rows = []
     for i in payload["items"]:
@@ -436,33 +170,65 @@ def build_summary(payload):
     return {"generated_utc": payload.get("generated_utc"), "lines": lines}
 
 
+def fill_missing_changes_from_source_history(items):
+    """Fill missing changes from NerkhAra's daily history, without replacing
+    change_pct values already supplied by the live source.
+
+    NerkhAra history has one mean price per UTC day, so this fallback is a
+    day-over-day change, not an exact rolling 24-hour measurement.
+    """
+    cache = {}
+    filled = 0
+    for item in items:
+        if not isinstance(item, dict) or item.get("stale"):
+            continue
+        if isinstance(item.get("change_pct"), (int, float)):
+            continue
+        history = item.get("history")
+        url = history.get("json") if isinstance(history, dict) else None
+        if not url and item.get("id"):
+            url = f"https://nerkhara.com/api/v1/history/{urllib.parse.quote(str(item['id']))}.json"
+        if not isinstance(url, str) or not url.startswith("https://nerkhara.com/api/v1/history/"):
+            continue
+        try:
+            if url not in cache:
+                cache[url] = get_json(url)
+            points = cache[url].get("points", [])
+            valid = [(p[0], float(p[1])) for p in points
+                     if isinstance(p, list) and len(p) >= 2
+                     and isinstance(p[0], str)
+                     and isinstance(p[1], (int, float)) and p[1] > 0]
+            if len(valid) < 2:
+                continue
+            latest_date, latest_price = valid[-1]
+            previous = next(((d, p) for d, p in reversed(valid[:-1]) if d != latest_date), None)
+            if not previous or previous[1] <= 0:
+                continue
+            previous_date, previous_price = previous
+            item["change_pct"] = round((latest_price - previous_price) / previous_price * 100, 4)
+            item["change_basis"] = "source_daily_history"
+            item["change_history_dates"] = [previous_date, latest_date]
+            filled += 1
+        except Exception as e:  # noqa: BLE001
+            print("source history failed for", item.get("id"), type(e).__name__, file=sys.stderr)
+    print("Filled change_pct from source daily history:", filled)
+
+
 def update_history(items):
     data = load_json(HIST)
     series = data.get("series", {}) if isinstance(data, dict) else {}
-    if not isinstance(series, dict):
-        series = {}
-    seeded = set(data.get("seeded", [])) if isinstance(data, dict) else set()
-    attempts = data.get("seed_attempted", {}) if isinstance(data, dict) else {}
-    if not isinstance(attempts, dict):
-        attempts = {}
-    # Import provider history once per symbol; retain it across every future run.
-    seed_history(series, [i.get("id") for i in items if i.get("id") in SITE_ASSETS], seeded, attempts)
     hour = int(time.time()) // 3600 * 3600
-    for item in items:
-        pid, price = item.get("id"), item.get("price")
-        if not pid or not isinstance(price, (int, float)) or item.get("stale"):
+    for i in items:
+        pid, price = i.get("id"), i.get("price")
+        if not pid or not isinstance(price, (int, float)) or i.get("stale"):
             continue
-        points = series.setdefault(pid, [])
-        # One hourly observation at most; do not truncate historical records.
-        if not points or points[-1][0] < hour:
-            points.append([hour, float(price)])
-    for pid, points in list(series.items()):
-        unique = {int(p[0]): [int(p[0]), float(p[1])] for p in points if isinstance(p, (list, tuple)) and len(p) >= 2}
-        series[pid] = sorted(unique.values(), key=lambda p: p[0])
-    result = {"v": 2, "updated_utc": now_iso(), "seeded": sorted(seeded),
-              "seed_attempted": attempts, "series": series}
-    HIST.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    return result
+        s = series.setdefault(pid, [])
+        if s and s[-1][0] >= hour:
+            continue
+        s.append([hour, price])
+        if len(s) > HIST_MAX:
+            del s[: len(s) - HIST_MAX]
+    HIST.write_text(json.dumps({"v": 1, "series": series}, separators=(",", ":")), encoding="utf-8")
 
 
 def main():
@@ -475,14 +241,6 @@ def main():
         primary = None
 
     fx, fx_date = fetch_fx()
-    iran_direct = fetch_iran_market()
-    # The public Iran Market Data feed currently omits AED. Use Arzhaam's
-    # published market quote as the independent AED fallback.
-    arzhaam_aed_used = False
-    if "aed" not in iran_direct:
-        arzhaam_quote = fetch_arzhaam_aed()
-        arzhaam_aed_used = "aed" in arzhaam_quote
-        iran_direct.update(arzhaam_quote)
     cg = fetch_coingecko()
     eia = fetch_eia()
     stooq = fetch_stooq()
@@ -493,7 +251,7 @@ def main():
     else:
         prev = load_json(OUT)
         if not valid_primary(prev):
-            if not fx and not cg and not iran_direct:
+            if not fx and not cg:
                 print("No valid data at all; keeping previous files.")
                 return 0
             prev = {"items": []}
@@ -551,10 +309,10 @@ def main():
     # Fill currencies the market feed lacks from USD market price x global FX (flagged derived).
     usd = by_id.get("usd")
     if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and fx:
-        for pid, code in (("eur", "EUR"), ("gbp", "GBP")):
+        for pid, code in (("eur", "EUR"), ("gbp", "GBP"), ("aed", "AED")):
             cur = by_id.get(pid)
             has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
-            per = fx.get(code)
+            per = fx.get(code) or (3.6725 if code == "AED" else None)
             if not has and per:
                 row = {"id": pid, "price": round(usd["price"] / per), "unit": usd.get("unit", "IRT"),
                        "change_pct": None, "updated_utc": usd.get("updated_utc"), "sources": 0,
@@ -567,16 +325,13 @@ def main():
         items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
-    currency_checks = select_currency_quotes(items, iran_direct)
-    payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(k for k, v in iran_direct.items() if v.get("source_name") == "Iran Market Data"),
-                                 "arzhaam_aed": arzhaam_aed_used,
-                                 "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
+    payload["source_status"] = {"primary": bool(primary), "fx": bool(fx), "coingecko": sorted(cg),
                                 "stooq": sorted(stooq), "eia": sorted(eia), "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.parent.mkdir(exist_ok=True)
+    fill_missing_changes_from_source_history(items)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    history = update_history(items)
-    write_api_files(payload, history)
+    update_history(items)
     s = build_summary(payload)
     if s:
         SUMMARY.write_text(json.dumps(s, ensure_ascii=False), encoding="utf-8")
