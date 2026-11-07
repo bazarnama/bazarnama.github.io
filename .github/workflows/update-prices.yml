@@ -8,26 +8,36 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: bazarnama-price-updates
+  cancel-in-progress: true
+
 jobs:
   update-prices:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Fetch latest prices
+      - name: Fetch prices and update history
         run: python update_prices.py
 
-      - name: Commit updated prices
+      - name: Commit price and history data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/prices.json
-          git commit -m "Update market prices" || echo "No changes"
+          git add data/ api/
+          if git diff --cached --quiet; then
+            echo "No price or history changes."
+            exit 0
+          fi
+          git commit -m "Update market prices and history"
+          git pull --rebase origin main
           git push
