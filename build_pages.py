@@ -70,7 +70,9 @@ async function getPrices(){let old=null;try{const r=await fetch('/data/prices.js
 function tl(v){if(!v)return 'نامشخص';const s=String(v),d=new Date(s.endsWith('Z')?s:s+'Z');return isNaN(d)?s:d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
 async function load(){
  try{const data=await getPrices();const x=(data.items||[]).find(i=>i&&i.id===ID);
-  if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمتی از منبع دریافت نشد.';return;}
+  if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';const ss=data.source_status;let why='قیمتی از منبع دریافت نشد.';
+   if(ss){const bits=[];bits.push('منبع اصلی: '+(ss.primary?'پاسخ داد ولی این مورد را نداشت':'پاسخ نداد'));if(ID==='brent'||ID==='wti'||ID==='natgas'){bits.push('Stooq: '+((ss.stooq||[]).includes(ID)?'دارد':'قیمتی نداد'));bits.push('EIA: '+(ss.eia_key_set?((ss.eia||[]).includes(ID)?'دارد':'قیمتی نداد'):'کلید EIA_API_KEY تنظیم نشده'));}why+=' ('+bits.join(' · ')+')';}
+   $('status').textContent=why;return;}
   $('price').textContent=fmt(x.price);$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.updated_utc||x.as_of);$('src').textContent=x.sources?fmt(x.sources)+' منبع':'نامشخص';

@@ -283,6 +283,8 @@ def main():
         items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
+    payload["source_status"] = {"primary": bool(primary), "fx": bool(fx), "coingecko": sorted(cg),
+                                "stooq": sorted(stooq), "eia": sorted(eia), "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
