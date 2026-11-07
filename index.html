@@ -196,7 +196,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     </section>
 
     <section id="summary" class="section" hidden>
-      <div class="sectionHead"><div><h2>خلاصه بازار</h2><div class="sub">خلاصه خودکار بر پایه تغییرات ۲۴ ساعته؛ تحلیل یا پیش‌بینی نیست.</div></div></div>
+      <div class="sectionHead"><div><h2>خلاصه بازار</h2><div class="sub">خلاصه خودکار بر پایه تغییرات 24 ساعته؛ تحلیل یا پیش‌بینی نیست.</div></div></div>
       <div class="panel" id="summaryBody"></div>
     </section>
 
@@ -305,7 +305,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const cls=value>0?'up':value<0?'down':'neutral';
     const sign=value>0?'+':'';
     const arrow=value>0?'▲':value<0?'▼':'•';
-    const tip=basis==='source_daily_history'?'تغییر روزانه بر اساس تاریخچه روزانه همان منبع؛ الزاماً بازه دقیق ۲۴ ساعت شناور نیست.':'درصد تغییر اعلام‌شده توسط منبع قیمت.';
+    const tip=basis==='source_daily_history'?'تغییر روزانه بر اساس تاریخچه روزانه همان منبع؛ الزاماً بازه دقیق 24 ساعت شناور نیست.':'درصد تغییر اعلام‌شده توسط منبع قیمت.';
     return `<span class="change ${cls}" title="${tip}">${arrow} <bdi dir="ltr">${sign}${fmt(value,2)}%</bdi></span>`;
   }
   function currentPrice(item) {
@@ -764,5 +764,12 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   setInterval(fetchNews,30*60*1000);
 })();
 </script>
+<script id="latin-digits">/* Latin digits everywhere, also for text that arrives later (news headlines, API text) */
+(()=>{const M={'۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9','٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'},T=/[۰-۹٠-٩]/,G=/[۰-۹٠-٩]/g,f=s=>s.replace(G,c=>M[c]);
+function walk(n){if(n.nodeType===3){if(T.test(n.nodeValue))n.nodeValue=f(n.nodeValue);return;}if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.nodeName))return;for(const c of n.childNodes)walk(c);}
+walk(document.body);
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'){if(T.test(m.target.nodeValue))m.target.nodeValue=f(m.target.nodeValue);}else m.addedNodes.forEach(walk);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.nodeName==='INPUT'&&t.type!=='number'&&T.test(t.value)){const p=t.selectionStart;t.value=f(t.value);try{t.setSelectionRange(p,p);}catch(x){}}});
+})();</script>
 </body>
 </html>

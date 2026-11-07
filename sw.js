@@ -1,5 +1,6 @@
-const V='bazarnama-v16',SHELL=['/','/currency.html','/gold.html','/crypto.html','/about.html','/data/prices.json','/data/history.json','/api/v1/latest.json','/api/v1/index.json'];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).catch(()=>{}));self.skipWaiting();});
+const V='bazarnama-v17',SHELL=['/','/currency.html','/gold.html','/crypto.html','/about.html'];
+// Pre-cache only the pages. Missing files must never break installation, so each is added on its own.
+self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>Promise.allSettled(SHELL.map(u=>c.add(u)))).catch(()=>{}));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',e=>{
  const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin)return;
