@@ -79,12 +79,11 @@ async function mergeDirectCurrencies(data){
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_priority:2,source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};
-    if(!primary||primary.stale||primary.method==='derived'||primary.derived){if(at>=0)data.items[at]=direct;else data.items.push(direct);}
+    if(!primary||primary.stale||!Number.isFinite(Number(primary.price))||Number(primary.price)<=0){if(at>=0)data.items[at]=direct;else data.items.push(direct);}
     else {primary.source_name='NerkhAra';primary.source_priority=1;primary.source_updated_utc=primary.source_updated_utc||primary.updated_utc;primary.secondary_source='Iran Market Data';primary.secondary_price=price;primary.source_discrepancy_pct=primary.price?Math.abs(primary.price-price)/primary.price*100:null;}
-   }else if(['eur','gbp','aed'].includes(id)&&primary&&(primary.method==='derived'||primary.derived)){data.items.splice(at,1);}
   }
  }catch(e){
-  data.items=data.items.filter(x=>!(['eur','gbp','aed'].includes(x.id)&&(x.method==='derived'||x.derived)));
+  /* Keep valid NerkhAra rates, including its documented derived EUR/GBP rates. */
  }
  return data;
 }

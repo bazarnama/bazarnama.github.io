@@ -290,15 +290,14 @@ def fetch_arzhaam_aed():
         return {}
 
 def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
+    """Compare NerkhAra primary rates with independent fallbacks without discarding valid primary rates."""
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
         primary = by_id.get(pid)
         alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and primary.get("method") != "derived" and
-                    not primary.get("derived"))
+                    primary.get("price") > 0 and not primary.get("stale"))
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)))
         discrepancy = None
         if p_ok and a_ok and primary.get("price"):
@@ -308,7 +307,9 @@ def select_currency_quotes(items, secondary):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
-        # Direct independent quote is preferred over a derived cross-rate.
+        # NerkhAra remains primary even when its own methodology derives EUR/GBP
+        # from its Tehran USD rate and the world FX rate. Secondary data is only
+        # used when NerkhAra has no fresh, valid quote at all.
         if a_ok and (not p_ok):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
@@ -332,9 +333,6 @@ def select_currency_quotes(items, secondary):
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
                 # Large disagreement is retained as a quality flag; don't silently average markets.
                 primary["discrepancy_warning"] = discrepancy is not None and discrepancy > 5.0
-        elif primary and pid in ("eur", "gbp", "aed") and (primary.get("method") == "derived" or primary.get("derived")):
-            # Never publish a dollar-cross calculation as a direct Iranian free-market quote.
-            items.remove(primary)
         elif primary:
             primary["stale"] = True
             primary["source_name"] = primary.get("source_name") or "NerkhAra"
