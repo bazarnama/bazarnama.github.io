@@ -170,48 +170,35 @@ def build_summary(payload):
     return {"generated_utc": payload.get("generated_utc"), "lines": lines}
 
 
-def fill_missing_changes_from_source_history(items):
-    """Fill missing changes from NerkhAra's daily history, without replacing
-    change_pct values already supplied by the live source.
+def apply_history_changes(items):
+    """Fill missing change_pct from this updater's own hourly snapshots.
 
-    NerkhAra history has one mean price per UTC day, so this fallback is a
-    day-over-day change, not an exact rolling 24-hour measurement.
+    The snapshots are prices collected from the same configured feeds. A point
+    close to 24 hours ago is required; otherwise change_pct remains unknown.
     """
-    cache = {}
-    filled = 0
-    for item in items:
-        if not isinstance(item, dict) or item.get("stale"):
+    data = load_json(HIST)
+    series = data.get("series", {}) if isinstance(data, dict) else {}
+    now = int(time.time())
+    target = now - 24 * 3600
+    tolerance = 4 * 3600
+    for row in items:
+        if not isinstance(row, dict) or row.get("stale"):
             continue
-        if isinstance(item.get("change_pct"), (int, float)):
+        current = row.get("price")
+        existing = row.get("change_pct")
+        if not isinstance(current, (int, float)) or not current:
             continue
-        history = item.get("history")
-        url = history.get("json") if isinstance(history, dict) else None
-        if not url and item.get("id"):
-            url = f"https://nerkhara.com/api/v1/history/{urllib.parse.quote(str(item['id']))}.json"
-        if not isinstance(url, str) or not url.startswith("https://nerkhara.com/api/v1/history/"):
+        if isinstance(existing, (int, float)):
             continue
-        try:
-            if url not in cache:
-                cache[url] = get_json(url)
-            points = cache[url].get("points", [])
-            valid = [(p[0], float(p[1])) for p in points
-                     if isinstance(p, list) and len(p) >= 2
-                     and isinstance(p[0], str)
-                     and isinstance(p[1], (int, float)) and p[1] > 0]
-            if len(valid) < 2:
-                continue
-            latest_date, latest_price = valid[-1]
-            previous = next(((d, p) for d, p in reversed(valid[:-1]) if d != latest_date), None)
-            if not previous or previous[1] <= 0:
-                continue
-            previous_date, previous_price = previous
-            item["change_pct"] = round((latest_price - previous_price) / previous_price * 100, 4)
-            item["change_basis"] = "source_daily_history"
-            item["change_history_dates"] = [previous_date, latest_date]
-            filled += 1
-        except Exception as e:  # noqa: BLE001
-            print("source history failed for", item.get("id"), type(e).__name__, file=sys.stderr)
-    print("Filled change_pct from source daily history:", filled)
+        points = series.get(row.get("id"), [])
+        candidates = [p for p in points if isinstance(p, list) and len(p) >= 2
+                      and isinstance(p[0], (int, float)) and isinstance(p[1], (int, float))
+                      and abs(p[0] - target) <= tolerance and p[1] > 0]
+        if not candidates:
+            continue
+        old = min(candidates, key=lambda p: abs(p[0] - target))[1]
+        row["change_pct"] = round((current - old) / old * 100, 2)
+        row["change_method"] = "local_history_24h"
 
 
 def update_history(items):
@@ -228,6 +215,7 @@ def update_history(items):
         s.append([hour, price])
         if len(s) > HIST_MAX:
             del s[: len(s) - HIST_MAX]
+    HIST.parent.mkdir(parents=True, exist_ok=True)
     HIST.write_text(json.dumps({"v": 1, "series": series}, separators=(",", ":")), encoding="utf-8")
 
 
@@ -325,11 +313,12 @@ def main():
         items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
+    apply_history_changes(items)
+
     payload["source_status"] = {"primary": bool(primary), "fx": bool(fx), "coingecko": sorted(cg),
                                 "stooq": sorted(stooq), "eia": sorted(eia), "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
-    OUT.parent.mkdir(exist_ok=True)
-    fill_missing_changes_from_source_history(items)
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     update_history(items)
     s = build_summary(payload)
