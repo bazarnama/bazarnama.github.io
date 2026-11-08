@@ -37,9 +37,12 @@ FX_URLS = [
     "https://api.frankfurter.dev/v1/latest?base=USD",
     "https://api.frankfurter.app/latest?from=USD",
 ]
-COINGECKO = ("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether"
+COINGECKO = ("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,solana,ripple,binancecoin,dogecoin,litecoin,"
+             "tron,cardano,the-open-network,bitcoin-cash,polkadot,pax-gold"
              "&vs_currencies=usd&include_24hr_change=true")
-CG_IDS = {"bitcoin": "btc", "ethereum": "eth", "tether": "usdt_usd"}
+CG_IDS = {"bitcoin": "btc", "ethereum": "eth", "tether": "usdt_usd", "solana": "sol", "ripple": "xrp", "binancecoin": "bnb",
+          "dogecoin": "doge", "litecoin": "ltc", "tron": "trx", "cardano": "ada", "the-open-network": "ton",
+          "bitcoin-cash": "bch", "polkadot": "dot", "pax-gold": "paxg"}
 
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "data" / "prices.json"
@@ -118,13 +121,24 @@ EIA_SERIES = [  # (id, route, series code, unit)
 STOOQ_SYMBOLS = {  # id -> candidate symbols (first plausible one wins), plausible price range
     "brent": (["cb.f", "lco.f"], 10, 400),
     "wti": (["cl.f"], 10, 400),
+    # backups for metals / gas: only requested when NerkhAra has no fresh value for them
+    "xau": (["xauusd"], 500, 30000),
+    "xag": (["xagusd"], 5, 1000),
+    "xpt": (["xptusd"], 200, 15000),
+    "xpd": (["xpdusd"], 200, 15000),
+    "natural-gas": (["ng.f"], 0.3, 60),
 }
+STOOQ_ALWAYS = ("brent", "wti")   # references shown even when the primary feed is fine
 
 
-def fetch_stooq():
-    """Delayed futures prices (a few minutes to ~20 min late) from Stooq CSV. No key needed."""
+def fetch_stooq(ids=None):
+    """Delayed futures prices (a few minutes to ~20 min late) from Stooq CSV. No key needed.
+    ids: which ids to request (default: the always-on energy references)."""
     out = {}
-    for pid, (symbols, lo, hi) in STOOQ_SYMBOLS.items():
+    for pid in (ids if ids is not None else STOOQ_ALWAYS):
+        if pid not in STOOQ_SYMBOLS:
+            continue
+        symbols, lo, hi = STOOQ_SYMBOLS[pid]
         for sym in symbols:
             try:
                 req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv",
@@ -737,7 +751,7 @@ def main():
             iran_direct[pid] = chosen
     cg = fetch_coingecko()
     eia = fetch_eia()
-    stooq = fetch_stooq()
+    stooq = {}
 
     if primary:
         payload = primary
@@ -757,12 +771,19 @@ def main():
     items = payload["items"]
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
 
+    def _missing(pid):   # NerkhAra stays the first source: backups are used only when it has no fresh value
+        cur = by_id.get(pid)
+        return not (cur and isinstance(cur.get("price"), (int, float)) and cur.get("price") > 0 and not cur.get("stale"))
+
+    need = [pid for pid in STOOQ_SYMBOLS if pid not in STOOQ_ALWAYS and _missing(pid)]
+    stooq = fetch_stooq(list(STOOQ_ALWAYS) + need)
+
     # backup crypto prices (USD) when the primary feed does not have them
-    for key in ("btc", "eth"):
-        if key in cg and (key not in by_id or by_id[key].get("stale") or not isinstance(by_id[key].get("price"), (int, float))):
+    for key in [k for k in cg if k != "usdt_usd"]:
+        if _missing(key):
             row = {"id": key, "price": cg[key]["price"], "unit": "USD",
                    "change_pct": cg[key].get("change_pct"), "updated_utc": now_iso(),
-                   "sources": 1, "backup_source": "coingecko"}
+                   "sources": 1, "backup_source": "coingecko", "source_name": "CoinGecko (جایگزین)"}
             if key in by_id:
                 items[items.index(by_id[key])] = row
             else:
@@ -774,9 +795,9 @@ def main():
     # fill the value when the primary feed has none (Stooq first, then EIA).
     if eia:
         payload["external_energy"] = eia
-    if stooq:
-        payload["delayed_energy"] = stooq
-    for pid in ("brent", "wti"):
+    if any(k in stooq for k in STOOQ_ALWAYS):
+        payload["delayed_energy"] = {k: v for k, v in stooq.items() if k in STOOQ_ALWAYS}
+    for pid in ("brent", "wti", "xau", "xag", "xpt", "xpd", "natural-gas"):
         cur = by_id.get(pid)
         has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
         if has:
@@ -784,7 +805,8 @@ def main():
         if pid in stooq:
             e = stooq[pid]
             row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": None,
-                   "updated_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True}
+                   "updated_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True,
+                   "source_name": "Stooq (جایگزین)"}
         elif pid in eia:
             e = eia[pid]
             row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
@@ -795,6 +817,7 @@ def main():
             items[items.index(cur)] = row
         else:
             items.append(row)
+        by_id[pid] = row
 
     if fx:
         payload["fx_usd"] = fx
