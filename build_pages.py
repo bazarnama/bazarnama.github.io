@@ -387,10 +387,10 @@ def icon(id_, size=40):
 
 
 ORDER = {
-    "currency": ["usd", "usdt", "eur", "gbp", "aed"],
+    "currency": ["usd", "eur", "gbp", "aed"],
     "gold": ["gold-18k", "gold-24k", "gold-mesghal", "coin-emami", "coin-bahar-azadi", "coin-half", "coin-quarter", "coin-gram",
              "xau", "paxg", "silver-999", "xag", "xpt", "xpd"],
-    "crypto": ["btc", "eth", "bnb", "sol", "xrp", "ada", "doge", "ton", "trx", "ltc", "bch", "dot"],
+    "crypto": ["btc", "usdt", "eth", "bnb", "sol", "xrp", "ada", "doge", "ton", "trx", "ltc", "bch", "dot"],
     "energy": ["brent", "brent-spot", "wti", "wti-spot", "opec-basket", "natural-gas"],
 }
 GROUP_TITLE = {"currency": "ارز", "gold": "طلا، سکه و فلزات گرانبها", "crypto": "ارز دیجیتال", "energy": "نفت و انرژی"}

@@ -264,7 +264,6 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   const NEWS_FEED = 'https://news.google.com/rss/search?q=%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF+%D8%A7%DB%8C%D8%B1%D8%A7%D9%86+OR+%D8%A7%D8%B1%D8%B2+OR+%D8%B7%D9%84%D8%A7+OR+%D8%A8%D9%88%D8%B1%D8%B3&hl=fa&gl=IR&ceid=IR:fa';
   const assets = [
     {id:'usd',name:'دلار آمریکا',category:'currency',unit:'تومان',core:true},
-    {id:'usdt',name:'تتر',category:'currency',alt:'crypto',unit:'تومان',core:true},
     {id:'eur',name:'یورو',category:'currency',unit:'تومان',core:true},
     {id:'gbp',name:'پوند انگلیس',category:'currency',unit:'تومان',core:true},
     {id:'aed',name:'درهم امارات',category:'currency',unit:'تومان',core:true},
@@ -283,6 +282,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     {id:'xpt',name:'اونس جهانی پلاتین',category:'gold',unit:'دلار / اونس'},
     {id:'xpd',name:'اونس جهانی پالادیوم',category:'gold',unit:'دلار / اونس'},
     {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر',core:true},
+    {id:'usdt',name:'تتر',category:'currency',alt:'crypto',unit:'تومان',core:true},
     {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر',core:true},
     {id:'bnb',name:'بایننس کوین (BNB)',category:'crypto',unit:'تتر'},
     {id:'sol',name:'سولانا (SOL)',category:'crypto',unit:'تتر'},
@@ -362,7 +362,8 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const methodText='';
       return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct,p.change_basis):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی · ':''}${time?dateLabel(time):'زمان نامشخص'} · ${safeText(source+methodText)}</div></article>`;
     }).join(''):'<div class="empty" style="grid-column:1/-1">هنوز موردی در این بخش وجود ندارد. با ستاره کنار دارایی‌ها، علاقه‌مندی اضافه کن.</div>';
-    $('priceRows').innerHTML=list.length?list.map(a=>{
+    const tableList=assets.filter(a=>a.core);
+    $('priceRows').innerHTML=tableList.length?tableList.map(a=>{
       const p=market.get(a.id); const ok=p&&typeof p.price==='number';
       return `<tr><td><span class="assetIdentity">${iconMarkup(a.id)}<strong>${a.name}</strong></span></td><td>${ok?fmt(p.price):'—'}</td><td>${ok?unitLabel(p.unit):a.unit}</td><td>${ok?changeMarkup(p.change_pct,p.change_basis):'—'}</td><td><span class="tag">${!ok?'ناموجود':p.stale?'داده قدیمی':'دریافت‌شده'}</span></td></tr>`;
     }).join(''):'<tr><td colspan="5" class="empty">موردی در این فهرست نیست.</td></tr>';
@@ -532,12 +533,15 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     {g:'ارزها',c:'USD',n:'دلار آمریکا'},{g:'ارزها',c:'EUR',n:'یورو'},{g:'ارزها',c:'GBP',n:'پوند انگلیس'},{g:'ارزها',c:'AED',n:'درهم امارات'},
     {g:'ارزها',c:'TRY',n:'لیر ترکیه'},{g:'ارزها',c:'CNY',n:'یوان چین'},{g:'ارزها',c:'CAD',n:'دلار کانادا'},{g:'ارزها',c:'AUD',n:'دلار استرالیا'},
     {g:'ارزها',c:'JPY',n:'ین ژاپن'},{g:'ارزها',c:'CHF',n:'فرانک سوئیس'},{g:'ارزها',c:'INR',n:'روپیه هند'},{g:'ارزها',c:'KRW',n:'وون کره'},
-    {g:'ارز دیجیتال',c:'USDT',n:'تتر'},{g:'ارز دیجیتال',c:'BTC',n:'بیت‌کوین'},{g:'ارز دیجیتال',c:'ETH',n:'اتریوم'},
+    {g:'ارز دیجیتال',c:'USDT',n:'تتر'},{g:'ارز دیجیتال',c:'BTC',n:'بیت‌کوین'},{g:'ارز دیجیتال',c:'ETH',n:'اتریوم'},{g:'ارز دیجیتال',c:'BNB',n:'بایننس کوین'},{g:'ارز دیجیتال',c:'SOL',n:'سولانا'},{g:'ارز دیجیتال',c:'XRP',n:'ریپل'},{g:'ارز دیجیتال',c:'ADA',n:'کاردانو'},{g:'ارز دیجیتال',c:'DOGE',n:'دوج‌کوین'},{g:'ارز دیجیتال',c:'TON',n:'تون‌کوین'},{g:'ارز دیجیتال',c:'TRX',n:'ترون'},{g:'ارز دیجیتال',c:'LTC',n:'لایت‌کوین'},{g:'ارز دیجیتال',c:'BCH',n:'بیت‌کوین کش'},{g:'ارز دیجیتال',c:'DOT',n:'پولکادات'},
     {g:'طلا و سکه',c:'GOLD18',n:'طلای 18 عیار (گرم)'},{g:'طلا و سکه',c:'EMAMI',n:'سکه امامی'},{g:'طلا و سکه',c:'HALF',n:'نیم‌سکه'},
-    {g:'طلا و سکه',c:'QUARTER',n:'ربع‌سکه'},{g:'طلا و سکه',c:'XAU',n:'اونس جهانی طلا'}
+    {g:'طلا و سکه',c:'QUARTER',n:'ربع‌سکه'},{g:'طلا و سکه',c:'XAU',n:'اونس جهانی طلا'},
+    {g:'طلا و سکه',c:'GOLD24',n:'طلای 24 عیار (گرم)'},{g:'طلا و سکه',c:'MESGHAL',n:'طلای آبشده (مثقال)'},{g:'طلا و سکه',c:'BAHAR',n:'سکه بهار آزادی'},{g:'طلا و سکه',c:'COINGRAM',n:'سکه گرمی'},
+    {g:'نقره و فلزات',c:'SILVER999',n:'نقره 999 (گرم)'},{g:'نقره و فلزات',c:'XAG',n:'اونس جهانی نقره'},{g:'نقره و فلزات',c:'XPT',n:'اونس پلاتین'},{g:'نقره و فلزات',c:'XPD',n:'اونس پالادیوم'},{g:'نقره و فلزات',c:'PAXG',n:'پکس گلد (PAXG)'},
+    {g:'نفت و انرژی',c:'BRENT',n:'نفت برنت (بشکه)'},{g:'نفت و انرژی',c:'WTI',n:'نفت WTI (بشکه)'},{g:'نفت و انرژی',c:'BRENTSPOT',n:'نفت برنت فیزیکی (بشکه)'},{g:'نفت و انرژی',c:'WTISPOT',n:'نفت WTI فیزیکی (بشکه)'},{g:'نفت و انرژی',c:'OPEC',n:'سبد نفتی اوپک (بشکه)'},{g:'نفت و انرژی',c:'NATGAS',n:'گاز طبیعی (MMBtu)'}
   ];
   const CONV_NAME=Object.fromEntries(CONV.map(x=>[x.c,x.n]));
-  const MARKET_ID={USD:'usd',EUR:'eur',GBP:'gbp',AED:'aed',USDT:'usdt',GOLD18:'gold-18k',EMAMI:'coin-emami',HALF:'coin-half',QUARTER:'coin-quarter'};
+  const MARKET_ID={USD:'usd',EUR:'eur',GBP:'gbp',AED:'aed',USDT:'usdt',GOLD18:'gold-18k',EMAMI:'coin-emami',HALF:'coin-half',QUARTER:'coin-quarter',GOLD24:'gold-24k',MESGHAL:'gold-mesghal',BAHAR:'coin-bahar-azadi',COINGRAM:'coin-gram',SILVER999:'silver-999',XAG:'xag',XPT:'xpt',XPD:'xpd',PAXG:'paxg',BNB:'bnb',SOL:'sol',XRP:'xrp',ADA:'ada',DOGE:'doge',TON:'ton',TRX:'trx',LTC:'ltc',BCH:'bch',DOT:'dot',BRENT:'brent',WTI:'wti',BRENTSPOT:'brent-spot',WTISPOT:'wti-spot',OPEC:'opec-basket',NATGAS:'natural-gas'};
   const okPrice=p=>p&&typeof p.price==='number'&&Number.isFinite(p.price)&&p.price>0;
   // returns {v: toman per 1 unit, kind:'market'|'derived', how:string} or null
   function tomanRate(code) {
@@ -546,6 +550,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const usd=market.get('usd'); const usdT=okPrice(usd)?usd.price:null;
     const direct=market.get(MARKET_ID[code]);
     if (MARKET_ID[code] && okPrice(direct) && (direct.unit==='IRT'||direct.unit==null)) return direct.derived?{v:direct.price,kind:'derived',how:'محاسبه از نرخ دلار بازار و نرخ جهانی'}:{v:direct.price,kind:'market'};
+    if (MARKET_ID[code] && !['XAU','BTC','ETH'].includes(code) && okPrice(direct) && (direct.unit==='USD'||direct.unit==='USDT')) {
+      const t=market.get('usdt'); const base=direct.unit==='USD'?usdT:(okPrice(t)?t.price:usdT);
+      return base?{v:direct.price*base,kind:'derived',how:'قیمت جهانی × نرخ '+(direct.unit==='USD'?'دلار':'تتر')}:null;
+    }
     if (code==='XAU') { const p=market.get('xau'); return okPrice(p)&&usdT?{v:p.price*usdT,kind:'market'}:null; }
     if (code==='BTC'||code==='ETH') {
       const p=market.get(code.toLowerCase()); if(!okPrice(p)) return null;
@@ -564,7 +572,14 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const a=Math.abs(x);
     return fmt(x, a>=1000?0:a>=1?2:a>=0.01?4:8);
   }
+  function buildChartSelect() {
+    const sel=$('chartAsset'); if(!sel) return; const cur=sel.value||'usd';
+    const G={currency:'ارز',gold:'طلا، سکه و فلزات',crypto:'ارز دیجیتال',energy:'نفت و انرژی'};
+    sel.innerHTML=Object.keys(G).map(g=>{const l=assets.filter(a=>(g==='crypto'?(a.category==='crypto'||a.alt==='crypto'):(a.category===g&&a.alt!=='crypto')));return l.length?`<optgroup label="${G[g]}">`+l.map(a=>`<option value="${a.id}">${a.name}</option>`).join('')+'</optgroup>':'';}).join('');
+    sel.value=assets.some(a=>a.id===cur)?cur:'usd';
+  }
   function buildConverter() {
+    buildChartSelect();
     const groups=[...new Set(CONV.map(x=>x.g))];
     const html=groups.map(g=>`<optgroup label="${g}">`+CONV.filter(x=>x.g===g).map(x=>`<option value="${x.c}">${x.n}</option>`).join('')+'</optgroup>').join('');
     $('fromCurrency').innerHTML=html; $('toCurrency').innerHTML=html;

@@ -1,4 +1,4 @@
-const V='bazarnama-v25',SHELL=['/','/prices.html','/currency.html','/gold.html','/crypto.html','/energy.html','/about.html','/bn-icons.js'];
+const V='bazarnama-v26',SHELL=['/','/prices.html','/currency.html','/gold.html','/crypto.html','/energy.html','/about.html','/bn-icons.js'];
 // Pre-cache only the pages. Missing files must never break installation, so each is added on its own.
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>Promise.allSettled(SHELL.map(u=>c.add(u)))).catch(()=>{}));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()));});
