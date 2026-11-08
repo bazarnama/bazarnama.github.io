@@ -138,7 +138,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     <div class="wrap topinner">
       <a class="brand" href="#home" aria-label="بازارنما - صفحه اصلی"><span class="brandmark">ب</span><span>بازارنما</span></a>
       <nav class="nav" aria-label="ناوبری اصلی">
-        <a href="#markets">قیمت‌ها</a><a href="/prices.html">همه قیمت‌ها</a><a href="/currency.html">قیمت ارز</a><a href="/gold.html">طلا و سکه</a><a href="/crypto.html">ارز دیجیتال</a><a href="/energy.html">نفت و انرژی</a><a href="#chart">نمودار</a><a href="#converter">تبدیل ارز</a><a href="#news">اخبار</a>
+        <a href="#markets">قیمت‌ها</a><a href="/prices.html"><b>لیست قیمت‌ها</b></a><a href="/currency.html">قیمت ارز</a><a href="/gold.html">طلا و سکه</a><a href="/crypto.html">ارز دیجیتال</a><a href="/energy.html">نفت و انرژی</a><a href="#chart">نمودار</a><a href="#converter">تبدیل ارز</a><a href="#news">اخبار</a>
       </nav>
       <button type="button" class="iconbtn" id="themeBtn" aria-label="تغییر حالت شب و روز" title="حالت شب و روز">☾</button>
     </div>
@@ -150,7 +150,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <div class="eyebrow">نمای روز بازارهای مالی؛ ارز، طلا و رمزارز</div>
         <h1>قیمت روز دلار، طلا و ارز دیجیتال؛ نرخ ارزهای بازار</h1>
         <p>قیمت دلار و ارزهای خارجی، طلای 18 عیار و سکه، بیت‌کوین و اتریوم را در یک صفحه دنبال کن؛ تغییرات و نمودار قیمت را ببین و از ماشین‌حساب تبدیل ارز استفاده کن.</p>
-        <div class="heroActions"><a class="btn light" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="#chart">نمودار</a><a class="btn ghost" href="/currency.html">ارز</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a></div>
+        <div class="heroActions"><a class="btn light" href="/prices.html">لیست قیمت‌ها</a><a class="btn ghost" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="#chart">نمودار</a><a class="btn ghost" href="/currency.html">ارز</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a></div>
       </div></div>
     
     </section>
@@ -164,7 +164,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <button type="button" class="chip active" data-filter="all">همه</button><button type="button" class="chip" data-filter="currency">ارز</button><button type="button" class="chip" data-filter="gold">طلا و سکه</button><button type="button" class="chip" data-filter="crypto">رمزارز</button><button type="button" class="chip" data-filter="energy">انرژی</button><button type="button" class="chip" data-filter="favorites">★ علاقه‌مندی‌ها</button>
       </div>
       <div class="stats" id="assetCards" style="margin-top:13px"><div class="empty">در حال بارگذاری قیمت‌ها…</div></div>
-      <div style="text-align:center;margin-top:13px"><a class="btn" href="/prices.html" id="moreBtn">مشاهده بیشتر ← همهٔ قیمت‌ها (37 مورد)</a></div>
+      <div style="text-align:center;margin-top:13px"><button type="button" class="smallbtn" id="moreBtn" aria-expanded="false">مشاهده بیشتر</button></div>
     </section>
 
     <section id="chart" class="section heroChart">
@@ -195,7 +195,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
     
     <section class="section">
-      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div><div class="toolbar"><a class="smallbtn" href="/prices.html">مشاهده همهٔ قیمت‌ها ←</a></div></div>
+      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div><div class="toolbar"><a class="smallbtn" href="/prices.html">لیست قیمت‌ها ←</a></div></div>
       <div class="panel tablewrap"><table><thead><tr><th>دارایی</th><th>قیمت</th><th>واحد</th><th>تغییر 24 ساعته</th><th>وضعیت</th></tr></thead><tbody id="priceRows"><tr><td colspan="5" class="empty">در انتظار دریافت اطلاعات…</td></tr></tbody></table></div>
     </section>
 
@@ -263,20 +263,43 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   const API = '/api/v1';
   const NEWS_FEED = 'https://news.google.com/rss/search?q=%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF+%D8%A7%DB%8C%D8%B1%D8%A7%D9%86+OR+%D8%A7%D8%B1%D8%B2+OR+%D8%B7%D9%84%D8%A7+OR+%D8%A8%D9%88%D8%B1%D8%B3&hl=fa&gl=IR&ceid=IR:fa';
   const assets = [
-    {id:'usd',name:'دلار آمریکا',category:'currency',unit:'تومان'},
-    {id:'eur',name:'یورو',category:'currency',unit:'تومان'},
-    {id:'gbp',name:'پوند انگلیس',category:'currency',unit:'تومان'},
-    {id:'aed',name:'درهم امارات',category:'currency',unit:'تومان'},
-    {id:'usdt',name:'تتر',category:'currency',alt:'crypto',unit:'تومان'},
-    {id:'gold-18k',name:'طلای 18 عیار',category:'gold',unit:'تومان / گرم'},
-    {id:'coin-emami',name:'سکه امامی',category:'gold',unit:'تومان'},
-    {id:'coin-half',name:'نیم سکه',category:'gold',unit:'تومان'},
-    {id:'coin-quarter',name:'ربع سکه',category:'gold',unit:'تومان'},
-    {id:'xau',name:'اونس جهانی طلا',category:'gold',unit:'دلار'},
-    {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر'},
-    {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر'},
-    {id:'brent',name:'نفت برنت',category:'energy',unit:'دلار / بشکه'},
-    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'}
+    {id:'usd',name:'دلار آمریکا',category:'currency',unit:'تومان',core:true},
+    {id:'usdt',name:'تتر',category:'currency',alt:'crypto',unit:'تومان',core:true},
+    {id:'eur',name:'یورو',category:'currency',unit:'تومان',core:true},
+    {id:'gbp',name:'پوند انگلیس',category:'currency',unit:'تومان',core:true},
+    {id:'aed',name:'درهم امارات',category:'currency',unit:'تومان',core:true},
+    {id:'gold-18k',name:'طلای 18 عیار',category:'gold',unit:'تومان / گرم',core:true},
+    {id:'gold-24k',name:'طلای 24 عیار',category:'gold',unit:'تومان / گرم',core:true},
+    {id:'gold-mesghal',name:'طلای آبشده (مثقال)',category:'gold',unit:'تومان / مثقال'},
+    {id:'coin-emami',name:'سکه امامی',category:'gold',unit:'تومان',core:true},
+    {id:'coin-bahar-azadi',name:'سکه بهار آزادی',category:'gold',unit:'تومان',core:true},
+    {id:'coin-half',name:'نیم سکه',category:'gold',unit:'تومان',core:true},
+    {id:'coin-quarter',name:'ربع سکه',category:'gold',unit:'تومان',core:true},
+    {id:'coin-gram',name:'سکه گرمی',category:'gold',unit:'تومان'},
+    {id:'xau',name:'اونس جهانی طلا',category:'gold',unit:'دلار',core:true},
+    {id:'paxg',name:'پکس گلد (PAXG)',category:'gold',unit:'تتر'},
+    {id:'silver-999',name:'نقره 999 (گرم)',category:'gold',unit:'تومان / گرم',core:true},
+    {id:'xag',name:'اونس جهانی نقره',category:'gold',unit:'دلار / اونس'},
+    {id:'xpt',name:'اونس جهانی پلاتین',category:'gold',unit:'دلار / اونس'},
+    {id:'xpd',name:'اونس جهانی پالادیوم',category:'gold',unit:'دلار / اونس'},
+    {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر',core:true},
+    {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر',core:true},
+    {id:'bnb',name:'بایننس کوین (BNB)',category:'crypto',unit:'تتر'},
+    {id:'sol',name:'سولانا (SOL)',category:'crypto',unit:'تتر'},
+    {id:'xrp',name:'ریپل (XRP)',category:'crypto',unit:'تتر'},
+    {id:'ada',name:'کاردانو (ADA)',category:'crypto',unit:'تتر'},
+    {id:'doge',name:'دوج‌کوین (DOGE)',category:'crypto',unit:'تتر'},
+    {id:'ton',name:'تون‌کوین (TON)',category:'crypto',unit:'تتر'},
+    {id:'trx',name:'ترون (TRX)',category:'crypto',unit:'تتر'},
+    {id:'ltc',name:'لایت‌کوین (LTC)',category:'crypto',unit:'تتر'},
+    {id:'bch',name:'بیت‌کوین کش (BCH)',category:'crypto',unit:'تتر'},
+    {id:'dot',name:'پولکادات (DOT)',category:'crypto',unit:'تتر'},
+    {id:'brent',name:'نفت برنت',category:'energy',unit:'دلار / بشکه',core:true},
+    {id:'brent-spot',name:'نفت برنت فیزیکی',category:'energy',unit:'دلار / بشکه'},
+    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه',core:true},
+    {id:'wti-spot',name:'نفت WTI فیزیکی',category:'energy',unit:'دلار / بشکه'},
+    {id:'opec-basket',name:'سبد نفتی اوپک',category:'energy',unit:'دلار / بشکه'},
+    {id:'natural-gas',name:'گاز طبیعی',category:'energy',unit:'دلار / MMBtu'}
   ];
   const $ = id => document.getElementById(id);
   let market = new Map();
@@ -321,8 +344,14 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     return assets.filter(a => filter==='all' || (filter==='favorites'?favorites.has(a.id):(a.category===filter||a.alt===filter)));
   }
   function iconMarkup(id) { return (window.BN_ICONS && window.BN_ICONS[id]) || ''; }
+  let showAll = false;
   function renderAssets() {
-    const list=visibleAssets();
+    const full=visibleAssets();
+    const collapsible = filter==='all';
+    const hiddenCount = full.filter(a=>!a.core).length;
+    const list = collapsible && !showAll ? full.filter(a=>a.core) : full;
+    const moreBtn=$('moreBtn');
+    if (moreBtn) { moreBtn.parentElement.hidden=!(collapsible && hiddenCount); moreBtn.textContent = showAll ? 'نمایش کمتر ▲' : 'مشاهده بیشتر (' + fmt(hiddenCount) + ' مورد دیگر) ▼'; moreBtn.setAttribute('aria-expanded', String(showAll)); }
     $('assetCards').innerHTML=list.length?list.map(a=>{
       const p=market.get(a.id); const ok=p && typeof p.price==='number';
       const fav=favorites.has(a.id);
@@ -664,6 +693,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   $('themeBtn').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
   $('refreshBtn').addEventListener('click',refreshMarket);
   $('newsRefresh').addEventListener('click',fetchNews);
+  $('moreBtn').addEventListener('click',()=>{showAll=!showAll;renderAssets();});
   $('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;renderFilters();renderAssets();});
   $('assetCards').addEventListener('click',e=>{if(e.target.closest('[data-star],a'))return;const c=e.target.closest('[data-href]');if(c)location.href=c.dataset.href;});
   $('assetCards').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-href]'))location.href=e.target.dataset.href;});
