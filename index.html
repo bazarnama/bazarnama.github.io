@@ -161,6 +161,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <button type="button" class="chip active" data-filter="all">همه</button><button type="button" class="chip" data-filter="currency">ارز</button><button type="button" class="chip" data-filter="gold">طلا و سکه</button><button type="button" class="chip" data-filter="crypto">رمزارز</button><button type="button" class="chip" data-filter="energy">انرژی</button><button type="button" class="chip" data-filter="favorites">★ علاقه‌مندی‌ها</button>
       </div>
       <div class="stats" id="assetCards" style="margin-top:13px"><div class="empty">در حال بارگذاری قیمت‌ها…</div></div>
+      <div style="text-align:center;margin-top:13px" hidden><button type="button" class="smallbtn" id="moreBtn" aria-expanded="false">مشاهده بیشتر</button></div>
     </section>
 
     <section id="chart" class="section heroChart">
@@ -272,7 +273,30 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر'},
     {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر'},
     {id:'brent',name:'نفت برنت',category:'energy',unit:'دلار / بشکه'},
-    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'}
+    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'},
+    {id:'gold-24k',name:'طلای 24 عیار',category:'gold',unit:'تومان / گرم'},
+    {id:'gold-mesghal',name:'طلای آبشده (مثقال)',category:'gold',unit:'تومان / مثقال'},
+    {id:'coin-bahar-azadi',name:'سکه بهار آزادی',category:'gold',unit:'تومان'},
+    {id:'coin-gram',name:'سکه گرمی',category:'gold',unit:'تومان'},
+    {id:'silver-999',name:'نقره 999 (گرم)',category:'gold',unit:'تومان / گرم'},
+    {id:'xag',name:'اونس جهانی نقره',category:'gold',unit:'دلار / اونس'},
+    {id:'xpt',name:'اونس جهانی پلاتین',category:'gold',unit:'دلار / اونس'},
+    {id:'xpd',name:'اونس جهانی پالادیوم',category:'gold',unit:'دلار / اونس'},
+    {id:'paxg',name:'پکس گلد (PAXG)',category:'gold',unit:'تتر'},
+    {id:'natural-gas',name:'گاز طبیعی',category:'energy',unit:'دلار / MMBtu'},
+    {id:'opec-basket',name:'سبد نفتی اوپک',category:'energy',unit:'دلار / بشکه'},
+    {id:'brent-spot',name:'نفت برنت فیزیکی',category:'energy',unit:'دلار / بشکه'},
+    {id:'wti-spot',name:'نفت WTI فیزیکی',category:'energy',unit:'دلار / بشکه'},
+    {id:'sol',name:'سولانا (SOL)',category:'crypto',unit:'تتر'},
+    {id:'xrp',name:'ریپل (XRP)',category:'crypto',unit:'تتر'},
+    {id:'bnb',name:'بایننس کوین (BNB)',category:'crypto',unit:'تتر'},
+    {id:'doge',name:'دوج‌کوین (DOGE)',category:'crypto',unit:'تتر'},
+    {id:'ltc',name:'لایت‌کوین (LTC)',category:'crypto',unit:'تتر'},
+    {id:'trx',name:'ترون (TRX)',category:'crypto',unit:'تتر'},
+    {id:'ada',name:'کاردانو (ADA)',category:'crypto',unit:'تتر'},
+    {id:'ton',name:'تون‌کوین (TON)',category:'crypto',unit:'تتر'},
+    {id:'bch',name:'بیت‌کوین کش (BCH)',category:'crypto',unit:'تتر'},
+    {id:'dot',name:'پولکادات (DOT)',category:'crypto',unit:'تتر'}
   ];
   const $ = id => document.getElementById(id);
   let market = new Map();
@@ -291,7 +315,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   function saveStorage(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch {} }
   function fmt(value, digits) {
     if (typeof value !== 'number' || !Number.isFinite(value)) return 'ناموجود';
-    return new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:digits ?? (value<10?4:0)}).format(value);
+    return new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:digits ?? (value<10?4:value<1000?2:0)}).format(value);
   }
   function safeText(value) { return String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function unitLabel(unit) { return ({IRT:'تومان',IRR:'ریال',USD:'دلار آمریکا',USDT:'تتر',EUR:'یورو',GBP:'پوند',AED:'درهم'})[unit] || unit || '—'; }
@@ -336,8 +360,13 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const [c1,c2] = bg[id] || ['#3aa68a','#12604f'];
     return `<span class="assetIcon" aria-hidden="true" style="background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,${c1},${c2});color:#fff;border-radius:50%;width:44px;height:44px;flex-basis:44px;box-shadow:0 6px 14px ${c2}55,inset 0 1px 0 #ffffff66"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px">${glyph}</svg></span>`;
   }
+  const CORE_COUNT = 14; let showAll = false;
   function renderAssets() {
-    const list=visibleAssets();
+    const full=visibleAssets();
+    const collapsible = filter==='all' && full.length>CORE_COUNT;
+    const list = collapsible && !showAll ? full.slice(0,CORE_COUNT) : full;
+    const moreBtn=$('moreBtn');
+    if (moreBtn) { moreBtn.parentElement.hidden=!collapsible; moreBtn.textContent = showAll ? 'نمایش کمتر ▲' : 'مشاهده بیشتر (' + fmt(full.length-CORE_COUNT) + ' مورد دیگر) ▼'; moreBtn.setAttribute('aria-expanded', String(showAll)); }
     $('assetCards').innerHTML=list.length?list.map(a=>{
       const p=market.get(a.id); const ok=p && typeof p.price==='number';
       const fav=favorites.has(a.id);
@@ -679,6 +708,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   $('themeBtn').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
   $('refreshBtn').addEventListener('click',refreshMarket);
   $('newsRefresh').addEventListener('click',fetchNews);
+  $('moreBtn').addEventListener('click',()=>{showAll=!showAll;renderAssets();});
   $('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;renderFilters();renderAssets();});
   $('assetCards').addEventListener('click',e=>{if(e.target.closest('[data-star],a'))return;const c=e.target.closest('[data-href]');if(c)location.href=c.dataset.href;});
   $('assetCards').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-href]'))location.href=e.target.dataset.href;});

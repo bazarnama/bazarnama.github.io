@@ -250,6 +250,16 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 <b id="p-xau">در حال دریافت…</b>
 <small id="t-xau">واحد: دلار</small>
 </article>
+
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>طلای 24 عیار</strong><b id="p-gold-24k">در حال دریافت…</b><small id="t-gold-24k">واحد: تومان / گرم</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>طلای آبشده (مثقال)</strong><b id="p-gold-mesghal">در حال دریافت…</b><small id="t-gold-mesghal">واحد: تومان / مثقال</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>سکه بهار آزادی</strong><b id="p-coin-bahar-azadi">در حال دریافت…</b><small id="t-coin-bahar-azadi">واحد: تومان</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>سکه گرمی</strong><b id="p-coin-gram">در حال دریافت…</b><small id="t-coin-gram">واحد: تومان</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>نقره 999 (گرم)</strong><b id="p-silver-999">در حال دریافت…</b><small id="t-silver-999">واحد: تومان / گرم</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی نقره</strong><b id="p-xag">در حال دریافت…</b><small id="t-xag">واحد: دلار / اونس</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی پلاتین</strong><b id="p-xpt">در حال دریافت…</b><small id="t-xpt">واحد: دلار / اونس</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی پالادیوم</strong><b id="p-xpd">در حال دریافت…</b><small id="t-xpd">واحد: دلار / اونس</small></article>
+<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>پکس گلد (PAXG)</strong><b id="p-paxg">در حال دریافت…</b><small id="t-paxg">واحد: تتر</small></article>
 </div>
 </section>
 
@@ -281,6 +291,16 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 <a href="/price-coin-half.html">قیمت نیم‌سکه</a> ·
 <a href="/price-coin-quarter.html">قیمت ربع‌سکه</a> ·
 <a href="/price-xau.html">قیمت اونس جهانی طلا</a>
+ ·
+<a href="/price-gold-24k.html">قیمت طلای 24 عیار</a> ·
+<a href="/price-gold-mesghal.html">قیمت طلای آبشده (مثقال)</a> ·
+<a href="/price-coin-bahar-azadi.html">قیمت سکه بهار آزادی</a> ·
+<a href="/price-coin-gram.html">قیمت سکه گرمی</a> ·
+<a href="/price-silver-999.html">قیمت نقره 999 (گرم)</a> ·
+<a href="/price-xag.html">قیمت اونس جهانی نقره</a> ·
+<a href="/price-xpt.html">قیمت اونس جهانی پلاتین</a> ·
+<a href="/price-xpd.html">قیمت اونس جهانی پالادیوم</a> ·
+<a href="/price-paxg.html">قیمت پکس گلد (PAXG)</a>
 </p>
 </section>
 
@@ -342,11 +362,11 @@ if(themeBtn){
  });
 }
 
-const ids=["gold-18k","coin-emami","coin-half","coin-quarter","xau"];
+const ids=["gold-18k","coin-emami","coin-half","coin-quarter","xau","gold-24k","gold-mesghal","coin-bahar-azadi","coin-gram","silver-999","xag","xpt","xpd","paxg"];
 const status=document.getElementById('status');
 const button=document.getElementById('refresh');
 
-const fmt=v=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:v<10?4:0}).format(v);
+const fmt=v=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:v<10?4:v<1000?2:0}).format(v);
 
 function timeLabel(value){
  if(!value)return 'زمان داده نامشخص';

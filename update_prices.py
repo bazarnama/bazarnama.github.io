@@ -22,7 +22,10 @@ from zoneinfo import ZoneInfo
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
 SECONDARY_IRAN_MARKET = "https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json"
 DIRECT_CURRENCY_IDS = {"usd": "USD_IRR_FREE", "eur": "EUR_IRR_FREE", "gbp": "GBP_IRR_FREE", "aed": "AED_IRR_FREE"}
-SITE_ASSETS = {"usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "coin-half", "coin-quarter", "xau", "btc", "eth", "brent", "wti"}
+SITE_ASSETS = {"usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "coin-half", "coin-quarter", "xau", "btc", "eth", "brent", "wti",
+               "gold-24k", "gold-mesghal", "coin-bahar-azadi", "coin-gram", "silver-999", "xag", "xpt", "xpd", "paxg",
+               "natural-gas", "opec-basket", "brent-spot", "wti-spot",
+               "sol", "xrp", "bnb", "doge", "ltc", "trx", "ada", "ton", "bch", "dot"}
 # Independent Iranian free-market quotes (never computed from the dollar). Used as a second source for
 # usd/eur/gbp/aed and as the only source for the extra currencies below (shown on the currency page only).
 NERKHSANJ = "https://nerkh.jahankhahan.shop/data/live.json"

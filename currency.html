@@ -547,7 +547,7 @@ const status=document.getElementById('status');
 const button=document.getElementById('refresh');
 
 const fmt=v=>new Intl.NumberFormat('fa-IR-u-nu-latn',{
- maximumFractionDigits:v<10?4:0
+ maximumFractionDigits:v<10?4:v<1000?2:0
 }).format(v);
 
 function timeLabel(value){
