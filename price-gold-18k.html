@@ -329,6 +329,16 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 .price{position:relative;transition:transform .15s ease,box-shadow .15s ease}.price:hover{transform:translateY(-2px)}
 .price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
 .price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--brand,#087e6e);outline-offset:2px}
+
+/* فشرده‌سازی بخش معرفی صفحهٔ اصلی تا نمای کلی بازار زودتر دیده شود */
+.hero:has(.heroBox){padding:10px 0 6px!important}
+.heroBox{padding:15px 18px!important;border-radius:20px!important}
+.heroBox .eyebrow{font-size:12px!important;margin:0!important}
+.hero .heroBox h1{font-size:clamp(19px,4.4vw,27px)!important;line-height:1.4!important;margin:4px 0!important}
+.heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.heroBox .heroActions{margin-top:10px!important;gap:7px!important}
+.heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
+@media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | طلا و سکه</div><h1 style="display:flex;align-items:center;gap:12px"><span class="bni" aria-hidden="true" style="--a:#fbdc7a;--b:#c48410;--s:48px"><svg viewBox="0 0 40 40" fill="none"><path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/></svg></span><span>قیمت طلای 18 عیار امروز</span></h1><p>طلای 18 عیار رایج‌ترین عیار برای خرید و فروش طلا و زیورآلات است و قیمت آن معمولاً برای هر گرم اعلام می‌شود.</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
