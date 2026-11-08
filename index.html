@@ -17,7 +17,7 @@
   <meta name="twitter:title" content="قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما">
   <meta name="twitter:description" content="نرخ روز ارز، طلا و رمزارزها را در بازارنما ببینید؛ همراه با نمودار و ماشین‌حساب تبدیل ارز.">
   <title>قیمت دلار، طلا و ارز دیجیتال امروز | بازارنما</title>
-  <link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
+  <script src="/bn-icons.js"></script><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
   <!-- Favicon / لوگوی سایت در نتایج گوگل -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="shortcut icon" href="/favicon.svg">
@@ -129,13 +129,16 @@ table{border-collapse:separate;border-spacing:0}
 a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
 [tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
 :focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
+
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
+.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
 </style></head>
 <body>
   <header class="topbar">
     <div class="wrap topinner">
       <a class="brand" href="#home" aria-label="بازارنما - صفحه اصلی"><span class="brandmark">ب</span><span>بازارنما</span></a>
       <nav class="nav" aria-label="ناوبری اصلی">
-        <a href="#markets">قیمت‌ها</a><a href="/currency.html">قیمت ارز</a><a href="/gold.html">طلا و سکه</a><a href="/crypto.html">ارز دیجیتال</a><a href="#chart">نمودار</a><a href="#converter">تبدیل ارز</a><a href="#news">اخبار</a>
+        <a href="#markets">قیمت‌ها</a><a href="/prices.html">همه قیمت‌ها</a><a href="/currency.html">قیمت ارز</a><a href="/gold.html">طلا و سکه</a><a href="/crypto.html">ارز دیجیتال</a><a href="/energy.html">نفت و انرژی</a><a href="#chart">نمودار</a><a href="#converter">تبدیل ارز</a><a href="#news">اخبار</a>
       </nav>
       <button type="button" class="iconbtn" id="themeBtn" aria-label="تغییر حالت شب و روز" title="حالت شب و روز">☾</button>
     </div>
@@ -161,7 +164,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         <button type="button" class="chip active" data-filter="all">همه</button><button type="button" class="chip" data-filter="currency">ارز</button><button type="button" class="chip" data-filter="gold">طلا و سکه</button><button type="button" class="chip" data-filter="crypto">رمزارز</button><button type="button" class="chip" data-filter="energy">انرژی</button><button type="button" class="chip" data-filter="favorites">★ علاقه‌مندی‌ها</button>
       </div>
       <div class="stats" id="assetCards" style="margin-top:13px"><div class="empty">در حال بارگذاری قیمت‌ها…</div></div>
-      <div style="text-align:center;margin-top:13px" hidden><button type="button" class="smallbtn" id="moreBtn" aria-expanded="false">مشاهده بیشتر</button></div>
+      <div style="text-align:center;margin-top:13px"><a class="btn" href="/prices.html" id="moreBtn">مشاهده بیشتر ← همهٔ قیمت‌ها (37 مورد)</a></div>
     </section>
 
     <section id="chart" class="section heroChart">
@@ -192,7 +195,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
     
     <section class="section">
-      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div></div>
+      <div class="sectionHead"><div><h2>جدول قیمت‌ها</h2><div class="sub">زمان و وضعیت آخرین داده برای هر دارایی</div></div><div class="toolbar"><a class="smallbtn" href="/prices.html">مشاهده همهٔ قیمت‌ها ←</a></div></div>
       <div class="panel tablewrap"><table><thead><tr><th>دارایی</th><th>قیمت</th><th>واحد</th><th>تغییر 24 ساعته</th><th>وضعیت</th></tr></thead><tbody id="priceRows"><tr><td colspan="5" class="empty">در انتظار دریافت اطلاعات…</td></tr></tbody></table></div>
     </section>
 
@@ -252,7 +255,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     <div class="disclaimer muted" style="font-size:11px">یادآوری: اطلاعات این وب‌سایت صرفاً برای آگاهی عمومی است و توصیه خرید یا فروش نیست. نرخ‌ها ممکن است با تأخیر منتشر شوند یا در زمان اختلال منبع در دسترس نباشند. داده‌های بازار ایران به تومان نمایش داده می‌شوند؛ برای رمزارز و کالا، واحد کنار قیمت را بررسی کن.</div>
   </main>
 
-  <footer class="footer"><div class="wrap footerGrid"><div><strong>بازارنما</strong><br>نمای بازارهای مالی در یک نگاه<br><a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/about.html">درباره و روش کار</a></div><div>منابع داده: <a href="https://nerkhara.com/en/api/" target="_blank" rel="noopener">NerkhAra</a> · <a href="https://iran-market.github.io/" target="_blank" rel="noopener">Iran Market Data</a> · <a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a> · <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a></div><div>© <span id="year"></span> بازارنما</div></div></footer>
+  <footer class="footer"><div class="wrap footerGrid"><div><strong>بازارنما</strong><br>نمای بازارهای مالی در یک نگاه<br><a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/energy.html">نفت و انرژی</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره و روش کار</a></div><div>منابع داده: <a href="https://nerkhara.com/en/api/" target="_blank" rel="noopener">NerkhAra</a> · <a href="https://iran-market.github.io/" target="_blank" rel="noopener">Iran Market Data</a> · <a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a> · <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a></div><div>© <span id="year"></span> بازارنما</div></div></footer>
 
 <script>
 (() => {
@@ -273,30 +276,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     {id:'btc',name:'بیت‌کوین',category:'crypto',unit:'تتر'},
     {id:'eth',name:'اتریوم',category:'crypto',unit:'تتر'},
     {id:'brent',name:'نفت برنت',category:'energy',unit:'دلار / بشکه'},
-    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'},
-    {id:'gold-24k',name:'طلای 24 عیار',category:'gold',unit:'تومان / گرم'},
-    {id:'gold-mesghal',name:'طلای آبشده (مثقال)',category:'gold',unit:'تومان / مثقال'},
-    {id:'coin-bahar-azadi',name:'سکه بهار آزادی',category:'gold',unit:'تومان'},
-    {id:'coin-gram',name:'سکه گرمی',category:'gold',unit:'تومان'},
-    {id:'silver-999',name:'نقره 999 (گرم)',category:'gold',unit:'تومان / گرم'},
-    {id:'xag',name:'اونس جهانی نقره',category:'gold',unit:'دلار / اونس'},
-    {id:'xpt',name:'اونس جهانی پلاتین',category:'gold',unit:'دلار / اونس'},
-    {id:'xpd',name:'اونس جهانی پالادیوم',category:'gold',unit:'دلار / اونس'},
-    {id:'paxg',name:'پکس گلد (PAXG)',category:'gold',unit:'تتر'},
-    {id:'natural-gas',name:'گاز طبیعی',category:'energy',unit:'دلار / MMBtu'},
-    {id:'opec-basket',name:'سبد نفتی اوپک',category:'energy',unit:'دلار / بشکه'},
-    {id:'brent-spot',name:'نفت برنت فیزیکی',category:'energy',unit:'دلار / بشکه'},
-    {id:'wti-spot',name:'نفت WTI فیزیکی',category:'energy',unit:'دلار / بشکه'},
-    {id:'sol',name:'سولانا (SOL)',category:'crypto',unit:'تتر'},
-    {id:'xrp',name:'ریپل (XRP)',category:'crypto',unit:'تتر'},
-    {id:'bnb',name:'بایننس کوین (BNB)',category:'crypto',unit:'تتر'},
-    {id:'doge',name:'دوج‌کوین (DOGE)',category:'crypto',unit:'تتر'},
-    {id:'ltc',name:'لایت‌کوین (LTC)',category:'crypto',unit:'تتر'},
-    {id:'trx',name:'ترون (TRX)',category:'crypto',unit:'تتر'},
-    {id:'ada',name:'کاردانو (ADA)',category:'crypto',unit:'تتر'},
-    {id:'ton',name:'تون‌کوین (TON)',category:'crypto',unit:'تتر'},
-    {id:'bch',name:'بیت‌کوین کش (BCH)',category:'crypto',unit:'تتر'},
-    {id:'dot',name:'پولکادات (DOT)',category:'crypto',unit:'تتر'}
+    {id:'wti',name:'نفت WTI',category:'energy',unit:'دلار / بشکه'}
   ];
   const $ = id => document.getElementById(id);
   let market = new Map();
@@ -340,33 +320,9 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   function visibleAssets() {
     return assets.filter(a => filter==='all' || (filter==='favorites'?favorites.has(a.id):(a.category===filter||a.alt===filter)));
   }
-  function iconMarkup(id) {
-    const bg = {usd:['#34c98a','#0a7650'],eur:['#5b8cff','#1c3ea6'],gbp:['#9b6cff','#46269e'],aed:['#19c2ae','#0a6761'],usdt:['#35c9a6','#12705b'],
-      'gold-18k':['#fbdc7a','#c48410'],'coin-emami':['#f8d35c','#b5750a'],'coin-half':['#f8d35c','#b5750a'],'coin-quarter':['#f8d35c','#b5750a'],
-      xau:['#efc24f','#8a5805'],btc:['#ffa62e','#d4680a'],eth:['#8c9bff','#3a49c4'],brent:['#4b5262','#10131a'],wti:['#6a7484','#1f242d']};
-    const txt = (t,size) => `<text x="20" y="${size>16?28:25}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${size}" font-weight="800" fill="#fff">${t}</text>`;
-    const ring = '<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4"/>';
-    const glyph = {
-      usd:txt('$',23), eur:txt('€',23), gbp:txt('£',23), aed:txt('د',22),
-      'gold-18k':'<path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/>',
-      'coin-emami':ring+'<circle cx="20" cy="20" r="6.6" fill="#fff"/>',
-      'coin-half':ring+'<path d="M20 13.4a6.6 6.6 0 0 0 0 13.2z" fill="#fff"/>',
-      'coin-quarter':ring+'<path d="M20 20v-6.6A6.6 6.6 0 0 0 13.4 20z" fill="#fff"/>',
-      xau:'<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.2" stroke-opacity=".9"/>'+txt('Au',12.5),
-      btc:txt('₿',24), usdt:txt('₮',24), eth:'<path d="M20 7.5 29 21l-9 5.2L11 21z" fill="#fff"/><path d="M20 28.4 29 23l-9 9.6L11 23z" fill="#fff" fill-opacity=".72"/>',
-      brent:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#12151c">B</text>',
-      wti:'<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#1f242d">W</text>'
-    }[id] || txt('•',22);
-    const [c1,c2] = bg[id] || ['#3aa68a','#12604f'];
-    return `<span class="assetIcon" aria-hidden="true" style="background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,${c1},${c2});color:#fff;border-radius:50%;width:44px;height:44px;flex-basis:44px;box-shadow:0 6px 14px ${c2}55,inset 0 1px 0 #ffffff66"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:30px;height:30px">${glyph}</svg></span>`;
-  }
-  const CORE_COUNT = 14; let showAll = false;
+  function iconMarkup(id) { return (window.BN_ICONS && window.BN_ICONS[id]) || ''; }
   function renderAssets() {
-    const full=visibleAssets();
-    const collapsible = filter==='all' && full.length>CORE_COUNT;
-    const list = collapsible && !showAll ? full.slice(0,CORE_COUNT) : full;
-    const moreBtn=$('moreBtn');
-    if (moreBtn) { moreBtn.parentElement.hidden=!collapsible; moreBtn.textContent = showAll ? 'نمایش کمتر ▲' : 'مشاهده بیشتر (' + fmt(full.length-CORE_COUNT) + ' مورد دیگر) ▼'; moreBtn.setAttribute('aria-expanded', String(showAll)); }
+    const list=visibleAssets();
     $('assetCards').innerHTML=list.length?list.map(a=>{
       const p=market.get(a.id); const ok=p && typeof p.price==='number';
       const fav=favorites.has(a.id);
@@ -708,7 +664,6 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   $('themeBtn').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
   $('refreshBtn').addEventListener('click',refreshMarket);
   $('newsRefresh').addEventListener('click',fetchNews);
-  $('moreBtn').addEventListener('click',()=>{showAll=!showAll;renderAssets();});
   $('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;renderFilters();renderAssets();});
   $('assetCards').addEventListener('click',e=>{if(e.target.closest('[data-star],a'))return;const c=e.target.closest('[data-href]');if(c)location.href=c.dataset.href;});
   $('assetCards').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-href]'))location.href=e.target.dataset.href;});

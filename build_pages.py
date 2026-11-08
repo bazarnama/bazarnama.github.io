@@ -25,7 +25,7 @@ A = [
  ("brent","نفت برنت","قیمت نفت برنت امروز","energy","دلار / بشکه","نفت برنت یکی از دو شاخص اصلی قیمت نفت خام در جهان است و بر حسب دلار برای هر بشکه اعلام می‌شود."),
  ("wti","نفت WTI","قیمت نفت WTI امروز","energy","دلار / بشکه","نفت WTI شاخص قیمت نفت خام آمریکا است و معمولاً با برنت مقایسه می‌شود."),
 ]
-CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","energy":"/#markets"}
+CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","energy":"/energy.html"}
 CATN = {"currency":"قیمت ارز","gold":"طلا و سکه","crypto":"ارز دیجیتال","energy":"نفت"}
 
 HEAD_COMMON = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">'
@@ -35,9 +35,10 @@ function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textCo
 let st=null;try{st=JSON.parse(localStorage.getItem('bazarnama-theme'))}catch(e){}
 ap(st||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),false);
 if(btn)btn.onclick=()=>ap(root.dataset.theme==='dark'?'light':'dark',true);"""
-FOOT = '<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/about.html">درباره بازارنما و روش کار</a></footer>'
+FOOT = '<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/energy.html">نفت و انرژی</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره بازارنما و روش کار</a></footer>'
 TOP = '<header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>'
-EXTRA_CSS = ".kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}"
+EXTRA_CSS = ".bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}"
+EXTRA_CSS += ".kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}"
 
 
 def page(title, desc, path, body, ld, script=""):
@@ -322,6 +323,80 @@ for _id, _n, _h1, _cat, _unit, _q, _blurb, _about, _drv in NEW:
     }
 
 
+# ---- آیکون‌ها (منبع واحد: این بخش؛ خروجی در bn-icons.js و صفحه‌های ساخته‌شده) ----
+def _t(txt, size=23, y=None):
+    y = y if y is not None else (28 if size > 16 else 25)
+    return f'<text x="20" y="{y}" text-anchor="middle" font-family="Arial,sans-serif" font-size="{size}" font-weight="800" fill="#fff">{txt}</text>'
+
+
+_RING = '<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/>'
+_DROP = '<path d="M20 7C20 7 10.5 17.5 10.5 24a9.5 9.5 0 0 0 19 0C29.5 17.5 20 7 20 7z" fill="#fff"/>'
+
+
+def _dropl(ch, col):
+    return _DROP + f'<text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="{col}">{ch}</text>'
+
+
+_BAR = '<path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/>'
+_STAR = '<path d="M20 12.5l2.2 5 5.4.5-4.1 3.6 1.3 5.3-4.8-2.8-4.8 2.8 1.3-5.3-4.1-3.6 5.4-.5z" fill="#fff"/>'
+
+# id: (رنگ ۱، رنگ ۲، شکل)
+ICONS = {
+    "usd": ("#34c98a", "#0a7650", _t("$")), "eur": ("#5b8cff", "#1c3ea6", _t("€")),
+    "gbp": ("#9b6cff", "#46269e", _t("£")), "aed": ("#19c2ae", "#0a6761", _t("د", 22)),
+    "usdt": ("#35c9a6", "#12705b", _t("₮", 24)),
+    "gold-18k": ("#fbdc7a", "#c48410", _BAR),
+    "gold-24k": ("#ffe08a", "#b87a05", _BAR + _t("24", 9, 25).replace('fill="#fff"', 'fill="#7a4f00"')),
+    "gold-mesghal": ("#f7c948", "#a66a06", '<path d="M20 7C20 7 11 17.5 11 23.5a9 9 0 0 0 18 0C29 17.5 20 7 20 7z" fill="#fff"/><path d="M14 31h12" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'),
+    "coin-emami": ("#f8d35c", "#b5750a", _RING + '<circle cx="20" cy="20" r="6.6" fill="#fff"/>'),
+    "coin-bahar-azadi": ("#f4c542", "#a8670a", _RING + _STAR),
+    "coin-half": ("#f8d35c", "#b5750a", _RING + '<path d="M20 13.4a6.6 6.6 0 0 0 0 13.2z" fill="#fff"/>'),
+    "coin-quarter": ("#f8d35c", "#b5750a", _RING + '<path d="M20 20v-6.6A6.6 6.6 0 0 0 13.4 20z" fill="#fff"/>'),
+    "coin-gram": ("#f6cf55", "#ad700a", _RING + _t("g", 15, 25)),
+    "xau": ("#efc24f", "#8a5805", '<circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.2" stroke-opacity=".9" fill="none"/>' + _t("Au", 12.5)),
+    "paxg": ("#e8b93a", "#7d5206", _RING + _t("PG", 11, 24)),
+    "silver-999": ("#d3d9e3", "#78859a", _BAR),
+    "xag": ("#cfd6e2", "#6f7d93", _RING + _t("Ag", 11.5, 24.5)),
+    "xpt": ("#c3cfdf", "#56657d", _RING + _t("Pt", 11.5, 24.5)),
+    "xpd": ("#b8c3d6", "#4f5c76", _RING + _t("Pd", 11.5, 24.5)),
+    "btc": ("#ffa62e", "#d4680a", _t("₿", 24)),
+    "eth": ("#8c9bff", "#3a49c4", '<path d="M20 7.5 29 21l-9 5.2L11 21z" fill="#fff"/><path d="M20 28.4 29 23l-9 9.6L11 23z" fill="#fff" fill-opacity=".72"/>'),
+    "bnb": ("#f3ba2f", "#a8770a", _t("BNB", 10.5, 24)),
+    "sol": ("#9b6cff", "#0fb98f", '<path d="M11 12h18l-3 4.4H8zM8 17.8h18l3 4.4H11zM11 23.6h18l-3 4.4H8z" fill="#fff"/>'),
+    "xrp": ("#5a6b86", "#1d2536", _t("X", 22)),
+    "ada": ("#4f8df5", "#1a47a6", '<circle cx="20" cy="20" r="2.6" fill="#fff"/><circle cx="20" cy="11" r="1.9" fill="#fff"/><circle cx="20" cy="29" r="1.9" fill="#fff"/><circle cx="12.2" cy="15.5" r="1.9" fill="#fff"/><circle cx="27.8" cy="15.5" r="1.9" fill="#fff"/><circle cx="12.2" cy="24.5" r="1.9" fill="#fff"/><circle cx="27.8" cy="24.5" r="1.9" fill="#fff"/>'),
+    "doge": ("#e7c25a", "#9a7415", _t("Ð", 24)),
+    "ton": ("#3aa7f5", "#0b5eb0", '<path d="M10.5 12h19L20 30z" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/><path d="M20 12v18" stroke="#fff" stroke-width="2.2"/>'),
+    "trx": ("#ef4f4f", "#a01818", '<path d="M10 12l20 3-10 16z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><path d="M10 12l11 7 9-4M21 19l-1 12" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/>'),
+    "ltc": ("#9fb0cc", "#40517a", _t("Ł", 24)),
+    "bch": ("#46c47c", "#1b7a43", _t("₿", 24)),
+    "dot": ("#ee2d8a", "#7a1148", '<circle cx="20" cy="12" r="3.2" fill="#fff"/><circle cx="20" cy="28" r="3.2" fill="#fff"/><circle cx="12" cy="16.5" r="3.2" fill="#fff"/><circle cx="28" cy="16.5" r="3.2" fill="#fff"/><circle cx="12" cy="23.5" r="3.2" fill="#fff"/><circle cx="28" cy="23.5" r="3.2" fill="#fff"/>'),
+    "brent": ("#4b5262", "#10131a", _dropl("B", "#12151c")),
+    "brent-spot": ("#5a6272", "#171b24", _dropl("B", "#12151c") + '<circle cx="29" cy="12" r="3" fill="#7ee0a8"/>'),
+    "wti": ("#6a7484", "#1f242d", _dropl("W", "#1f242d")),
+    "wti-spot": ("#778091", "#262c36", _dropl("W", "#1f242d") + '<circle cx="29" cy="12" r="3" fill="#7ee0a8"/>'),
+    "opec-basket": ("#3d6a8c", "#0f2f49", _dropl("O", "#0f2f49")),
+    "natural-gas": ("#4aa8ff", "#1450a8", '<path d="M20 6c1 5-6 8-6 15a6 6 0 0 0 12 0c0-3-1.6-4.6-3-6 .2 2.2-1 3.6-2.2 3.6C19.8 17 21.5 11.5 20 6z" fill="#fff"/>'),
+}
+
+
+def icon(id_, size=40):
+    c1, c2, g = ICONS.get(id_, ("#3aa68a", "#12604f", _t("•", 22)))
+    return (f'<span class="bni" aria-hidden="true" style="--a:{c1};--b:{c2};--s:{size}px">'
+            f'<svg viewBox="0 0 40 40" fill="none">{g}</svg></span>')
+
+
+ORDER = {
+    "currency": ["usd", "usdt", "eur", "gbp", "aed"],
+    "gold": ["gold-18k", "gold-24k", "gold-mesghal", "coin-emami", "coin-bahar-azadi", "coin-half", "coin-quarter", "coin-gram",
+             "xau", "paxg", "silver-999", "xag", "xpt", "xpd"],
+    "crypto": ["btc", "eth", "bnb", "sol", "xrp", "ada", "doge", "ton", "trx", "ltc", "bch", "dot"],
+    "energy": ["brent", "brent-spot", "wti", "wti-spot", "opec-basket", "natural-gas"],
+}
+GROUP_TITLE = {"currency": "ارز", "gold": "طلا، سکه و فلزات گرانبها", "crypto": "ارز دیجیتال", "energy": "نفت و انرژی"}
+CORE_IDS = ["usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "coin-half", "coin-quarter", "xau", "btc", "eth", "brent", "wti"]
+
+
 def asset_page(a):
     id_, name, h1, cat, unit, blurb = a
     extra = CONTENT[id_]
@@ -330,7 +405,7 @@ def asset_page(a):
     rel = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] == cat and o[0] != id_)
     others = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] != cat)
     faq = "".join(f'<article class="faq-item"><h3>{html.escape(q)}</h3><p>{html.escape(ans)}</p></article>' for q,ans in extra["faq"])
-    body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1>{html.escape(h1)}</h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
+    body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1 style="display:flex;align-items:center;gap:12px">{icon(id_, 48)}<span>{html.escape(h1)}</span></h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
 <section class="panel" aria-labelledby="live-title"><h2 id="live-title">نرخ لحظه‌ای {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر 24 ساعته</small><b id="chg">…</b></div><div><small>زمان داده</small><b id="time" style="font-size:15px">…</b></div></div><p><button class="smallbtn" type="button" id="shareBtn">اشتراک‌گذاری قیمت</button> <span id="shareMsg" class="muted" aria-live="polite"></span></p><p id="sourceInfo" class="muted" aria-live="polite">منبع و زمان آخرین به‌روزرسانی در حال دریافت…</p><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نمودار تاریخی {html.escape(name)}</h2><p>نمودار، داده‌های تاریخی موجود برای این دارایی را نمایش می‌دهد؛ تعداد نقاط و بازه قابل مشاهده به تاریخچه‌ای بستگی دارد که منبع داده ارائه کرده است.</p><div class="toolbar" style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0"><button class="smallbtn active" type="button" data-range="7">7 روز</button><button class="smallbtn" type="button" data-range="30">30 روز</button><button class="smallbtn" type="button" data-range="90">3 ماه</button><button class="smallbtn" type="button" data-range="365">1 سال</button><button class="smallbtn" type="button" data-range="0">همه</button></div><canvas id="historyChart" aria-label="نمودار تاریخی قیمت {html.escape(name)}" style="display:block;width:100%;height:260px"></canvas><p id="chartHint" class="muted" aria-live="polite">در حال دریافت تاریخچه…</p></section>
 <section class="panel" aria-labelledby="ret-title"><h2 id="ret-title">اگر در گذشته خریده بودی چه می‌شد؟</h2><p>مقدار دارایی را وارد کن (مثلاً 1 {html.escape(QTY.get(id_,"واحد"))}) تا ببینی در هر بازه چقدر پول داده بودی و الان ارزشش چقدر است. بر پایهٔ تاریخچهٔ ثبت‌شده در بازارنما است و پیش‌بینی یا توصیهٔ مالی نیست.</p><label for="retAmount">مقدار ({html.escape(QTY.get(id_,"واحد"))})</label> <input id="retAmount" type="number" inputmode="decimal" min="0" step="any" value="1" style="padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);max-width:100%"><div class="kv" id="retGrid"><div><small>7 روز پیش</small><b data-ret="7">…</b></div><div><small>30 روز پیش</small><b data-ret="30">…</b></div><div><small>90 روز پیش</small><b data-ret="90">…</b></div><div><small>1 سال پیش</small><b data-ret="365">…</b></div></div><p id="retHint" class="muted" aria-live="polite"></p></section>
@@ -349,6 +424,56 @@ def asset_page(a):
     return page(title, desc, f"/price-{id_}.html", body, ld, ASSET_JS.replace("__ID__", json.dumps(id_)))
 
 
+LIST_CSS = (".bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;"
+            "background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;"
+            "box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}"
+            ".plist{display:grid;gap:8px;margin-top:12px}.prow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);"
+            "border-radius:14px;background:var(--surface);text-decoration:none;color:var(--text)}.prow:hover{border-color:var(--brand,#087e6e)}.prow .pn{font-weight:700}"
+            ".prow .pv{text-align:left;font-weight:800;font-size:18px}.prow small{display:block;color:var(--muted);font-weight:400;font-size:12px}.prow .pc{font-size:13px;font-weight:700}"
+            ".pnav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.pnav a{border:1px solid var(--line);border-radius:999px;padding:4px 14px;text-decoration:none;color:var(--text);background:var(--surface)}"
+            "#q{width:100%;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text)}")
+
+LIST_JS = """const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:d??(v<10?4:v<1000?2:0)}).format(v);
+const U={IRT:'تومان',USD:'دلار',USDT:'تتر'};
+fetch('/data/prices.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+ const m=new Map((d.items||[]).map(i=>[i.id,i]));let n=0;
+ document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price)+' '+(U[x.unit]||x.unit||'');n++;
+  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent=(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
+  else el.textContent='ناموجود';});
+ const st=document.getElementById('st'),t=d.fetched_utc||d.generated_utc;
+ if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
+}).catch(()=>{document.querySelectorAll('[data-p]').forEach(el=>el.textContent='ناموجود');});
+const q=document.getElementById('q');
+if(q)q.addEventListener('input',()=>{const v=q.value.trim();document.querySelectorAll('.prow').forEach(r=>{r.hidden=!!v&&!r.dataset.n.includes(v);});
+ document.querySelectorAll('section[data-g]').forEach(s=>{s.hidden=!s.querySelector('.prow:not([hidden])');});});"""
+
+
+def list_page(path, title, h1, desc, cats):
+    names = {a[0]: a for a in A}
+    secs, nav = "", ""
+    for c in cats:
+        rows = ""
+        for i in ORDER[c]:
+            a = names[i]
+            rows += (f'<a class="prow" href="/price-{i}.html" data-n="{html.escape(a[1])}">{icon(i, 40)}'
+                     f'<span class="pn">{html.escape(a[1])}<small>{html.escape(a[4])}</small></span>'
+                     f'<span><span class="pv" data-p="{i}">…</span><small class="pc" data-c="{i}"></small></span></a>')
+        secs += f'<section class="panel" id="g-{c}" data-g="{c}"><h2>{GROUP_TITLE[c]}</h2><div class="plist">{rows}</div></section>'
+        nav += f'<a href="#g-{c}">{GROUP_TITLE[c]}</a>'
+    nav_all = ""
+    if len(cats) > 1:
+        nav_all = f'<div class="pnav">{nav}</div>'
+    body = (f'<section class="hero"><div class="eyebrow">بازارنما | لیست قیمت‌ها</div><h1>{html.escape(h1)}</h1><p>{html.escape(desc)}</p>'
+            f'{nav_all}<input id="q" type="search" placeholder="جستجوی نام دارایی…" aria-label="جستجو"><p class="muted" id="st" aria-live="polite"></p></section>{secs}')
+    ld = {"@context": "https://schema.org", "@graph": [
+        {"@type": "CollectionPage", "@id": f"{BASE}{path}", "url": f"{BASE}{path}", "name": title, "description": desc, "inLanguage": "fa-IR",
+         "isPartOf": {"@type": "WebSite", "name": "بازارنما", "url": BASE + "/"}},
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
+            {"@type": "ListItem", "position": 2, "name": h1, "item": f"{BASE}{path}"}]}]}
+    return page(title, desc, path, body, ld, LIST_JS).replace("</style><style id=\"glass\">", LIST_CSS + "</style><style id=\"glass\">", 1)
+
+
 def about():
     title = "درباره بازارنما و روش جمع‌آوری قیمت‌ها"
     desc = "بازارنما چیست، قیمت‌ها از کجا می‌آیند، هر چند وقت به‌روز می‌شوند و محدودیت‌های داده‌ها چیست."
@@ -362,8 +487,14 @@ def main():
     for a in A:
         (ROOT / f"price-{a[0]}.html").write_text(finalize(asset_page(a)), encoding="utf-8")
     (ROOT / "about.html").write_text(finalize(about()), encoding="utf-8")
+    (ROOT / "prices.html").write_text(finalize(list_page("/prices.html", "لیست قیمت‌ها | همه قیمت‌های بازارنما", "همهٔ قیمت‌ها",
+        "قیمت لحظه‌ای ارز، طلا، سکه، نقره، فلزات گرانبها، نفت، گاز و ارزهای دیجیتال در یک صفحه؛ با دسترسی به صفحهٔ جداگانهٔ هر دارایی.",
+        ["currency", "gold", "crypto", "energy"])), encoding="utf-8")
+    (ROOT / "energy.html").write_text(finalize(list_page("/energy.html", "قیمت نفت و انرژی | برنت، WTI، سبد اوپک و گاز طبیعی", "قیمت نفت و انرژی",
+        "قیمت نفت برنت، WTI، سبد نفتی اوپک و گاز طبیعی به دلار؛ با لینک به صفحهٔ جداگانهٔ هر مورد.", ["energy"])), encoding="utf-8")
+    (ROOT / "bn-icons.js").write_text("window.BN_ICONS=" + json.dumps({k: icon(k, 44) for k in ICONS}, ensure_ascii=False) + ";\n", encoding="utf-8")
     today = datetime.date.today().isoformat()
-    urls = ["/", "/currency.html", "/gold.html", "/crypto.html", "/about.html"] + [f"/price-{a[0]}.html" for a in A]
+    urls = ["/", "/prices.html", "/currency.html", "/gold.html", "/crypto.html", "/energy.html", "/about.html"] + [f"/price-{a[0]}.html" for a in A]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{BASE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     (ROOT / "sitemap.xml").write_text(sm, encoding="utf-8")

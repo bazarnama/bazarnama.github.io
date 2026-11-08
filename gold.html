@@ -190,6 +190,9 @@ table{border-collapse:separate;border-spacing:0}
 a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
 [tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
 :focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
+
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
+.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
 </style>
 </head>
 
@@ -221,45 +224,20 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 <span id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</span>
 
 <div class="prices">
-<article class="price">
-<strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>طلای 18 عیار</strong>
-<b id="p-gold-18k">در حال دریافت…</b>
-<small id="t-gold-18k">واحد: تومان / گرم</small>
-</article>
-
-<article class="price">
-<strong><span class="asset-icon gold" data-asset-symbol="●" aria-hidden="true"></span>سکه امامی</strong>
-<b id="p-coin-emami">در حال دریافت…</b>
-<small id="t-coin-emami">واحد: تومان</small>
-</article>
-
-<article class="price">
-<strong><span class="asset-icon gold" data-asset-symbol="½" aria-hidden="true"></span>نیم‌سکه</strong>
-<b id="p-coin-half">در حال دریافت…</b>
-<small id="t-coin-half">واحد: تومان</small>
-</article>
-
-<article class="price">
-<strong><span class="asset-icon gold" data-asset-symbol="¼" aria-hidden="true"></span>ربع‌سکه</strong>
-<b id="p-coin-quarter">در حال دریافت…</b>
-<small id="t-coin-quarter">واحد: تومان</small>
-</article>
-
-<article class="price">
-<strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی طلا</strong>
-<b id="p-xau">در حال دریافت…</b>
-<small id="t-xau">واحد: دلار</small>
-</article>
-
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>طلای 24 عیار</strong><b id="p-gold-24k">در حال دریافت…</b><small id="t-gold-24k">واحد: تومان / گرم</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>طلای آبشده (مثقال)</strong><b id="p-gold-mesghal">در حال دریافت…</b><small id="t-gold-mesghal">واحد: تومان / مثقال</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>سکه بهار آزادی</strong><b id="p-coin-bahar-azadi">در حال دریافت…</b><small id="t-coin-bahar-azadi">واحد: تومان</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>سکه گرمی</strong><b id="p-coin-gram">در حال دریافت…</b><small id="t-coin-gram">واحد: تومان</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>نقره 999 (گرم)</strong><b id="p-silver-999">در حال دریافت…</b><small id="t-silver-999">واحد: تومان / گرم</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی نقره</strong><b id="p-xag">در حال دریافت…</b><small id="t-xag">واحد: دلار / اونس</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی پلاتین</strong><b id="p-xpt">در حال دریافت…</b><small id="t-xpt">واحد: دلار / اونس</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>اونس جهانی پالادیوم</strong><b id="p-xpd">در حال دریافت…</b><small id="t-xpd">واحد: دلار / اونس</small></article>
-<article class="price"><strong><span class="asset-icon gold" data-asset-symbol="Au" aria-hidden="true"></span>پکس گلد (PAXG)</strong><b id="p-paxg">در حال دریافت…</b><small id="t-paxg">واحد: تتر</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#fbdc7a;--b:#c48410;--s:38px"><svg viewBox="0 0 40 40" fill="none"><path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/></svg></span><a href="/price-gold-18k.html">طلای 18 عیار</a></strong><b id="p-gold-18k">در حال دریافت…</b><small id="t-gold-18k">واحد: تومان / گرم</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#ffe08a;--b:#b87a05;--s:38px"><svg viewBox="0 0 40 40" fill="none"><path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/><text x="20" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="800" fill="#7a4f00">24</text></svg></span><a href="/price-gold-24k.html">طلای 24 عیار</a></strong><b id="p-gold-24k">در حال دریافت…</b><small id="t-gold-24k">واحد: تومان / گرم</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f7c948;--b:#a66a06;--s:38px"><svg viewBox="0 0 40 40" fill="none"><path d="M20 7C20 7 11 17.5 11 23.5a9 9 0 0 0 18 0C29 17.5 20 7 20 7z" fill="#fff"/><path d="M14 31h12" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></span><a href="/price-gold-mesghal.html">طلای آبشده (مثقال)</a></strong><b id="p-gold-mesghal">در حال دریافت…</b><small id="t-gold-mesghal">واحد: تومان / مثقال</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f8d35c;--b:#b5750a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><circle cx="20" cy="20" r="6.6" fill="#fff"/></svg></span><a href="/price-coin-emami.html">سکه امامی</a></strong><b id="p-coin-emami">در حال دریافت…</b><small id="t-coin-emami">واحد: تومان</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f4c542;--b:#a8670a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M20 12.5l2.2 5 5.4.5-4.1 3.6 1.3 5.3-4.8-2.8-4.8 2.8 1.3-5.3-4.1-3.6 5.4-.5z" fill="#fff"/></svg></span><a href="/price-coin-bahar-azadi.html">سکه بهار آزادی</a></strong><b id="p-coin-bahar-azadi">در حال دریافت…</b><small id="t-coin-bahar-azadi">واحد: تومان</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f8d35c;--b:#b5750a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M20 13.4a6.6 6.6 0 0 0 0 13.2z" fill="#fff"/></svg></span><a href="/price-coin-half.html">نیم‌سکه</a></strong><b id="p-coin-half">در حال دریافت…</b><small id="t-coin-half">واحد: تومان</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f8d35c;--b:#b5750a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M20 20v-6.6A6.6 6.6 0 0 0 13.4 20z" fill="#fff"/></svg></span><a href="/price-coin-quarter.html">ربع‌سکه</a></strong><b id="p-coin-quarter">در حال دریافت…</b><small id="t-coin-quarter">واحد: تومان</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#f6cf55;--b:#ad700a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><text x="20" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="800" fill="#fff">g</text></svg></span><a href="/price-coin-gram.html">سکه گرمی</a></strong><b id="p-coin-gram">در حال دریافت…</b><small id="t-coin-gram">واحد: تومان</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#efc24f;--b:#8a5805;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.2" stroke-opacity=".9" fill="none"/><text x="20" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-size="12.5" font-weight="800" fill="#fff">Au</text></svg></span><a href="/price-xau.html">اونس جهانی طلا</a></strong><b id="p-xau">در حال دریافت…</b><small id="t-xau">واحد: دلار</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#e8b93a;--b:#7d5206;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><text x="20" y="24" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#fff">PG</text></svg></span><a href="/price-paxg.html">پکس گلد (PAXG)</a></strong><b id="p-paxg">در حال دریافت…</b><small id="t-paxg">واحد: تتر</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#d3d9e3;--b:#78859a;--s:38px"><svg viewBox="0 0 40 40" fill="none"><path d="M7.5 27 11.5 15h17l4 12z" fill="#fff" fill-opacity=".95"/><path d="M11.5 15h17l.9 2.6H10.6z" fill="#fff"/><path d="M12.5 27l2-6h11l2 6z" fill="#000" fill-opacity=".13"/></svg></span><a href="/price-silver-999.html">نقره 999 (گرم)</a></strong><b id="p-silver-999">در حال دریافت…</b><small id="t-silver-999">واحد: تومان / گرم</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#cfd6e2;--b:#6f7d93;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><text x="20" y="24.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5" font-weight="800" fill="#fff">Ag</text></svg></span><a href="/price-xag.html">اونس جهانی نقره</a></strong><b id="p-xag">در حال دریافت…</b><small id="t-xag">واحد: دلار / اونس</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#c3cfdf;--b:#56657d;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><text x="20" y="24.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5" font-weight="800" fill="#fff">Pt</text></svg></span><a href="/price-xpt.html">اونس جهانی پلاتین</a></strong><b id="p-xpt">در حال دریافت…</b><small id="t-xpt">واحد: دلار / اونس</small></article>
+<article class="price"><strong><span class="bni" aria-hidden="true" style="--a:#b8c3d6;--b:#4f5c76;--s:38px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="#fff" stroke-width="2.4" fill="none"/><text x="20" y="24.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5" font-weight="800" fill="#fff">Pd</text></svg></span><a href="/price-xpd.html">اونس جهانی پالادیوم</a></strong><b id="p-xpd">در حال دریافت…</b><small id="t-xpd">واحد: دلار / اونس</small></article>
 </div>
 </section>
 
@@ -287,20 +265,19 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 <h2>صفحه جداگانه هر قیمت</h2>
 <p>
 <a href="/price-gold-18k.html">قیمت طلای 18 عیار</a> ·
-<a href="/price-coin-emami.html">قیمت سکه امامی</a> ·
-<a href="/price-coin-half.html">قیمت نیم‌سکه</a> ·
-<a href="/price-coin-quarter.html">قیمت ربع‌سکه</a> ·
-<a href="/price-xau.html">قیمت اونس جهانی طلا</a>
- ·
 <a href="/price-gold-24k.html">قیمت طلای 24 عیار</a> ·
 <a href="/price-gold-mesghal.html">قیمت طلای آبشده (مثقال)</a> ·
+<a href="/price-coin-emami.html">قیمت سکه امامی</a> ·
 <a href="/price-coin-bahar-azadi.html">قیمت سکه بهار آزادی</a> ·
+<a href="/price-coin-half.html">قیمت نیم‌سکه</a> ·
+<a href="/price-coin-quarter.html">قیمت ربع‌سکه</a> ·
 <a href="/price-coin-gram.html">قیمت سکه گرمی</a> ·
+<a href="/price-xau.html">قیمت اونس جهانی طلا</a> ·
+<a href="/price-paxg.html">قیمت پکس گلد (PAXG)</a> ·
 <a href="/price-silver-999.html">قیمت نقره 999 (گرم)</a> ·
 <a href="/price-xag.html">قیمت اونس جهانی نقره</a> ·
 <a href="/price-xpt.html">قیمت اونس جهانی پلاتین</a> ·
-<a href="/price-xpd.html">قیمت اونس جهانی پالادیوم</a> ·
-<a href="/price-paxg.html">قیمت پکس گلد (PAXG)</a>
+<a href="/price-xpd.html">قیمت اونس جهانی پالادیوم</a>
 </p>
 </section>
 
@@ -308,7 +285,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 <a href="/">صفحه اصلی بازارنما</a> ·
 <a href="/currency.html">قیمت ارز</a> ·
 <a href="/gold.html">قیمت طلا و سکه</a> ·
-<a href="/crypto.html">قیمت ارز دیجیتال</a> ·
+<a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/energy.html">نفت و انرژی</a> · <a href="/prices.html">همه قیمت‌ها</a> ·
 <a href="/about.html">درباره و روش کار</a>
 </footer>
 
@@ -362,7 +339,7 @@ if(themeBtn){
  });
 }
 
-const ids=["gold-18k","coin-emami","coin-half","coin-quarter","xau","gold-24k","gold-mesghal","coin-bahar-azadi","coin-gram","silver-999","xag","xpt","xpd","paxg"];
+const ids=["gold-18k","gold-24k","gold-mesghal","coin-emami","coin-bahar-azadi","coin-half","coin-quarter","coin-gram","xau","paxg","silver-999","xag","xpt","xpd"];
 const status=document.getElementById('status');
 const button=document.getElementById('refresh');
 
