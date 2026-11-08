@@ -49,7 +49,7 @@ def page(title, desc, path, body, ld, script=""):
 <meta name="description" content="{e(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{url}"><meta name="theme-color" content="#087e6e">
 <meta property="og:type" content="website"><meta property="og:locale" content="fa_IR"><meta property="og:site_name" content="بازارنما"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}">
-<meta name="twitter:card" content="summary"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(desc)}">
+<meta property="og:image" content="https://bazarnama.github.io/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://bazarnama.github.io/og-image.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(desc)}">
 <title>{e(title)}</title>{HEAD_COMMON}
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 <style>{STYLE}{EXTRA_CSS}</style><style id="glass">{GLASS}</style></head><body><main class="wrap">
