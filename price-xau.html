@@ -364,22 +364,27 @@ async function mergeDirectCurrencies(data){
  }
  return data;
 }
-async function getPrices(){
+async function getPrices(early){
  let old=null;
- try{const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(d.primary_ok!==false&&d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<25*60*1000)return await mergeDirectCurrencies(d);}}}catch(e){}
- try{const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await mergeDirectCurrencies(await r.json());}finally{clearTimeout(t);}}
- catch(e){if(old)return await mergeDirectCurrencies({...old,items:old.items.map(i=>({...i,stale:true}))});throw e;}
+ try{const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(early)early(d);if(d.primary_ok!==false&&d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<25*60*1000)return d;}}}catch(e){}
+ try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);try{const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await r.json();}finally{clearTimeout(t);}}
+ catch(e){if(old)return {...old,items:old.items.map(i=>({...i,stale:true}))};throw e;}
 }
 async function load(){
  try{
-  const data=await getPrices(),x=(data.items||[]).find(i=>i&&i.id===ID);
+  const data=await getPrices(d=>show(d,true));show(data,false);
+ }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
+}
+function show(data,early){
+ try{
+  const x=(data.items||[]).find(i=>i&&i.id===ID);
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
   $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
-  $('status').textContent=x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
+  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 let rangeDays=30,LAST=null,ALLPTS=[];

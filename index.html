@@ -371,7 +371,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         if (stamp && Date.now()-Date.parse(stamp) < 20*60*1000) return d;
       }
     } catch {}
-    try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 15000); }
+    try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 4000); }
     catch (e) { if (old) return {...old, items:old.items.map(i=>({...i,stale:true}))}; throw e; }
   }
   // ---------- Supplementary sources (added in the ChatGPT revision) ----------
@@ -462,10 +462,9 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       // Optional supplementary feeds must not prevent the primary market feed
       // from being displayed if one of them is unavailable.
       secondaryQuotes.clear();
-      const supplements=await Promise.allSettled([fetchCryptoExternal(), fetchIranMarketData()]);
 
-      // Render the primary feed immediately; an optional daily reference-rate
-      // request must never delay the market prices.
+      // Render the primary feed immediately; supplementary feeds are fetched
+      // afterwards and must never delay the market prices.
       saveStorage(MARKET_CACHE_KEY, [...market.values()]);
       saveStorage(MARKET_CACHE_TIME_KEY, payload.generated_utc || null);
       saveStorage(MARKET_FETCH_TIME_KEY, receivedAt);
@@ -484,6 +483,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         : 'زمان تولید داده از سوی منبع اعلام نشده';
       updateConverter();
       ensureFx(payload).then(updateConverter);
+      Promise.allSettled([fetchCryptoExternal(), fetchIranMarketData()]).then(()=>{ renderAssets(); checkAlerts(); updateConverter(); });
     } catch (error) {
       console.error('Market refresh failed:', error);
       secondaryQuotes.clear();
