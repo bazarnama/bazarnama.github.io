@@ -98,7 +98,7 @@ async function load(){
  try{
   const data=await getPrices(),x=(data.items||[]).find(i=>i&&i.id===ID);
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
-  $('price').textContent=fmt(x.price);LAST=x.price;$('retUnit').textContent=UNITS[x.unit]||x.unit||'';renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
+  $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
@@ -108,17 +108,17 @@ async function load(){
 }
 let rangeDays=30,LAST=null,ALLPTS=[];
 function renderReturns(){
- const amt=Number($('retAmount').value)||0,hint=$('retHint');let any=false;
+ const amt=Number($('retAmount').value)||0,hint=$('retHint'),u=$('unit').textContent||'';let any=false;
  document.querySelectorAll('[data-ret]').forEach(el=>{
   const d=Number(el.dataset.ret),target=Date.now()/1000-d*86400;
   const cand=ALLPTS.filter(p=>p.t<=target+43200);
   const ref=cand.length?cand[cand.length-1]:null;
   if(!ref||!LAST||ALLPTS[0].t>target+86400){el.textContent='داده کافی نیست';el.className='';return;}
-  const pct=(LAST-ref.v)/ref.v*100,val=amt*LAST/ref.v;any=true;
+  const pct=(LAST-ref.v)/ref.v*100,cost=amt*ref.v,val=amt*LAST;any=true;
   el.className=pct>0?'up':pct<0?'down':'';
-  el.textContent=(pct>0?'+':'')+fmt(pct,1)+'٪ ← '+fmt(val,0)+' '+($('unit').textContent||'');
+  el.innerHTML=(pct>0?'+':'')+fmt(pct,1)+'٪<span style="display:block;font-size:13px;font-weight:400;color:var(--muted)">خرید: '+fmt(cost,0)+' '+u+'<br>الان: '+fmt(val,0)+' '+u+'</span>';
  });
- hint.textContent=any?'عدد دوم ارزش امروز مبلغ واردشده است؛ کارمزد و تفاوت قیمت خرید و فروش لحاظ نشده است.':'';
+ hint.textContent=any?'قیمت‌ها به واحد '+u+' است؛ کارمزد و تفاوت قیمت خرید و فروش لحاظ نشده است.':'';
 }
 $('retAmount').addEventListener('input',renderReturns);
 $('shareBtn').addEventListener('click',async()=>{
@@ -269,6 +269,9 @@ CONTENT = {
 }
 
 
+QTY = {'usd':'دلار','eur':'یورو','gbp':'پوند','aed':'درهم','usdt':'تتر','gold-18k':'گرم','coin-emami':'سکه','coin-half':'نیم‌سکه','coin-quarter':'ربع‌سکه','xau':'اونس','btc':'بیت‌کوین','eth':'اتریوم','brent':'بشکه','wti':'بشکه'}
+
+
 def asset_page(a):
     id_, name, h1, cat, unit, blurb = a
     extra = CONTENT[id_]
@@ -280,7 +283,7 @@ def asset_page(a):
     body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1>{html.escape(h1)}</h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/#markets">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
 <section class="panel" aria-labelledby="live-title"><h2 id="live-title">نرخ لحظه‌ای {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر 24 ساعته</small><b id="chg">…</b></div><div><small>زمان داده</small><b id="time" style="font-size:15px">…</b></div></div><p><button class="smallbtn" type="button" id="shareBtn">اشتراک‌گذاری قیمت</button> <span id="shareMsg" class="muted" aria-live="polite"></span></p><p id="sourceInfo" class="muted" aria-live="polite">منبع و زمان آخرین به‌روزرسانی در حال دریافت…</p><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نمودار تاریخی {html.escape(name)}</h2><p>نمودار، داده‌های تاریخی موجود برای این دارایی را نمایش می‌دهد؛ تعداد نقاط و بازه قابل مشاهده به تاریخچه‌ای بستگی دارد که منبع داده ارائه کرده است.</p><div class="toolbar" style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0"><button class="smallbtn active" type="button" data-range="7">7 روز</button><button class="smallbtn" type="button" data-range="30">30 روز</button><button class="smallbtn" type="button" data-range="90">3 ماه</button><button class="smallbtn" type="button" data-range="365">1 سال</button><button class="smallbtn" type="button" data-range="0">همه</button></div><canvas id="historyChart" aria-label="نمودار تاریخی قیمت {html.escape(name)}" style="display:block;width:100%;height:260px"></canvas><p id="chartHint" class="muted" aria-live="polite">در حال دریافت تاریخچه…</p></section>
-<section class="panel" aria-labelledby="ret-title"><h2 id="ret-title">اگر در گذشته خریده بودی چه می‌شد؟</h2><p>مبلغ سرمایه‌گذاری فرضی را وارد کن تا بازدهٔ تقریبی بر پایهٔ تاریخچهٔ ثبت‌شده در بازارنما دیده شود. این محاسبه فقط یک مقایسهٔ تاریخی است و پیش‌بینی یا توصیهٔ مالی نیست.</p><label for="retAmount">مبلغ (<span id="retUnit">{html.escape(unit)}</span>)</label> <input id="retAmount" type="number" inputmode="decimal" min="0" value="10000000" style="padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);max-width:100%"><div class="kv" id="retGrid"><div><small>7 روز پیش</small><b data-ret="7">…</b></div><div><small>30 روز پیش</small><b data-ret="30">…</b></div><div><small>90 روز پیش</small><b data-ret="90">…</b></div><div><small>1 سال پیش</small><b data-ret="365">…</b></div></div><p id="retHint" class="muted" aria-live="polite"></p></section>
+<section class="panel" aria-labelledby="ret-title"><h2 id="ret-title">اگر در گذشته خریده بودی چه می‌شد؟</h2><p>مقدار دارایی را وارد کن (مثلاً 1 {html.escape(QTY.get(id_,"واحد"))}) تا ببینی در هر بازه چقدر پول داده بودی و الان ارزشش چقدر است. بر پایهٔ تاریخچهٔ ثبت‌شده در بازارنما است و پیش‌بینی یا توصیهٔ مالی نیست.</p><label for="retAmount">مقدار ({html.escape(QTY.get(id_,"واحد"))})</label> <input id="retAmount" type="number" inputmode="decimal" min="0" step="any" value="1" style="padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);max-width:100%"><div class="kv" id="retGrid"><div><small>7 روز پیش</small><b data-ret="7">…</b></div><div><small>30 روز پیش</small><b data-ret="30">…</b></div><div><small>90 روز پیش</small><b data-ret="90">…</b></div><div><small>1 سال پیش</small><b data-ret="365">…</b></div></div><p id="retHint" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>درباره قیمت {html.escape(name)}</h2><p>{html.escape(extra['overview'])}</p><h3>چه عواملی بر قیمت اثر می‌گذارند؟</h3><p>{html.escape(extra['drivers'])}</p><h3>چطور این نرخ را بخوانیم؟</h3><p>{html.escape(extra['reading'])}</p></section>
 <section class="panel"><h2>پرسش‌های متداول درباره {html.escape(name)}</h2>{faq}</section>
 <section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div><p>برای آشنایی با منبع داده، زمان به‌روزرسانی و محدودیت‌های نرخ‌ها، صفحه <a href="/about.html">درباره بازارنما و روش کار</a> را بخوان. قیمت‌های نمایش‌داده‌شده برای اطلاع‌رسانی هستند و توصیه خرید یا فروش محسوب نمی‌شوند.</p></section>"""
