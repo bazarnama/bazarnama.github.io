@@ -431,21 +431,21 @@ LIST_CSS = (".bni{display:inline-grid;place-items:center;width:var(--s,40px);hei
             "border-radius:14px;background:var(--surface);text-decoration:none;color:var(--text)}.prow:hover{border-color:var(--brand,#087e6e)}.prow .pn{font-weight:700}"
             ".prow .pv{text-align:left;font-weight:800;font-size:18px}.prow small{display:block;color:var(--muted);font-weight:400;font-size:12px}.prow .pc{font-size:13px;font-weight:700}"
             ".pnav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.pnav a{border:1px solid var(--line);border-radius:999px;padding:4px 14px;text-decoration:none;color:var(--text);background:var(--surface)}"
-            "#q{width:100%;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text)}")
+            "#q{margin-top:10px;width:100%;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text)}")
 
 LIST_JS = """const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:d??(v<10?4:v<1000?2:0)}).format(v);
 const U={IRT:'تومان',USD:'دلار',USDT:'تتر'};
 fetch('/data/prices.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
  const m=new Map((d.items||[]).map(i=>[i.id,i]));let n=0;
- document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price)+' '+(U[x.unit]||x.unit||'');n++;
+ document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price);n++;
   const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent=(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
   else el.textContent='ناموجود';});
  const st=document.getElementById('st'),t=d.fetched_utc||d.generated_utc;
  if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
 }).catch(()=>{document.querySelectorAll('[data-p]').forEach(el=>el.textContent='ناموجود');});
 const q=document.getElementById('q');
-if(q)q.addEventListener('input',()=>{const v=q.value.trim();document.querySelectorAll('.prow').forEach(r=>{r.hidden=!!v&&!r.dataset.n.includes(v);});
- document.querySelectorAll('section[data-g]').forEach(s=>{s.hidden=!s.querySelector('.prow:not([hidden])');});});"""
+if(q)q.addEventListener('input',()=>{const v=q.value.trim();document.querySelectorAll('.price').forEach(r=>{r.hidden=!!v&&!r.dataset.n.includes(v);});
+ document.querySelectorAll('section[data-g]').forEach(s=>{s.hidden=!s.querySelector('.price:not([hidden])');});});"""
 
 
 def list_page(path, title, h1, desc, cats):
@@ -455,10 +455,9 @@ def list_page(path, title, h1, desc, cats):
         rows = ""
         for i in ORDER[c]:
             a = names[i]
-            rows += (f'<a class="prow" href="/price-{i}.html" data-n="{html.escape(a[1])}">{icon(i, 40)}'
-                     f'<span class="pn">{html.escape(a[1])}<small>{html.escape(a[4])}</small></span>'
-                     f'<span><span class="pv" data-p="{i}">…</span><small class="pc" data-c="{i}"></small></span></a>')
-        secs += f'<section class="panel" id="g-{c}" data-g="{c}"><h2>{GROUP_TITLE[c]}</h2><div class="plist">{rows}</div></section>'
+            rows += (f'<article class="price" data-n="{html.escape(a[1])}"><strong>{icon(i, 38)}<a href="/price-{i}.html">{html.escape(a[1])}</a></strong>'
+                     f'<b data-p="{i}">در حال دریافت…</b><small>واحد: {html.escape(a[4])} <span class="pc" data-c="{i}"></span></small></article>')
+        secs += f'<section class="panel" id="g-{c}" data-g="{c}"><h2>{GROUP_TITLE[c]}</h2><div class="prices">{rows}</div></section>'
         nav += f'<a href="#g-{c}">{GROUP_TITLE[c]}</a>'
     nav_all = ""
     if len(cats) > 1:

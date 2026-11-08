@@ -325,6 +325,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
 .bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
 .price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
+
+.price{position:relative;transition:transform .15s ease,box-shadow .15s ease}.price:hover{transform:translateY(-2px)}
+.price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--brand,#087e6e);outline-offset:2px}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | ارز دیجیتال</div><h1 style="display:flex;align-items:center;gap:12px"><span class="bni" aria-hidden="true" style="--a:#e7c25a;--b:#9a7415;--s:48px"><svg viewBox="0 0 40 40" fill="none"><text x="20" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="24" font-weight="800" fill="#fff">Ð</text></svg></span><span>قیمت دوج‌کوین امروز</span></h1><p>دوج‌کوین یکی از قدیمی‌ترین رمزارزهای میم است که به‌خاطر جامعهٔ بزرگ و توجه رسانه‌ای شناخته می‌شود.</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
