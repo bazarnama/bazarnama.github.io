@@ -1,1 +1,1 @@
-{"api":"bazarnama/v1","id":"brent-spot","unit":"USD","updated_utc":"2026-11-03T00:00:00Z","points":[{"timestamp":1793664000,"price":107.03}]}
+{"api":"bazarnama/v1","id":"brent-spot","unit":null,"updated_utc":"2026-11-03T00:00:00Z","points":[{"timestamp":1793664000,"price":107.03}]}
