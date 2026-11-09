@@ -19,11 +19,10 @@ GitHub Pages به‌تنهایی امکان اجرای زمان‌بندی‌ش�
 
 ---
 بخش قیمت‌ها (جدید):
-- scripts/update_prices.py + .github/workflows/update-prices.yml: ذخیره قیمت‌ها در data/prices.json هر ۵ دقیقه
-- scripts/build_pages.py: ساخت صفحه جدا برای هر دارایی (price-*.html)، about.html و sitemap.xml
-  (بعد از هر تغییر در لیست دارایی‌ها اجرا شود: python scripts/build_pages.py)
+- update_prices.py + .github/workflows/update-prices.yml: دریافت و ذخیره قیمت‌ها در data/prices.json تقریباً هر ۱۰ دقیقه
+- build_pages.py: ساخت صفحه جدا برای هر دارایی (price-*.html)، about.html و sitemap.xml
+  (بعد از هر تغییر در لیست دارایی‌ها اجرا شود: python build_pages.py)
 - manifest.webmanifest و sw.js: نصب به‌صورت اپلیکیشن (PWA)
 - data/history.json: تاریخچه ساعتی (هر ساعت یک نقطه، ۱۴ روز) که اسکریپت update_prices.py می‌سازد
-- منبع‌های قیمت: NerkhAra (اصلی)، Frankfurter (نرخ جهانی ارز)، CoinGecko (پشتیبان بیت‌کوین/اتریوم)
-- انرژی: برای منبع خارجی EIA، کلید رایگان را در GitHub: Settings > Secrets and variables > Actions با نام EIA_API_KEY ذخیره کنید (اختیاری؛ بدون آن، فقط منبع اصلی استفاده می‌شود)
-- نفت: منبع Stooq (بدون کلید، با تأخیر چند دقیقه) + EIA (روزانه)
+- انرژی: سری‌های روزانه EIA از CSV عمومی FRED خوانده می‌شوند؛ کلید API لازم نیست و داده لحظه‌ای نیست
+- انرژی: EIA از مسیر FRED (قیمت روزانه برنت فیزیکی، WTI فیزیکی و گاز طبیعی Henry Hub)
