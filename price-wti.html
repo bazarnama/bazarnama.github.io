@@ -357,15 +357,35 @@ if(btn)btn.onclick=()=>ap(root.dataset.theme==='dark'?'light':'dark',true);const
 const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:d??(v<10?4:v<1000?2:0)}).format(v);
 const $=id=>document.getElementById(id);
 function tl(v){if(!v)return 'نامشخص';const s=String(v),hasZone=/[zZ]|[+-]\d{2}:?\d{2}$/.test(s),d=new Date(typeof v==='number'?(v>1e12?v:v*1000):(hasZone?s:s+'Z'));return isNaN(d)?s:d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
-async function getPrices(early){
- const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});
- if(!r.ok)throw new Error('دادهٔ منتشرشده در دسترس نیست');
- const data=await r.json();
- if(!data||!Array.isArray(data.items))throw new Error('ساختار داده معتبر نیست');
- const stamp=Date.parse(data.fetched_utc||data.generated_utc||'');
- if(!Number.isFinite(stamp)||Date.now()-stamp>20*60*1000)data.items=data.items.map(x=>({...x,stale:true}));
- if(early)early(data);
+async function mergeDirectCurrencies(data){
+ if(!data||!Array.isArray(data.items))return data;
+ const symbols={usd:'USD_IRR_FREE',eur:'EUR_IRR_FREE',gbp:'GBP_IRR_FREE',aed:'AED_IRR_FREE'};
+ try{
+  const r=await fetch('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json?x='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('secondary source unavailable');
+  const payload=await r.json(),rows=Array.isArray(payload.data)?payload.data:[];
+  for(const [id,symbol] of Object.entries(symbols)){
+   const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
+   const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
+   const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
+   const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
+   if(fresh){
+    const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};
+    if(!primary||primary.stale||primary.method==='derived'||primary.derived){if(at>=0)data.items[at]=direct;else data.items.push(direct);}
+    else {primary.source_name=primary.source_name||'NerkhAra';primary.source_updated_utc=primary.source_updated_utc||primary.updated_utc;primary.secondary_source='Iran Market Data';primary.secondary_price=price;primary.source_discrepancy_pct=primary.price?Math.abs(primary.price-price)/primary.price*100:null;}
+   }else if(['eur','gbp','aed'].includes(id)&&primary&&(primary.method==='derived'||primary.derived)){data.items.splice(at,1);}
+  }
+ }catch(e){
+  data.items=data.items.filter(x=>!(['eur','gbp','aed'].includes(x.id)&&(x.method==='derived'||x.derived)));
+ }
  return data;
+}
+async function getPrices(early){
+ let old=null;
+ try{const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(early)early(d);if(d.primary_ok!==false&&d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<25*60*1000)return d;}}}catch(e){}
+ try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);try{const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await r.json();}finally{clearTimeout(t);}}
+ catch(e){if(old)return {...old,items:old.items.map(i=>({...i,stale:true}))};throw e;}
 }
 async function load(){
  try{
@@ -375,15 +395,13 @@ async function load(){
 function show(data,early){
  try{
   const x=(data.items||[]).find(i=>i&&i.id===ID);
-  if(!x||typeof x.price!=='number'||x.derived||x.method==='derived'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
+  if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
-  $('time').textContent=x.source_time_label||tl(x.source_updated_utc||x.updated_utc||x.as_of);
+  $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
-  const daily=x.market_type==='daily-spot'||x.backup_source==='fred';
-  if(daily){const h=$('live-title');if(h)h.textContent='آخرین قیمت روزانه '+(ID==='brent-spot'?'نفت برنت فیزیکی':ID==='wti-spot'?'نفت WTI فیزیکی':'گاز طبیعی هنری هاب');const chgLabel=$('chg')?.previousElementSibling;if(chgLabel)chgLabel.textContent='تغییر نسبت به مشاهده قبلی';}
-  $('sourceInfo').textContent='منبع: '+source+' · زمان داده: '+(x.source_time_label||tl(x.source_updated_utc||x.updated_utc||x.as_of))+(daily?' · سری مرجع روزانه': '')+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
-  $('status').textContent=early?'در حال دریافت نرخ تازه‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':daily?'آخرین مشاهده روزانه بازار دریافت شد؛ این داده لحظه‌ای نیست.':'قیمت با موفقیت دریافت شد.';
+  $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
+  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 let rangeDays=30,LAST=null,ALLPTS=[];

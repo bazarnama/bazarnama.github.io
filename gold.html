@@ -369,19 +369,39 @@ function timeLabel(value){
 }
 
 async function getPrices(){
+ let old=null;
+
  try{
-  let r=await fetch('/data/prices.json?refresh='+Date.now(),{cache:'no-store'});
-  if(!r.ok)throw Error('HTTP '+r.status);
-  let data=await r.json();
-  if(data&&Array.isArray(data.items)){const stamp=Date.parse(data.fetched_utc||data.generated_utc||'');if(!Number.isFinite(stamp)||Date.now()-stamp>20*60*1000)data.items=data.items.map(x=>({...x,stale:true}));return data;}
- }catch(e){/* Try the same centrally-filtered snapshot via the public API path. */}
- const response=await fetch('/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store'});
- if(!response.ok)throw Error('Market snapshot unavailable');
- const data=await response.json();
- if(!data||!Array.isArray(data.items))throw Error('Invalid market snapshot');
- const stamp=Date.parse(data.fetched_utc||data.generated_utc||'');
- if(!Number.isFinite(stamp)||Date.now()-stamp>20*60*1000)data.items=data.items.map(x=>({...x,stale:true}));
- return data;
+  const r=await fetch('/data/prices.json',{cache:'no-store'});
+  if(r.ok){
+   const d=await r.json();
+   if(d&&Array.isArray(d.items)&&d.items.length){
+    old=d;
+    if(d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<20*60*1000)return d;
+   }
+  }
+ }catch(e){}
+
+ try{
+  const c=new AbortController();
+  const t=setTimeout(()=>c.abort(),12000);
+
+  try{
+   const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{
+    cache:'no-store',
+    signal:c.signal,
+    headers:{'Accept':'application/json'}
+   });
+
+   if(!r.ok)throw Error('HTTP '+r.status);
+   return await r.json();
+  }finally{
+   clearTimeout(t);
+  }
+ }catch(e){
+  if(old)return {...old,items:old.items.map(i=>({...i,stale:true}))};
+  throw e;
+ }
 }
 
 let loading=false;
@@ -407,12 +427,12 @@ async function load(){
    const price=document.getElementById('p-'+id);
    const time=document.getElementById('t-'+id);
 
-   if(x&&typeof x.price==='number'&&Number.isFinite(x.price)&&!x.derived&&x.method!=='derived'){ 
+   if(x&&typeof x.price==='number'&&Number.isFinite(x.price)){
     price.textContent=fmt(x.price);
 
     const unit=({IRT:'تومان',USD:'دلار',USDT:'تتر'}[x.unit]||x.unit||'—');
 
-    time.textContent='منبع: '+(x.source_name||'NerkhAra')+' · واحد: '+unit+' · '+(x.source_time_label||timeLabel(x.source_updated_utc||x.updated_utc||x.as_of))+(x.market_type==='daily-spot'?' · داده روزانه':'')+(x.stale?' · داده قدیمی':'');
+    time.textContent='واحد: '+unit+' · '+timeLabel(x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی':'');
 
     found++;
     if(x.stale)stale++;
