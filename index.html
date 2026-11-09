@@ -389,11 +389,13 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const p=market.get(a.id); const ok=p && typeof p.price==='number';
       const fav=favorites.has(a.id);
       const stale=p?.stale===true;
+      const freshnessStatus=p?.freshness?.status || (stale?'stale':'unknown');
+      const freshnessLabel=freshnessStatus==='aging'?'داده در آستانه کهنگی':freshnessStatus==='unknown'?'زمان منبع نامشخص':freshnessStatus==='stale'?'داده قدیمی':'';
       const unit=ok?unitLabel(p.unit):a.unit;
       const time=p?.source_updated_utc || p?.updated_utc || p?.as_of || null;
       const source=p?.source_name || p?.source || (p?.derived?'محاسبه‌شده':(p?.sources ? `${fmt(p.sources)} منبع` : 'منبع اصلی'));
       const methodText='';
-      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct,p.change_basis):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی · ':''}${time?dateLabel(time):'زمان نامشخص'} · ${safeText(source+methodText)}</div></article>`;
+      return `<article class="card asset" data-href="/price-${a.id}.html" tabindex="0" role="link" style="cursor:pointer"><div class="assetTop"><div class="assetIdentity">${iconMarkup(a.id)}<a class="assetName" href="/price-${a.id}.html" style="color:inherit;text-decoration:none">${a.name}</a></div><button type="button" class="star ${fav?'active':''}" data-star="${a.id}" aria-label="${fav?'حذف از':'افزودن به'} علاقه‌مندی‌ها" title="علاقه‌مندی">${fav?'★':'☆'}</button></div><div class="assetPrice">${ok?currentPrice(a):'—'}</div><div class="assetUnit">${safeText(unit)}</div>${ok?changeMarkup(p.change_pct,p.change_basis):'<span class="change neutral">قیمت دریافت نشده</span>'}<div class="assetFoot">${stale?'⚠ داده قدیمی · ':freshnessLabel?`⚠ ${freshnessLabel} · `:''}${time?dateLabel(time):'زمان نامشخص'} · ${safeText(source+methodText)}</div></article>`;
     }).join(''):'<div class="empty" style="grid-column:1/-1">هنوز موردی در این بخش وجود ندارد. با ستاره کنار دارایی‌ها، علاقه‌مندی اضافه کن.</div>';
     const tableList=assets.filter(a=>a.core);
     $('priceRows').innerHTML=tableList.length?tableList.map(a=>{
@@ -455,9 +457,11 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       const rawStamp=quote.updatedAt==null?'':String(quote.updatedAt);
       const hasZone=/[zZ]|[+-]\d{2}:?\d{2}$/.test(rawStamp);
       const stamp=quote.updatedAt ? (typeof quote.updatedAt==='number' ? new Date(quote.updatedAt>1e12?quote.updatedAt:quote.updatedAt*1000).getTime() : new Date(hasZone?rawStamp:rawStamp+'Z').getTime()) : NaN;
-      const fresh=Number.isFinite(stamp)&&Date.now()-stamp<12*60*60*1000&&Date.now()-stamp>-5*60*1000;
+      const age=Number.isFinite(stamp)?Date.now()-stamp:Infinity;
+      const fresh=Number.isFinite(stamp)&&age<90*60*1000&&age>-5*60*1000;
       if(fresh&&(!primary||primary.stale)) {
-        market.set(id,{...quote,source:quote.provider,stale:false,change_pct:primary?.change_pct??null});
+        market.set(id,{...quote,source:quote.provider,stale:false,change_pct:primary?.change_pct??null,
+          freshness:{status:age>60*60*1000?'aging':'fresh',observed_utc:new Date(stamp).toISOString(),age_seconds:Math.max(0,Math.floor(age/1000)),clock_basis:'provider_timestamp'}});
       }
       count++;
     }
@@ -468,10 +472,17 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const results=await Promise.allSettled([fetchCoinGecko()]);
     // Use a secondary quote only if the primary market feed has no quote for that asset.
     for(const id of ['btc','eth']) {
-      if(market.has(id)) continue;
+      const current=market.get(id);
+      if(current && !current.stale) continue;
       const alternatives=secondaryQuotes.get(id)||[];
       const fallback=alternatives[0];
-      if(fallback) market.set(id,{id,price:fallback.price,unit:fallback.unit,updated_utc:fallback.updatedAt,source:fallback.provider,stale:false});
+      if(fallback) {
+        const stamp=fallback.updatedAt?Date.parse(fallback.updatedAt):NaN;
+        const age=Number.isFinite(stamp)?Date.now()-stamp:Infinity;
+        const fresh=Number.isFinite(stamp)&&age>=-5*60*1000&&age<=20*60*1000;
+        if(fresh) market.set(id,{id,price:fallback.price,unit:fallback.unit,updated_utc:fallback.updatedAt,source:fallback.provider,stale:false,
+          freshness:{status:'fresh',observed_utc:new Date(stamp).toISOString(),age_seconds:Math.max(0,Math.floor(age/1000)),clock_basis:'provider_timestamp'}});
+      }
     }
     return results;
   }
@@ -524,8 +535,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
         return item && typeof item.price === 'number' && Number.isFinite(item.price);
       }).length;
       const staleCount = assets.filter(asset => market.get(asset.id)?.stale === true).length;
-      $('marketStatus').textContent = `${fmt(availableCount)} از ${fmt(assets.length)} دارایی قیمت دارند؛ ${fmt(staleCount)} مورد طبق اعلام منبع قدیمی‌اند. برای قیمت‌های تازه‌تر دوباره تلاش کن؛ زمان انتشار داده به منبع بستگی دارد.`;
-      $('marketStatus').className = staleCount ? 'status' : 'status ok';
+      const agingCount = assets.filter(asset => market.get(asset.id)?.freshness?.status === 'aging').length;
+      const unknownCount = assets.filter(asset => market.has(asset.id) && !market.get(asset.id)?.freshness?.status).length;
+      $('marketStatus').textContent = `${fmt(availableCount)} از ${fmt(assets.length)} دارایی قیمت دارند؛ ${fmt(staleCount)} قدیمی، ${fmt(agingCount)} در آستانه کهنگی و ${fmt(unknownCount)} بدون زمان معتبر منبع.`;
+      $('marketStatus').className = staleCount || unknownCount ? 'status' : 'status ok';
       $('updateLabel').textContent = payload.generated_utc
         ? 'زمان تولید داده منبع: ' + dateLabel(payload.generated_utc)
         : 'زمان تولید داده از سوی منبع اعلام نشده';

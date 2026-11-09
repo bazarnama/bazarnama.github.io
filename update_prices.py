@@ -16,7 +16,7 @@ Sources
      Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, statistics, sys, time, urllib.parse, urllib.request, datetime, pathlib, re, html
+import json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
 from zoneinfo import ZoneInfo
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
@@ -39,7 +39,7 @@ FX_URLS = [
 ]
 COINGECKO = ("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,solana,ripple,binancecoin,dogecoin,litecoin,"
              "tron,cardano,the-open-network,bitcoin-cash,polkadot,pax-gold"
-             "&vs_currencies=usd&include_24hr_change=true")
+             "&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true")
 CG_IDS = {"bitcoin": "btc", "ethereum": "eth", "tether": "usdt_usd", "solana": "sol", "ripple": "xrp", "binancecoin": "bnb",
           "dogecoin": "doge", "litecoin": "ltc", "tron": "trx", "cardano": "ada", "the-open-network": "ton",
           "bitcoin-cash": "bch", "polkadot": "dot", "pax-gold": "paxg"}
@@ -51,6 +51,7 @@ HIST_ARCHIVE = ROOT / "data" / "history-archive.json"  # full store, never read 
 HIST_RECENT_DAYS = 14        # hourly resolution is kept this long, older points become one per day
 HIST_LEAN_DAYS = 8           # days published in the lean data/history.json
 SUMMARY = ROOT / "data" / "summary.json"
+SOURCE_HEALTH = ROOT / "data" / "source-health.json"
 HIST_MAX = None  # preserve the full series; old points are never discarded
 
 NAMES = {
@@ -62,9 +63,26 @@ NAMES = {
 
 
 def get_json(url):
+    """Fetch JSON with one bounded retry for transient network/rate-limit failures."""
     req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "bazarnama-updater"})
-    with urllib.request.urlopen(req, timeout=20) as r:
-        return json.loads(r.read().decode("utf-8"))
+    for attempt in range(2):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if attempt or exc.code not in (429, 500, 502, 503, 504):
+                raise
+            retry_after = exc.headers.get("Retry-After", "")
+            try:
+                delay = min(5.0, max(1.0, float(retry_after)))
+            except (TypeError, ValueError):
+                delay = 1.0
+            time.sleep(delay)
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if attempt:
+                raise
+            time.sleep(1.0)
+    raise RuntimeError("JSON fetch failed after retry")
 
 
 def now_iso():
@@ -108,7 +126,8 @@ def fetch_coingecko():
     for cg, key in CG_IDS.items():
         row = d.get(cg) if isinstance(d, dict) else None
         if isinstance(row, dict) and isinstance(row.get("usd"), (int, float)):
-            out[key] = {"price": float(row["usd"]), "change_pct": row.get("usd_24h_change")}
+            out[key] = {"price": float(row["usd"]), "change_pct": row.get("usd_24h_change"),
+                        "source_updated_utc": datetime.datetime.fromtimestamp(float(row["last_updated_at"]), datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if isinstance(row.get("last_updated_at"), (int, float)) else None}
     return out
 
 
@@ -152,8 +171,8 @@ def fetch_stooq(ids=None):
                 price = float(row["close"])
                 if not (lo <= price <= hi):
                     continue
-                out[pid] = {"price": price, "unit": "USD", "date": row.get("date"), "time": row.get("time"),
-                            "symbol": sym, "source": "Stooq"}
+                out[pid] = {"price": price, "unit": "USD", "source_date": row.get("date"), "source_time": row.get("time"),
+                            "source_updated_utc": None, "symbol": sym, "source": "Stooq"}
                 break
             except Exception as e:  # noqa: BLE001
                 print("Stooq failed for", pid, sym, type(e).__name__, file=sys.stderr)
@@ -641,7 +660,10 @@ def write_api_files(payload, history):
     (api / "history").mkdir(parents=True, exist_ok=True)
     items = payload.get("items", [])
     write_if_changed(api / "latest.json", dumps({"api": "bazarnama/v1", "generated_utc": payload.get("generated_utc"),
-                                                  "fetched_utc": payload.get("fetched_utc"), "items": items}))
+                                                  "fetched_utc": payload.get("fetched_utc"), "freshness": payload.get("freshness"), "items": items}))
+    health_path = ROOT / "data" / "source-health.json"
+    if health_path.exists():
+        write_if_changed(api / "source-health.json", health_path.read_text(encoding="utf-8"))
     series = history.get("series", {})
     write_if_changed(api / "index.json", dumps({
         "api": "bazarnama/v1",
@@ -730,6 +752,92 @@ def update_history(items):
     return archive
 
 
+
+# Maximum acceptable source-data age. These are publication-aware guardrails, not
+# promises about provider update cadence. The source timestamp is never replaced by
+# the time our workflow happened to fetch the response.
+FRESHNESS_LIMITS = {
+    "crypto": 20 * 60,
+    "currency": 90 * 60,
+    "gold": 2 * 60 * 60,
+    "coin": 2 * 60 * 60,
+    "metal": 2 * 60 * 60,
+    "energy": 2 * 60 * 60,
+}
+FRESHNESS_DEFAULT = 2 * 60 * 60
+
+
+def item_source_epoch(item):
+    """Return provider observation time; never substitute fetched_utc/generated_utc."""
+    for key in ("source_updated_utc", "updated_utc", "as_of"):
+        stamp = parse_timestamp(item.get(key))
+        if stamp is not None:
+            return stamp
+    value = item.get("date")
+    if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return parse_timestamp(value + "T00:00:00Z")
+    return None
+
+
+def annotate_freshness(items, checked_at=None):
+    checked_at = checked_at or time.time()
+    checked_iso = datetime.datetime.fromtimestamp(checked_at, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    statuses = {"fresh": 0, "aging": 0, "stale": 0, "unknown": 0}
+    rows = []
+    for item in items:
+        if not isinstance(item, dict) or not item.get("id"):
+            continue
+        family = str(item.get("family") or "").lower()
+        limit = FRESHNESS_LIMITS.get(family, FRESHNESS_DEFAULT)
+        if item.get("backup_source") == "eia":
+            limit = 72 * 60 * 60  # EIA benchmark series are daily publications.
+        elif item.get("id") in {"opec-basket", "natural-gas"}:
+            limit = 4 * 24 * 60 * 60
+        observed = item_source_epoch(item)
+        if observed is None:
+            status, age = ("stale", None) if item.get("stale") else ("unknown", None)
+        else:
+            age = max(0, int(checked_at - observed))
+            if item.get("stale") or age > limit:
+                status = "stale"
+                item["stale"] = True
+            elif age > limit * 0.65:
+                status = "aging"
+            else:
+                status = "fresh"
+        statuses[status] += 1
+        freshness = {
+            "status": status,
+            "observed_utc": datetime.datetime.fromtimestamp(observed, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if observed is not None else None,
+            "checked_utc": checked_iso,
+            "age_seconds": age,
+            "max_age_seconds": limit,
+            "clock_basis": "provider_timestamp" if observed is not None else "unknown",
+        }
+        item["freshness"] = freshness
+        item["source_checked_utc"] = item.get("source_checked_utc") or checked_iso
+        rows.append({"id": item["id"], **freshness, "source": item.get("source_name") or item.get("source") or item.get("backup_source") or "NerkhAra"})
+    return {"version": 1, "checked_utc": checked_iso, "policy": FRESHNESS_LIMITS,
+            "counts": statuses, "assets": rows}
+
+
+def write_source_health(payload, health):
+    health_doc = {
+        "schema": "bazarnama/source-health/v1",
+        "generated_utc": payload.get("generated_utc"),
+        "fetched_utc": payload.get("fetched_utc"),
+        "primary_ok": bool(payload.get("primary_ok")),
+        "source_status": payload.get("source_status", {}),
+        "freshness": health,
+        "notes": [
+            "observed_utc is the provider's data timestamp, not the time Bazarnama fetched it",
+            "unknown means the provider did not supply a trustworthy timestamp",
+            "aging and stale thresholds vary by market and publication cadence",
+        ],
+    }
+    write_if_changed(SOURCE_HEALTH, dumps(health_doc))
+
+
 def main():
     try:
         primary = get_json(PRIMARY)
@@ -769,6 +877,9 @@ def main():
             i["stale"] = True
 
     items = payload["items"]
+    # Apply source-age checks before fallback selection. This is important: a provider
+    # can return HTTP 200 with an old quote, which must trigger a fresher backup.
+    annotate_freshness(items)
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
 
     def _missing(pid):   # NerkhAra stays the first source: backups are used only when it has no fresh value
@@ -781,9 +892,9 @@ def main():
     # backup crypto prices (USD) when the primary feed does not have them
     for key in [k for k in cg if k != "usdt_usd"]:
         if _missing(key):
-            row = {"id": key, "price": cg[key]["price"], "unit": "USD",
-                   "change_pct": cg[key].get("change_pct"), "updated_utc": now_iso(),
-                   "sources": 1, "backup_source": "coingecko", "source_name": "CoinGecko (جایگزین)"}
+            row = {"id": key, "family": "crypto", "price": cg[key]["price"], "unit": "USD",
+                   "change_pct": cg[key].get("change_pct"), "updated_utc": cg[key].get("source_updated_utc"), "source_updated_utc": cg[key].get("source_updated_utc"),
+                   "source_checked_utc": now_iso(), "sources": 1, "backup_source": "coingecko", "source_name": "CoinGecko (جایگزین)"}
             if key in by_id:
                 items[items.index(by_id[key])] = row
             else:
@@ -804,13 +915,15 @@ def main():
             continue
         if pid in stooq:
             e = stooq[pid]
-            row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": None,
-                   "updated_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True,
+            row = {"id": pid, "family": "energy" if pid in {"brent", "wti", "natural-gas"} else "metal", "price": e["price"], "unit": e["unit"], "change_pct": None,
+                   "updated_utc": e.get("source_updated_utc"), "source_updated_utc": e.get("source_updated_utc"),
+                   "source_checked_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True,
                    "source_name": "Stooq (جایگزین)"}
         elif pid in eia:
             e = eia[pid]
-            row = {"id": pid, "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
-                   "updated_utc": e["date"] + "T00:00:00Z", "sources": 1, "backup_source": "eia"}
+            row = {"id": pid, "family": "energy", "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
+                   "updated_utc": e["date"] + "T00:00:00Z", "source_updated_utc": e["date"] + "T00:00:00Z",
+                   "source_checked_utc": now_iso(), "sources": 1, "backup_source": "eia", "delayed": True}
         else:
             continue
         if cur:
@@ -854,10 +967,13 @@ def main():
                                  "stooq": sorted(stooq), "eia": sorted(eia),
                                  "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
+    freshness = annotate_freshness(items)
+    payload["freshness"] = {"counts": freshness["counts"], "checked_utc": freshness["checked_utc"], "policy_version": 1}
     history = update_history(items)
     fill_changes_from_own_history(items, history["series"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(dumps(payload), encoding="utf-8")
+    write_source_health(payload, freshness)
     write_api_files(payload, history)
     s = build_summary(payload)
     if s:
