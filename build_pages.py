@@ -5,7 +5,7 @@ Run:  python build_pages.py   (output is committed; no build step on the server)
 import re, json, html, pathlib, datetime
 
 ROOT = pathlib.Path(__file__).resolve().parent
-BASE = "https://bazarnama.github.io"
+BASE = "https://ghimatyar.ir"
 GLASS = (ROOT / "glass.css").read_text(encoding="utf-8")
 STYLE = re.search(r"<style>(.*?)</style>", (ROOT / "currency.html").read_text(encoding="utf-8"), re.S).group(1)
 
@@ -31,12 +31,12 @@ CATN = {"currency":"قیمت ارز","gold":"طلا و سکه","crypto":"ارز 
 HEAD_COMMON = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">'
 SW = "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script>"
 THEME = """const root=document.documentElement,btn=document.getElementById('themeBtn');
-function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textContent=t==='dark'?'☀':'☾';if(s){try{localStorage.setItem('bazarnama-theme',JSON.stringify(t))}catch(e){}}}
-let st=null;try{st=JSON.parse(localStorage.getItem('bazarnama-theme'))}catch(e){}
+function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textContent=t==='dark'?'☀':'☾';if(s){try{localStorage.setItem('ghimatyar-theme',JSON.stringify(t))}catch(e){}}}
+let st=null;try{st=JSON.parse(localStorage.getItem('ghimatyar-theme'))}catch(e){}
 ap(st||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),false);
 if(btn)btn.onclick=()=>ap(root.dataset.theme==='dark'?'light':'dark',true);"""
-FOOT = '<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/energy.html">نفت و انرژی</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره بازارنما و روش کار</a></footer>'
-TOP = '<header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>'
+FOOT = '<footer class="footer"><a href="/">صفحه اصلی قیمت‌یار</a> · <a href="/currency.html">قیمت ارز</a> · <a href="/gold.html">قیمت طلا و سکه</a> · <a href="/crypto.html">قیمت ارز دیجیتال</a> · <a href="/energy.html">نفت و انرژی</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره قیمت‌یار و روش کار</a></footer>'
+TOP = '<header class="top"><a class="brand" href="/">قیمت‌یار</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>'
 EXTRA_CSS = ".bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}"
 EXTRA_CSS += ".kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}"
 
@@ -49,8 +49,8 @@ def page(title, desc, path, body, ld, script=""):
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="{e(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{url}"><meta name="theme-color" content="#087e6e">
-<meta property="og:type" content="website"><meta property="og:locale" content="fa_IR"><meta property="og:site_name" content="بازارنما"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}">
-<meta property="og:image" content="https://bazarnama.github.io/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://bazarnama.github.io/og-image.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(desc)}">
+<meta property="og:type" content="website"><meta property="og:locale" content="fa_IR"><meta property="og:site_name" content="قیمت‌یار"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}">
+<meta property="og:image" content="https://ghimatyar.ir/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://ghimatyar.ir/og-image.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(title)}"><meta name="twitter:description" content="{e(desc)}">
 <title>{e(title)}</title>{HEAD_COMMON}
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 <style>{STYLE}{EXTRA_CSS}</style><style id="glass">{GLASS}</style></head><body><main class="wrap">
@@ -97,7 +97,7 @@ async function getPrices(early){
 }
 async function load(){
  try{
-  const data=await getPrices(d=>show(d,true));show(data,false);
+  $('status').textContent='در حال دریافت نرخ…';const data=await getPrices();show(data,false);
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 function show(data,early){
@@ -188,7 +188,7 @@ document.addEventListener('input',e=>{const t=e.target;if(t&&t.nodeName==='INPUT
 TR = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
 
 
-GOATCOUNTER = ''  # کد GoatCounter (مثلاً 'bazarnama')؛ خالی = بدون آمار
+GOATCOUNTER = ''  # کد GoatCounter (مثلاً 'ghimatyar')؛ خالی = بدون آمار
 
 
 def finalize(t):
@@ -400,23 +400,23 @@ CORE_IDS = ["usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "coin-
 def asset_page(a):
     id_, name, h1, cat, unit, blurb = a
     extra = CONTENT[id_]
-    title = f"{h1} | بازارنما"
-    desc = f"{h1}؛ نرخ بازار {name} به {unit} همراه با تغییر 24 ساعته، زمان آخرین داده، منبع قیمت و راهنمای عوامل مؤثر در بازارنما."
+    title = f"{h1} | قیمت‌یار"
+    desc = f"{h1}؛ نرخ بازار {name} به {unit} همراه با تغییر 24 ساعته، زمان آخرین داده، منبع قیمت و راهنمای عوامل مؤثر در قیمت‌یار."
     rel = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] == cat and o[0] != id_)
     others = "".join(f'<a href="/price-{o[0]}.html">{html.escape(o[1])}</a>' for o in A if o[3] != cat)
     faq = "".join(f'<article class="faq-item"><h3>{html.escape(q)}</h3><p>{html.escape(ans)}</p></article>' for q,ans in extra["faq"])
-    body = f"""<section class="hero"><div class="eyebrow">بازارنما | {CATN[cat]}</div><h1 style="display:flex;align-items:center;gap:12px">{icon(id_, 48)}<span>{html.escape(h1)}</span></h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
+    body = f"""<section class="hero"><div class="eyebrow">قیمت‌یار | {CATN[cat]}</div><h1 style="display:flex;align-items:center;gap:12px">{icon(id_, 48)}<span>{html.escape(h1)}</span></h1><p>{html.escape(blurb)}</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
 <section class="panel" aria-labelledby="live-title"><h2 id="live-title">نرخ لحظه‌ای {html.escape(name)}</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">{html.escape(unit)}</b></div><div><small>تغییر 24 ساعته</small><b id="chg">…</b></div><div><small>زمان داده</small><b id="time" style="font-size:15px">…</b></div></div><p><button class="smallbtn" type="button" id="shareBtn">اشتراک‌گذاری قیمت</button> <span id="shareMsg" class="muted" aria-live="polite"></span></p><p id="sourceInfo" class="muted" aria-live="polite">منبع و زمان آخرین به‌روزرسانی در حال دریافت…</p><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
 <section class="panel"><h2>نمودار تاریخی {html.escape(name)}</h2><p>نمودار، داده‌های تاریخی موجود برای این دارایی را نمایش می‌دهد؛ تعداد نقاط و بازه قابل مشاهده به تاریخچه‌ای بستگی دارد که منبع داده ارائه کرده است.</p><div class="toolbar" style="display:flex;flex-wrap:wrap;gap:7px;margin:10px 0"><button class="smallbtn active" type="button" data-range="7">7 روز</button><button class="smallbtn" type="button" data-range="30">30 روز</button><button class="smallbtn" type="button" data-range="90">3 ماه</button><button class="smallbtn" type="button" data-range="365">1 سال</button><button class="smallbtn" type="button" data-range="0">همه</button></div><canvas id="historyChart" aria-label="نمودار تاریخی قیمت {html.escape(name)}" style="display:block;width:100%;height:260px"></canvas><p id="chartHint" class="muted" aria-live="polite">در حال دریافت تاریخچه…</p></section>
-<section class="panel" aria-labelledby="ret-title"><h2 id="ret-title">اگر در گذشته خریده بودی چه می‌شد؟</h2><p>مقدار دارایی را وارد کن (مثلاً 1 {html.escape(QTY.get(id_,"واحد"))}) تا ببینی در هر بازه چقدر پول داده بودی و الان ارزشش چقدر است. بر پایهٔ تاریخچهٔ ثبت‌شده در بازارنما است و پیش‌بینی یا توصیهٔ مالی نیست.</p><label for="retAmount">مقدار ({html.escape(QTY.get(id_,"واحد"))})</label> <input id="retAmount" type="number" inputmode="decimal" min="0" step="any" value="1" style="padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);max-width:100%"><div class="kv" id="retGrid"><div><small>7 روز پیش</small><b data-ret="7">…</b></div><div><small>30 روز پیش</small><b data-ret="30">…</b></div><div><small>90 روز پیش</small><b data-ret="90">…</b></div><div><small>1 سال پیش</small><b data-ret="365">…</b></div></div><p id="retHint" class="muted" aria-live="polite"></p></section>
+<section class="panel" aria-labelledby="ret-title"><h2 id="ret-title">اگر در گذشته خریده بودی چه می‌شد؟</h2><p>مقدار دارایی را وارد کن (مثلاً 1 {html.escape(QTY.get(id_,"واحد"))}) تا ببینی در هر بازه چقدر پول داده بودی و الان ارزشش چقدر است. بر پایهٔ تاریخچهٔ ثبت‌شده در قیمت‌یار است و پیش‌بینی یا توصیهٔ مالی نیست.</p><label for="retAmount">مقدار ({html.escape(QTY.get(id_,"واحد"))})</label> <input id="retAmount" type="number" inputmode="decimal" min="0" step="any" value="1" style="padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);max-width:100%"><div class="kv" id="retGrid"><div><small>7 روز پیش</small><b data-ret="7">…</b></div><div><small>30 روز پیش</small><b data-ret="30">…</b></div><div><small>90 روز پیش</small><b data-ret="90">…</b></div><div><small>1 سال پیش</small><b data-ret="365">…</b></div></div><p id="retHint" class="muted" aria-live="polite"></p></section>
 <section class="panel"><h2>درباره قیمت {html.escape(name)}</h2><p>{html.escape(extra['overview'])}</p><h3>چه عواملی بر قیمت اثر می‌گذارند؟</h3><p>{html.escape(extra['drivers'])}</p><h3>چطور این نرخ را بخوانیم؟</h3><p>{html.escape(extra['reading'])}</p></section>
 <section class="panel"><h2>پرسش‌های متداول درباره {html.escape(name)}</h2>{faq}</section>
-<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div><p>برای آشنایی با منبع داده، زمان به‌روزرسانی و محدودیت‌های نرخ‌ها، صفحه <a href="/about.html">درباره بازارنما و روش کار</a> را بخوان. قیمت‌های نمایش‌داده‌شده برای اطلاع‌رسانی هستند و توصیه خرید یا فروش محسوب نمی‌شوند.</p></section>"""
+<section class="panel"><h2>قیمت‌های مرتبط</h2><div class="rel">{rel}</div><h3>سایر بازارها</h3><div class="rel">{others}</div><p>برای آشنایی با منبع داده، زمان به‌روزرسانی و محدودیت‌های نرخ‌ها، صفحه <a href="/about.html">درباره قیمت‌یار و روش کار</a> را بخوان. قیمت‌های نمایش‌داده‌شده برای اطلاع‌رسانی هستند و توصیه خرید یا فروش محسوب نمی‌شوند.</p></section>"""
     ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "WebPage", "@id": f"{BASE}/price-{id_}.html#webpage", "name": title, "url": f"{BASE}/price-{id_}.html", "inLanguage": "fa-IR", "description": desc,
-         "isPartOf": {"@type": "WebSite", "@id": BASE + "/#website", "name": "بازارنما", "url": BASE + "/"}},
+         "isPartOf": {"@type": "WebSite", "@id": BASE + "/#website", "name": "قیمت‌یار", "url": BASE + "/"}},
         {"@type": "BreadcrumbList", "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
+            {"@type": "ListItem", "position": 1, "name": "قیمت‌یار", "item": BASE + "/"},
             {"@type": "ListItem", "position": 2, "name": CATN[cat], "item": BASE + CAT[cat] if CAT[cat].startswith("/") and not CAT[cat].startswith("/#") else BASE + "/"},
             {"@type": "ListItem", "position": 3, "name": name, "item": f"{BASE}/price-{id_}.html"}]},
         {"@type": "FAQPage", "@id": f"{BASE}/price-{id_}.html#faq", "mainEntity": [
@@ -462,31 +462,31 @@ def list_page(path, title, h1, desc, cats):
     nav_all = ""
     if len(cats) > 1:
         nav_all = f'<div class="pnav">{nav}</div>'
-    body = (f'<section class="hero"><div class="eyebrow">بازارنما | لیست قیمت‌ها</div><h1>{html.escape(h1)}</h1><p>{html.escape(desc)}</p>'
+    body = (f'<section class="hero"><div class="eyebrow">قیمت‌یار | لیست قیمت‌ها</div><h1>{html.escape(h1)}</h1><p>{html.escape(desc)}</p>'
             f'{nav_all}<input id="q" type="search" placeholder="جستجوی نام دارایی…" aria-label="جستجو"><p class="muted" id="st" aria-live="polite"></p></section>{secs}')
     ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "CollectionPage", "@id": f"{BASE}{path}", "url": f"{BASE}{path}", "name": title, "description": desc, "inLanguage": "fa-IR",
-         "isPartOf": {"@type": "WebSite", "name": "بازارنما", "url": BASE + "/"}},
+         "isPartOf": {"@type": "WebSite", "name": "قیمت‌یار", "url": BASE + "/"}},
         {"@type": "BreadcrumbList", "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "بازارنما", "item": BASE + "/"},
+            {"@type": "ListItem", "position": 1, "name": "قیمت‌یار", "item": BASE + "/"},
             {"@type": "ListItem", "position": 2, "name": h1, "item": f"{BASE}{path}"}]}]}
     return page(title, desc, path, body, ld, LIST_JS).replace("</style><style id=\"glass\">", LIST_CSS + "</style><style id=\"glass\">", 1)
 
 
 def about():
-    title = "درباره بازارنما و روش جمع‌آوری قیمت‌ها"
-    desc = "بازارنما چیست، قیمت‌ها از کجا می‌آیند، هر چند وقت به‌روز می‌شوند و محدودیت‌های داده‌ها چیست."
-    body = """<section class="hero"><div class="eyebrow">بازارنما</div><h1>درباره بازارنما و روش کار</h1><p>بازارنما نمای ساده و سریعی از قیمت ارز، طلا، سکه، رمزارز و نفت است.</p></section>
-<section class="panel"><h2>قیمت‌ها از کجا می‌آیند؟</h2><p>قیمت‌ها از رابط داده <a href="https://nerkhara.com/en/api/" rel="noopener noreferrer">NerkhAra</a> گرفته می‌شوند که نرخ را از چند منبع گردآوری می‌کند. بازارنما خودش قیمت‌گذاری نمی‌کند؛ فقط نمایش می‌دهد.</p><p>برای دلار، یورو، پوند و درهم، بازارنما دادهٔ NerkhAra را با دادهٔ مستقل Iran Market Data بررسی می‌کند. نرخ مستقیم بازار آزاد برای یورو، پوند و درهم جایگزین تبدیل از دلار می‌شود؛ نرخ‌های دو منبع نیز از نظر اختلاف کنترل می‌شوند. Frankfurter فقط برای نرخ‌های مرجع جهانی و CoinGecko برای پشتیبان قیمت بیت‌کوین و اتریوم استفاده می‌شود، نه برای ساخت نرخ مستقل ارزهای بازار آزاد ایران.</p><h2>هر چند وقت به‌روز می‌شود؟</h2><p>فرایند خودکار GitHub Actions تقریباً هر 10 دقیقه داده‌ها را دریافت و ذخیره می‌کند؛ اجرای دقیق ممکن است گاهی دیرتر انجام شود. تاریخچهٔ روزانهٔ منبع و نقاط ساعتی بازارنما در مخزن نگه‌داری می‌شوند و با انتشارهای بعدی حذف نمی‌شوند. اگر منبع در دسترس نباشد، آخرین قیمت ذخیره‌شده با برچسب «قدیمی» نمایش داده می‌شود و به‌عنوان نرخ زنده معرفی نمی‌شود.</p><h2>زمان داده یعنی چه؟</h2><p>کنار هر قیمت، زمان انتشار داده توسط منبع و تعداد منابع نوشته می‌شود تا بتوانی تازگی عدد را بسنجی.</p><h2>اخبار</h2><p>فقط تیتر، نام منبع، تاریخ و پیوند خبرها از RSS رسانه‌های خبری نمایش داده می‌شود و متن کامل در وب‌سایت ناشر خوانده می‌شود.</p><h2>محدودیت‌ها و سلب مسئولیت</h2><p>قیمت‌ها برای آگاهی عمومی‌اند و تضمین‌کننده قیمت نهایی معامله نیستند. بازار آزاد ممکن است در لحظه با عدد نمایش‌داده‌شده تفاوت داشته باشد. اطلاعات این سایت توصیه سرمایه‌گذاری، خرید یا فروش نیست.</p><h2>هشدار قیمت</h2><p>هشدارهای قیمت در مرورگر خودت ذخیره می‌شوند و فقط وقتی کار می‌کنند که صفحه بازارنما باز باشد؛ اطلاعاتی از تو روی سرور ما نگه داشته نمی‌شود.</p></section>"""
+    title = "درباره قیمت‌یار و روش جمع‌آوری قیمت‌ها"
+    desc = "قیمت‌یار چیست، قیمت‌ها از کجا می‌آیند، هر چند وقت به‌روز می‌شوند و محدودیت‌های داده‌ها چیست."
+    body = """<section class="hero"><div class="eyebrow">قیمت‌یار</div><h1>درباره قیمت‌یار و روش کار</h1><p>قیمت‌یار نمای ساده و سریعی از قیمت ارز، طلا، سکه، رمزارز و نفت است.</p></section>
+<section class="panel"><h2>قیمت‌ها از کجا می‌آیند؟</h2><p>قیمت‌ها از رابط داده <a href="https://nerkhara.com/en/api/" rel="noopener noreferrer">NerkhAra</a> گرفته می‌شوند که نرخ را از چند منبع گردآوری می‌کند. قیمت‌یار خودش قیمت‌گذاری نمی‌کند؛ فقط نمایش می‌دهد.</p><p>برای دلار، یورو، پوند و درهم، قیمت‌یار دادهٔ NerkhAra را با دادهٔ مستقل Iran Market Data بررسی می‌کند. نرخ مستقیم بازار آزاد برای یورو، پوند و درهم جایگزین تبدیل از دلار می‌شود؛ نرخ‌های دو منبع نیز از نظر اختلاف کنترل می‌شوند. Frankfurter فقط برای نرخ‌های مرجع جهانی و CoinGecko برای پشتیبان قیمت بیت‌کوین و اتریوم استفاده می‌شود، نه برای ساخت نرخ مستقل ارزهای بازار آزاد ایران.</p><h2>هر چند وقت به‌روز می‌شود؟</h2><p>فرایند خودکار GitHub Actions تقریباً هر 10 دقیقه داده‌ها را دریافت و ذخیره می‌کند؛ اجرای دقیق ممکن است گاهی دیرتر انجام شود. تاریخچهٔ روزانهٔ منبع و نقاط ساعتی قیمت‌یار در مخزن نگه‌داری می‌شوند و با انتشارهای بعدی حذف نمی‌شوند. اگر منبع در دسترس نباشد، آخرین قیمت ذخیره‌شده با برچسب «قدیمی» نمایش داده می‌شود و به‌عنوان نرخ زنده معرفی نمی‌شود.</p><h2>زمان داده یعنی چه؟</h2><p>کنار هر قیمت، زمان انتشار داده توسط منبع و تعداد منابع نوشته می‌شود تا بتوانی تازگی عدد را بسنجی.</p><h2>اخبار</h2><p>فقط تیتر، نام منبع، تاریخ و پیوند خبرها از RSS رسانه‌های خبری نمایش داده می‌شود و متن کامل در وب‌سایت ناشر خوانده می‌شود.</p><h2>محدودیت‌ها و سلب مسئولیت</h2><p>قیمت‌ها برای آگاهی عمومی‌اند و تضمین‌کننده قیمت نهایی معامله نیستند. بازار آزاد ممکن است در لحظه با عدد نمایش‌داده‌شده تفاوت داشته باشد. اطلاعات این سایت توصیه سرمایه‌گذاری، خرید یا فروش نیست.</p><h2>هشدار قیمت</h2><p>هشدارهای قیمت در مرورگر خودت ذخیره می‌شوند و فقط وقتی کار می‌کنند که صفحه قیمت‌یار باز باشد؛ اطلاعاتی از تو روی سرور ما نگه داشته نمی‌شود.</p></section>"""
     ld = {"@context": "https://schema.org", "@type": "AboutPage", "name": title, "url": BASE + "/about.html", "inLanguage": "fa-IR", "description": desc}
-    return page(title + " | بازارنما", desc, "/about.html", body, ld)
+    return page(title + " | قیمت‌یار", desc, "/about.html", body, ld)
 
 
 def main():
     for a in A:
         (ROOT / f"price-{a[0]}.html").write_text(finalize(asset_page(a)), encoding="utf-8")
     (ROOT / "about.html").write_text(finalize(about()), encoding="utf-8")
-    (ROOT / "prices.html").write_text(finalize(list_page("/prices.html", "لیست قیمت‌ها | همه قیمت‌های بازارنما", "همهٔ قیمت‌ها",
+    (ROOT / "prices.html").write_text(finalize(list_page("/prices.html", "لیست قیمت‌ها | همه قیمت‌های قیمت‌یار", "همهٔ قیمت‌ها",
         "قیمت لحظه‌ای ارز، طلا، سکه، نقره، فلزات گرانبها، نفت، گاز و ارزهای دیجیتال در یک صفحه؛ با دسترسی به صفحهٔ جداگانهٔ هر دارایی.",
         ["currency", "gold", "crypto", "energy"])), encoding="utf-8")
     (ROOT / "energy.html").write_text(finalize(list_page("/energy.html", "قیمت نفت و انرژی | برنت، WTI، سبد اوپک و گاز طبیعی", "قیمت نفت و انرژی",

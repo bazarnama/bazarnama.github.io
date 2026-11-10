@@ -64,7 +64,7 @@ NAMES = {
 
 def get_json(url):
     """Fetch JSON with one bounded retry for transient network/rate-limit failures."""
-    req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "bazarnama-updater"})
+    req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "ghimatyar-updater"})
     for attempt in range(2):
         try:
             with urllib.request.urlopen(req, timeout=15) as r:
@@ -161,7 +161,7 @@ def fetch_stooq(ids=None):
         for sym in symbols:
             try:
                 req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv",
-                                             headers={"User-Agent": "bazarnama-updater"})
+                                             headers={"User-Agent": "ghimatyar-updater"})
                 with urllib.request.urlopen(req, timeout=20) as r:
                     lines = r.read().decode("utf-8", "replace").strip().splitlines()
                 if len(lines) < 2:
@@ -292,7 +292,7 @@ def fetch_arzhaam_aed():
     try:
         req = urllib.request.Request(url, headers={
             "Accept": "text/html,application/xhtml+xml",
-            "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
+            "User-Agent": "Mozilla/5.0 (compatible; GhimatyarPriceBot/1.0)",
         })
         with urllib.request.urlopen(req, timeout=20) as response:
             page = response.read().decode("utf-8", "replace")
@@ -659,14 +659,14 @@ def write_api_files(payload, history):
     api = ROOT / "api" / "v1"
     (api / "history").mkdir(parents=True, exist_ok=True)
     items = payload.get("items", [])
-    write_if_changed(api / "latest.json", dumps({"api": "bazarnama/v1", "generated_utc": payload.get("generated_utc"),
+    write_if_changed(api / "latest.json", dumps({"api": "ghimatyar/v1", "generated_utc": payload.get("generated_utc"),
                                                   "fetched_utc": payload.get("fetched_utc"), "freshness": payload.get("freshness"), "items": items}))
     health_path = ROOT / "data" / "source-health.json"
     if health_path.exists():
         write_if_changed(api / "source-health.json", health_path.read_text(encoding="utf-8"))
     series = history.get("series", {})
     write_if_changed(api / "index.json", dumps({
-        "api": "bazarnama/v1",
+        "api": "ghimatyar/v1",
         "latest": "/api/v1/latest.json",
         "history_pattern": "/api/v1/history/{asset_id}.json",
         "assets": sorted(set([x.get("id") for x in items if x.get("id")])),
@@ -675,7 +675,7 @@ def write_api_files(payload, history):
     units = {x.get("id"): x.get("unit") for x in items}
     for pid, points in series.items():
         last = points[-1][0] if points else None
-        obj = {"api": "bazarnama/v1", "id": pid, "unit": units.get(pid),
+        obj = {"api": "ghimatyar/v1", "id": pid, "unit": units.get(pid),
                "updated_utc": datetime.datetime.fromtimestamp(last, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if last else None,
                "points": [{"timestamp": p[0], "price": p[1]} for p in points]}
         write_if_changed(api / "history" / f"{pid}.json", dumps(obj))
@@ -823,14 +823,14 @@ def annotate_freshness(items, checked_at=None):
 
 def write_source_health(payload, health):
     health_doc = {
-        "schema": "bazarnama/source-health/v1",
+        "schema": "ghimatyar/source-health/v1",
         "generated_utc": payload.get("generated_utc"),
         "fetched_utc": payload.get("fetched_utc"),
         "primary_ok": bool(payload.get("primary_ok")),
         "source_status": payload.get("source_status", {}),
         "freshness": health,
         "notes": [
-            "observed_utc is the provider's data timestamp, not the time Bazarnama fetched it",
+            "observed_utc is the provider's data timestamp, not the time Ghimatyar fetched it",
             "unknown means the provider did not supply a trustworthy timestamp",
             "aging and stale thresholds vary by market and publication cadence",
         ],

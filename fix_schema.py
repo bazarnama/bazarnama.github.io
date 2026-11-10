@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-BASE = "https://bazarnama.github.io"
+BASE = "https://ghimatyar.ir"
 
 def update_schema(filename, transform):
     path = ROOT / filename
@@ -47,7 +47,7 @@ def breadcrumb(label, url):
             {
                 "@type": "ListItem",
                 "position": 1,
-                "name": "بازارنما",
+                "name": "قیمت‌یار",
                 "item": BASE + "/"
             },
             {
@@ -77,7 +77,7 @@ def about_schema(data):
 
     page["isPartOf"] = {
         "@type": "WebSite",
-        "name": "بازارنما",
+        "name": "قیمت‌یار",
         "url": BASE + "/"
     }
 
@@ -85,7 +85,7 @@ def about_schema(data):
         "@context": "https://schema.org",
         "@graph": [
             page,
-            breadcrumb("درباره بازارنما", BASE + "/about.html")
+            breadcrumb("درباره قیمت‌یار", BASE + "/about.html")
         ]
     }
 
