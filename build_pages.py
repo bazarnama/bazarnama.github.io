@@ -64,7 +64,7 @@ def page(title, desc, path, body, ld, script=""):
 ASSET_JS = """const ID=__ID__,UNITS={IRT:'تومان',IRR:'ریال',USD:'دلار',USDT:'تتر'};
 const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFractionDigits:d??(v<10?4:v<1000?2:0)}).format(v);
 const $=id=>document.getElementById(id);
-function tl(v){if(!v)return 'نامشخص';const s=String(v),hasZone=/[zZ]|[+-]\\d{2}:?\\d{2}$/.test(s),d=new Date(typeof v==='number'?(v>1e12?v:v*1000):(hasZone?s:s+'Z'));return isNaN(d)?s:d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
+function tl(v){if(!v)return 'نامشخص';const s=String(v),hasZone=/[zZ]|[+-]\\d{2}:?\\d{2}$/.test(s),d=new Date(typeof v==='number'?(v>1e12?v:v*1000):(hasZone?s:s+'Z'));return isNaN(d)?s:d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\\s*/,' ساعت ');}
 async function mergeDirectCurrencies(data){
  if(!data||!Array.isArray(data.items))return data;
  const symbols={usd:'USD_IRR_FREE',eur:'EUR_IRR_FREE',gbp:'GBP_IRR_FREE',aed:'AED_IRR_FREE'};
@@ -105,7 +105,7 @@ function show(data,early){
   const x=(data.items||[]).find(i=>i&&i.id===ID);
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
-  if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent=(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
+  if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent='\\u2066'+(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪\\u2069';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||(x.method==='derived'?'محاسبه‌شده از نرخ دلار':'NerkhAra');
   $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
@@ -122,7 +122,7 @@ function renderReturns(){
   if(!ref||!LAST||ALLPTS[0].t>target+86400){el.textContent='داده کافی نیست';el.className='';return;}
   const pct=(LAST-ref.v)/ref.v*100,cost=amt*ref.v,val=amt*LAST;any=true;
   el.className=pct>0?'up':pct<0?'down':'';
-  el.innerHTML=(pct>0?'+':'')+fmt(pct,1)+'٪<span style="display:block;font-size:13px;font-weight:400;color:var(--muted)">خرید: '+fmt(cost,0)+' '+u+'<br>الان: '+fmt(val,0)+' '+u+'</span>';
+  el.innerHTML='\\u2066'+(pct>0?'+':'')+fmt(pct,1)+'٪\\u2069'+'<span style="display:block;font-size:13px;font-weight:400;color:var(--muted)">خرید: '+fmt(cost,0)+' '+u+'<br>الان: '+fmt(val,0)+' '+u+'</span>';
  });
  hint.textContent=any?'قیمت‌ها به واحد '+u+' است؛ کارمزد و تفاوت قیمت خرید و فروش لحاظ نشده است.':'';
 }
@@ -170,7 +170,7 @@ function drawHistory(points){
  ctx.strokeStyle='#087e6e';ctx.lineWidth=2.3;ctx.lineJoin='round';ctx.stroke();
  ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
  const delta=(points[points.length-1].v/points[0].v-1)*100;
- $('chartHint').textContent=fmt(points.length)+' نقطه تاریخی · تغییر بازه: '+(delta>0?'+':'')+fmt(delta,2)+'٪';
+ $('chartHint').textContent=fmt(points.length)+' نقطه تاریخی · تغییر بازه: '+'\\u2066'+(delta>0?'+':'')+fmt(delta,2)+'٪\\u2069';
 }
 document.querySelectorAll('[data-range]').forEach(btn=>btn.addEventListener('click',()=>{rangeDays=Number(btn.dataset.range);document.querySelectorAll('[data-range]').forEach(b=>b.classList.toggle('active',b===btn));loadHistory();}));
 load();loadHistory();setInterval(load,5*60*1000);
@@ -438,10 +438,10 @@ const U={IRT:'تومان',USD:'دلار',USDT:'تتر'};
 fetch('/data/prices.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
  const m=new Map((d.items||[]).map(i=>[i.id,i]));let n=0;
  document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price);n++;
-  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent=(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
+  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent='\\u2066'+(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪\\u2069';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
   else el.textContent='ناموجود';});
  const st=document.getElementById('st'),t=d.fetched_utc||d.generated_utc;
- if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
+ if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\\s*/,' ساعت ');}
 }).catch(()=>{document.querySelectorAll('[data-p]').forEach(el=>el.textContent='ناموجود');});
 const q=document.getElementById('q');
 if(q)q.addEventListener('input',()=>{const v=q.value.trim();document.querySelectorAll('.price').forEach(r=>{r.hidden=!!v&&!r.dataset.n.includes(v);});

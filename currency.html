@@ -556,7 +556,7 @@ function timeLabel(value){
     dateStyle:'short',
     timeStyle:'short',
     timeZone:'Asia/Tehran'
-   });
+   }).replace(/[,،]\s*/,' ساعت ');
 }
 
 async function getPrices(){

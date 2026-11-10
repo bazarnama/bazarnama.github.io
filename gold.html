@@ -365,7 +365,7 @@ function timeLabel(value){
  const d=new Date(raw.endsWith('Z')?raw:raw+'Z');
  return Number.isNaN(d.getTime())
   ?'زمان داده: '+raw
-  :'زمان داده: '+d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});
+  :'زمان داده: '+d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\s*/,' ساعت ');
 }
 
 async function getPrices(){

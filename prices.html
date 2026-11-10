@@ -352,10 +352,10 @@ const U={IRT:'تومان',USD:'دلار',USDT:'تتر'};
 fetch('/data/prices.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
  const m=new Map((d.items||[]).map(i=>[i.id,i]));let n=0;
  document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price);n++;
-  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent=(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
+  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent='\u2066'+(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪\u2069';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
   else el.textContent='ناموجود';});
  const st=document.getElementById('st'),t=d.fetched_utc||d.generated_utc;
- if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'});}
+ if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\s*/,' ساعت ');}
 }).catch(()=>{document.querySelectorAll('[data-p]').forEach(el=>el.textContent='ناموجود');});
 const q=document.getElementById('q');
 if(q)q.addEventListener('input',()=>{const v=q.value.trim();document.querySelectorAll('.price').forEach(r=>{r.hidden=!!v&&!r.dataset.n.includes(v);});

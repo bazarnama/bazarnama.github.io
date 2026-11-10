@@ -79,6 +79,7 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag{border-radius:999px!important}
 .field input,.field select{padding-inline:16px!important}
 .result{border-style:solid!important;border-radius:20px!important}
+.result small{display:block;margin-top:4px}
 .chip.active{background:linear-gradient(135deg,rgba(32,190,160,.75),rgba(8,126,110,.75))!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
 
 /* nested items inside a glass panel: lighter, no extra blur */
@@ -358,7 +359,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   function dateLabel(value) {
     if (!value) return 'زمان نامشخص';
     const d=new Date(value.endsWith && !value.endsWith('Z') ? value+'Z' : value);
-    return Number.isNaN(d.getTime()) ? safeText(value) : d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short'});
+    return Number.isNaN(d.getTime()) ? safeText(value) : d.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\s*/,' ساعت ');
   }
   function changeMarkup(value, basis) {
     if (typeof value !== 'number' || !Number.isFinite(value)) return '<span class="change neutral" title="منبع، تغییر معتبر یا تاریخچه کافی ارائه نکرده است">تغییر نامشخص</span>';
@@ -663,7 +664,8 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     return arr.map(row=>{
       if(Array.isArray(row)) return {date:row[0],price:Number(row[1])};
       return {date:row.date||row.day||row.timestamp||row.time||row.as_of,price:Number(row.price??row.value??row.close)};
-    }).filter(x=>x.date && Number.isFinite(x.price)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    }).map(x=>{ if(typeof x.date==='number'||/^\d{9,13}$/.test(String(x.date))){const n=Number(x.date);x.date=new Date(n>1e12?n:n*1000).toISOString();} return x; })
+      .filter(x=>x.date && Number.isFinite(x.price)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   }
   function drawChart(points, hourly) {
     const canvas=$('priceChart'); const rect=canvas.getBoundingClientRect(); const dpr=Math.max(1,window.devicePixelRatio||1);
@@ -680,7 +682,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,brand+'44');grad.addColorStop(1,brand+'00');
     ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(coords[coords.length-1].x,h-pad.b);ctx.lineTo(coords[0].x,h-pad.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
     ctx.beginPath();coords.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle=brand;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.stroke();
-    ctx.fillStyle=muted;ctx.textAlign='left';const lbl=d=>hourly?new Date(d).toLocaleString('fa-IR-u-nu-latn',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tehran'}):String(d).slice(0,10);ctx.fillText(lbl(points[0].date),pad.l,h-7);ctx.textAlign='right';ctx.fillText(lbl(points[points.length-1].date),w-pad.r,h-7);
+    ctx.fillStyle=muted;ctx.textAlign='left';const lbl=d=>hourly?new Date(d).toLocaleString('fa-IR-u-nu-latn',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tehran'}):new Date(d).toLocaleDateString('fa-IR-u-nu-latn',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Tehran'});ctx.fillText(lbl(points[0].date),pad.l,h-7);ctx.textAlign='right';ctx.fillText(lbl(points[points.length-1].date),w-pad.r,h-7);
     const delta=((values[values.length-1]-values[0])/values[0])*100;
     $('chartHint').textContent=`${fmt(points.length)} نقطه تاریخی · تغییر در بازه انتخابی: ${delta>0?'+':''}${fmt(delta,2)}٪ · تاریخچه ${hourly?'ساعتی (ساخته‌شده توسط بازارنما)':'روزانه'}`;
   }
