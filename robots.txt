@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ghimatyar.ir/sitemap.xml
+Sitemap: https://bazarnama.github.io/sitemap.xml
