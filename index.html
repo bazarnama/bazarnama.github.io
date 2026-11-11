@@ -157,6 +157,32 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 #marketStatus{font-size:11px!important;line-height:1.5!important;margin:4px 0!important}
 #filters{margin-top:6px!important}
 }
+
+/* Mobile top area: keep primary navigation reachable and prevent the hero buttons
+   from pushing the market overview too far below the fold. */
+@media(max-width:700px){
+  .topinner{display:flex;flex-wrap:wrap;min-height:0!important;gap:5px 10px!important;padding-top:8px;padding-bottom:7px}
+  .brand{font-size:18px!important;gap:8px!important}
+  .brandmark{width:34px;height:34px;border-radius:11px}
+  #themeBtn{margin-inline-start:auto;min-width:38px;padding:6px 9px}
+  .nav{display:flex!important;order:3;flex:0 0 calc(100% + 26px);width:calc(100% + 26px);margin-inline:-13px;padding:5px 13px 7px;gap:7px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;border-top:1px solid var(--line);font-size:12px}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{flex:0 0 auto;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2)}
+  .hero:has(.heroBox){padding:7px 0 4px!important}
+  .heroBox{padding:13px 14px!important;border-radius:17px!important}
+  .hero .heroBox h1{font-size:20px!important;line-height:1.5!important}
+  .heroBox .heroContent>p{font-size:12px!important;line-height:1.7!important}
+  .heroBox .heroActions{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding:2px 1px 5px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .heroBox .heroActions::-webkit-scrollbar{display:none}
+  .heroBox .heroActions .btn{flex:0 0 auto!important}
+}
+@media(max-width:380px){
+  .wrap{padding-inline:11px}
+  .brand{font-size:17px!important}
+  .hero .heroBox h1{font-size:18px!important}
+  .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}
+}
+
 </style></head>
 <body>
   <header class="topbar">
