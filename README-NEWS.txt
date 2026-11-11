@@ -19,7 +19,7 @@ GitHub Pages به‌تنهایی امکان اجرای زمان‌بندی‌ش�
 
 ---
 بخش قیمت‌ها (جدید):
-- scripts/update_prices.py + .github/workflows/update-prices.yml: ذخیره قیمت‌ها در data/prices.json هر ۱۰ دقیقه
+- scripts/update_prices.py + .github/workflows/update-prices.yml: ذخیره قیمت‌ها در data/prices.json هر ۵ دقیقه
 - scripts/build_pages.py: ساخت صفحه جدا برای هر دارایی (price-*.html)، about.html و sitemap.xml
   (بعد از هر تغییر در لیست دارایی‌ها اجرا شود: python scripts/build_pages.py)
 - manifest.webmanifest و sw.js: نصب به‌صورت اپلیکیشن (PWA)
