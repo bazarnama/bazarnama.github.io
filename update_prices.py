@@ -581,7 +581,12 @@ def fill_changes_from_own_history(items, series):
 
 
 def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
+    """Prefer independently observed Iranian market quotes for EUR/GBP/AED.
+
+    The primary feed can label a dollar-cross calculation as fresh. Freshness alone
+    does not make that value a direct market quote, so the three currencies below
+    must use a validated direct Iranian quote whenever one is available.
+    """
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
@@ -599,9 +604,11 @@ def select_currency_quotes(items, secondary):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
-        # A fresh direct Iranian quote may replace a derived/missing primary value.
-        # It must never replace a fresh primary quote; stale validation data is rejected above.
-        if a_ok and (not p_ok):
+        # EUR/GBP/AED are required to be direct Iranian market observations.
+        # Always prefer the independent direct quote for these currencies, even when
+        # the primary provider labels a calculated cross-rate as fresh.
+        force_direct = pid in {"eur", "gbp", "aed"}
+        if a_ok and (force_direct or not p_ok):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
                            "updated_utc": chosen.get("source_updated_utc"),
@@ -613,7 +620,7 @@ def select_currency_quotes(items, secondary):
             else:
                 items.append(chosen)
             by_id[pid] = chosen
-        elif p_ok:
+        elif p_ok and pid not in {"eur", "gbp", "aed"}:
             primary["source_name"] = primary.get("source_name") or "NerkhAra"
             primary["source_updated_utc"] = primary.get("source_updated_utc") or primary.get("updated_utc") or primary.get("as_of")
             primary["source_checked_utc"] = now_iso()
