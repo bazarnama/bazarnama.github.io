@@ -8,8 +8,8 @@ Files written (all optional for the browser — it falls back to live APIs):
 
 Sources
   1) NerkhAra latest.json          - Iranian market prices (primary)
-  2) Frankfurter (ECB)             - global FX cross rates per 1 USD (used for pound, euro,
-                                     lira, yuan ... when the market feed has no value)
+  2) Frankfurter (ECB)             - global FX cross rates per 1 USD for reference only;
+                                     never converted into local Iranian market quotes
   3) CoinGecko (public endpoint)   - backup BTC / ETH / USDT prices in USD
   4) Stooq CSV (no key)            - delayed futures prices for Brent / WTI
   5) EIA Open Data (US gov, needs a free key in env EIA_API_KEY) - external reference for
@@ -435,6 +435,8 @@ def fetch_nerkhsanj():
     The file carries a Jalali date and a Tehran clock time. Fresh quotes are accepted for up to
     72 h when the market is closed and 3 h while open. Older observations are retained as stale
     diagnostics for up to seven days, but are never selected or published as live prices.
+    A fresh quote is a direct Iranian market observation and may fill a missing/derived primary
+    EUR/GBP/AED quote; it is never allowed to replace a fresh primary market quote.
     """
     try:
         d = get_json(NERKHSANJ)
@@ -465,9 +467,9 @@ def fetch_nerkhsanj():
                 change = float(change) if change is not None else None
             except (TypeError, ValueError):
                 change = None
-            out[pid] = {"price": price, "unit": "IRT", "source_name": "NerkhSanj (validation only)",
+            out[pid] = {"price": price, "unit": "IRT", "source_name": "NerkhSanj",
                         "source_updated_utc": datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                        "source_checked_utc": now_iso(), "method": "validation-only", "change_pct": change,
+                        "source_checked_utc": now_iso(), "method": "direct", "change_pct": change,
                         "stale": age > (72 if closed else 3) * 3600, "market_closed": closed}
         return out
     except Exception as e:  # noqa: BLE001
@@ -480,7 +482,8 @@ def choose_independent(candidates):
     Returns (quote or None). Two or more quotes are cross-checked: the middle value defines
     'agreement'; a quote further than DISCREPANCY_PCT from it is an outlier. With exactly two quotes
     that disagree the first (preferred) source is kept and the discrepancy is reported."""
-    cands = [c for c in candidates if c and isinstance(c.get("price"), (int, float)) and c["price"] > 0]
+    cands = [c for c in candidates if c and not c.get("stale") and
+             isinstance(c.get("price"), (int, float)) and c["price"] > 0]
     if not cands:
         return None
     prices = [c["price"] for c in cands]
@@ -586,7 +589,8 @@ def select_currency_quotes(items, secondary):
         alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
                     not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
-        a_ok = bool(alt and isinstance(alt.get("price"), (int, float)))
+        a_ok = bool(alt and isinstance(alt.get("price"), (int, float)) and
+                    not alt.get("stale") and alt.get("method") != "derived")
         discrepancy = None
         if p_ok and a_ok and primary.get("price"):
             discrepancy = abs(float(primary["price"]) - float(alt["price"])) / float(primary["price"]) * 100
@@ -595,10 +599,9 @@ def select_currency_quotes(items, secondary):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
-        # NerkhSanj is validation-only; it must never be promoted to a market quote.
-        alt_validation_only = bool(alt and (alt.get("method") == "validation-only" or "nerkhsanj" in str(alt.get("source_name", "")).lower()))
-        # Direct independent quote is preferred over a derived cross-rate.
-        if a_ok and (not p_ok) and not alt_validation_only:
+        # A fresh direct Iranian quote may replace a derived/missing primary value.
+        # It must never replace a fresh primary quote; stale validation data is rejected above.
+        if a_ok and (not p_ok):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
                            "updated_utc": chosen.get("source_updated_utc"),
@@ -624,7 +627,7 @@ def select_currency_quotes(items, secondary):
                 primary["validation_warning"] = discrepancy is not None and discrepancy > DISCREPANCY_PCT
                 primary["discrepancy_warning"] = primary["validation_warning"]
         elif primary and (primary.get("derived") or primary.get("method") == "derived"):
-            # A validation-only feed must not be promoted to a quote; remove the derived value.
+            # No fresh direct backup exists; remove the derived value instead of publishing an estimate.
             items.remove(primary)
         elif primary:
             primary["stale"] = True
@@ -1029,21 +1032,6 @@ def main():
         payload["fx_usd"] = fx
         payload["fx_date"] = fx_date
 
-    # Fill currencies the market feed lacks from USD market price x global FX (flagged derived).
-    usd = by_id.get("usd")
-    if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and fx:
-        for pid, code in (("eur", "EUR"), ("gbp", "GBP")):
-            cur = by_id.get(pid)
-            has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
-            per = fx.get(code)
-            if not has and per:
-                row = {"id": pid, "price": round(usd["price"] / per), "unit": usd.get("unit", "IRT"),
-                       "change_pct": None, "updated_utc": usd.get("updated_utc"), "sources": 0,
-                       "derived": True, "derived_from": "usd x fx"}
-                if cur:
-                    items[items.index(cur)] = row
-                else:
-                    items.append(row)
     if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and "usdt" not in {i.get("id") for i in items if isinstance(i.get("price"), (int, float))}:
         items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})

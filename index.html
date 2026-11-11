@@ -944,7 +944,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
   renderFilters();renderAssets();refreshMarket();fetchNews();loadChart();loadSummary();
   // The source rebuilds its feed about every ten minutes; refresh at that cadence.
-  // Prices come from a static file refreshed every ~5 minutes, so polling is cheap.
+  // Prices come from a static file refreshed every ~10 minutes, so polling is cheap.
   setInterval(refreshMarket,5*60*1000);
   setInterval(loadSummary,10*60*1000);
   setInterval(fetchNews,30*60*1000);

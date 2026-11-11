@@ -31,15 +31,32 @@ class DirectMarketSourceTests(unittest.TestCase):
         self.assertEqual(removed, ["eur"])
         self.assertEqual([x["id"] for x in items], ["usd"])
 
-    def test_estimate_only_validation_feed_does_not_replace_derived_price(self):
+    def test_independent_source_selection_ignores_stale_quotes(self):
+        chosen = module.choose_independent([
+            {"price": 300000, "source_name": "stale", "stale": True},
+            {"price": 301000, "source_name": "fresh", "stale": False},
+        ])
+        self.assertEqual(chosen["source_name"], "fresh")
+
+    def test_fresh_direct_nerkhsanj_quote_replaces_derived_primary(self):
         items = [{"id": "eur", "price": 120, "method": "derived", "unit": "IRT"}]
-        validation = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
-                              "source_name": "NerkhSanj", "source_updated_utc": "2026-11-09T13:40:00Z"}}
-        module.select_currency_quotes(items, validation)
+        direct = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
+                          "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z",
+                          "stale": False}}
+        module.select_currency_quotes(items, direct)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["price"], 305000)
+        self.assertEqual(items[0]["source_selection"], "secondary-direct")
+
+    def test_stale_direct_backup_does_not_replace_derived_primary(self):
+        items = [{"id": "eur", "price": 120, "method": "derived", "unit": "IRT"}]
+        stale = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
+                          "source_name": "NerkhSanj", "stale": True}}
+        module.select_currency_quotes(items, stale)
         self.assertEqual(items, [])
 
 
-    def test_newer_validation_feed_does_not_replace_primary(self):
+    def test_newer_direct_backup_does_not_replace_fresh_primary(self):
         items = [{"id": "usd", "price": 263000, "method": "average", "unit": "IRT",
                   "source_updated_utc": "2026-11-09T13:30:00Z", "source_name": "NerkhAra"}]
         validation = {"usd": {"price": 263500, "unit": "IRT", "method": "direct",
@@ -74,7 +91,7 @@ class DirectMarketSourceTests(unittest.TestCase):
         self.assertAlmostEqual(result["brent-spot"]["change_pct"], 2.2222, places=3)
         self.assertEqual(len(result["brent-spot"]["_history_points"]), 2)
 
-    def test_nerkhsanj_validation_quotes_keep_provider_timestamp_and_toman_unit(self):
+    def test_nerkhsanj_direct_quotes_keep_provider_timestamp_and_toman_unit(self):
         payload = {
             "date": "1405/08/18", "time": "17:10",
             "rates": {"dollar": 263900, "euro": 305000, "pound": 350000, "aed": 71800, "tether": 264100, "yuan": 39500},
@@ -82,9 +99,9 @@ class DirectMarketSourceTests(unittest.TestCase):
         }
         with patch.object(module, "get_json", return_value=payload):
             result = module.fetch_nerkhsanj()
-        self.assertEqual(result["usd"]["source_name"], "NerkhSanj (validation only)")
+        self.assertEqual(result["usd"]["source_name"], "NerkhSanj")
         self.assertEqual(result["usd"]["unit"], "IRT")
-        self.assertEqual(result["usd"]["method"], "validation-only")
+        self.assertEqual(result["usd"]["method"], "direct")
         self.assertEqual(result["usd"]["change_pct"], 0.2)
         self.assertEqual(result["cny"]["price"], 39500)
         self.assertTrue(result["usd"]["source_updated_utc"].endswith("Z"))
