@@ -26,9 +26,8 @@ SITE_ASSETS = {"usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "co
                "gold-24k", "gold-mesghal", "coin-bahar-azadi", "coin-gram", "silver-999", "xag", "xpt", "xpd", "paxg",
                "natural-gas", "opec-basket", "brent-spot", "wti-spot",
                "sol", "xrp", "bnb", "doge", "ltc", "trx", "ada", "ton", "bch", "dot"}
-# NerkhAra is the primary source for USD/EUR/GBP/AED. Arzhaam is the ONLY
-# fallback for those four currencies. NerkhSanj is reserved for extra currencies
-# (CNY/TRY/CAD/AUD/CHF/SAR) and direct USDT; it must not replace these four quotes.
+# Independent Iranian free-market quotes (never computed from the dollar). Used as a second source for
+# usd/eur/gbp/aed and as the only source for the extra currencies below (shown on the currency page only).
 NERKHSANJ = "https://nerkh.jahankhahan.shop/data/live.json"
 NERKHSANJ_IDS = {"dollar": "usd", "euro": "eur", "pound": "gbp", "aed": "aed", "yuan": "cny", "lira": "try",
                  "cad": "cad", "aud": "aud", "chf": "chf", "sar": "sar", "tether": "usdt"}
@@ -362,71 +361,54 @@ def jalali_to_gregorian(jy, jm, jd):
     return datetime.date(gy, gm, gd)
 
 
-def fetch_arzhaam_currencies():
-    """Fetch direct USD/EUR/GBP/AED quotes from Arzhaam as NerkhAra's fallback.
+def fetch_arzhaam_aed():
+    """Read the publicly displayed AED market quote and its source timestamp."""
+    url = "https://arzhaam.ir/rates/aed"
+    try:
+        req = urllib.request.Request(url, headers={
+            "Accept": "text/html,application/xhtml+xml",
+            "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
+        })
+        with urllib.request.urlopen(req, timeout=20) as response:
+            page = response.read().decode("utf-8", "replace")
+        page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
+        visible = html.unescape(re.sub(r"<[^>]+>", " ", page))
+        visible = re.sub(r"\s+", " ", visible)
+        digits = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+        visible = visible.translate(digits).replace("٬", ",").replace("٫", ".")
 
-    NerkhAra is always primary. Arzhaam is the only fallback for these four
-    currency IDs; NerkhSanj and other feeds are deliberately excluded.
-    Each page is parsed independently so one failure never blocks the others.
-    """
-    urls = {pid: f"https://arzhaam.ir/rates/{pid}" for pid in DIRECT_CURRENCY_IDS}
-    months = {"فروردین": 1, "اردیبهشت": 2, "خرداد": 3, "تیر": 4, "مرداد": 5,
-              "شهریور": 6, "مهر": 7, "آبان": 8, "آذر": 9, "دی": 10,
-              "بهمن": 11, "اسفند": 12}
-    digit_map = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
-    out = {}
+        # The first visible price is the current AED quote, in toman.
+        price_match = re.search(r"([0-9][0-9,]*[0-9]|[0-9]+)\s*تومان", visible)
+        time_match = re.search(
+            r"آخرین\s*به[\u200c ]?روزرسانی\s*[:：]?\s*(\d{1,2})\s+([آ-ی]+)\s+(\d{4})[،, ]+\s*(\d{1,2}):(\d{2})",
+            visible,
+        )
+        if not price_match or not time_match:
+            raise ValueError("could not parse public AED price and timestamp")
+        price = float(price_match.group(1).replace(",", ""))
+        if not (1000 <= price <= 10_000_000):
+            raise ValueError("AED price outside plausible bounds")
 
-    for pid, url in urls.items():
-        try:
-            req = urllib.request.Request(url, headers={
-                "Accept": "text/html,application/xhtml+xml",
-                "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
-            })
-            with urllib.request.urlopen(req, timeout=20) as response:
-                page = response.read().decode("utf-8", "replace")
+        months = {"فروردین": 1, "اردیبهشت": 2, "خرداد": 3, "تیر": 4, "مرداد": 5,
+                  "شهریور": 6, "مهر": 7, "آبان": 8, "آذر": 9, "دی": 10,
+                  "بهمن": 11, "اسفند": 12}
+        day, month_name, year, hour, minute = time_match.groups()
+        if month_name not in months or int(hour) > 23:
+            raise ValueError("invalid Jalali timestamp")
+        gregorian = jalali_to_gregorian(int(year), months[month_name], int(day))
+        tehran = datetime.datetime.combine(gregorian, datetime.time(int(hour), int(minute)), ZoneInfo("Asia/Tehran"))
+        age = (datetime.datetime.now(ZoneInfo("Asia/Tehran")) - tehran).total_seconds()
+        if age < -300 or age > 6 * 60 * 60:
+            raise ValueError("Arzhaam AED quote is stale")
 
-            # Keep visible page text only; normalize Persian/Arabic digits and separators.
-            page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
-            visible = html.unescape(re.sub(r"<[^>]+>", " ", page))
-            visible = re.sub(r"\s+", " ", visible).translate(digit_map)
-            visible = visible.replace("٬", ",").replace("٫", ".")
-
-            # Each /rates/<assetId> page is for one asset, so its displayed toman
-            # quote is the first price followed by the unit label.
-            price_match = re.search(r"([0-9][0-9,]*(?:\.[0-9]+)?)\s*تومان", visible)
-            time_match = re.search(
-                r"آخرین\s*به[\u200c ]?روزرسانی\s*[:：]?\s*(\d{1,2})\s+([آ-ی]+)\s+(\d{4})[،, ]+\s*(\d{1,2}):(\d{2})",
-                visible,
-            )
-            if not price_match or not time_match:
-                raise ValueError("public page has no parseable price/timestamp")
-
-            price = float(price_match.group(1).replace(",", ""))
-            # Broad safety bounds reject malformed page fragments, not market movements.
-            if not (100 <= price <= 100_000_000):
-                raise ValueError("quote outside plausible toman bounds")
-
-            day, month_name, year, hour, minute = time_match.groups()
-            if month_name not in months or int(day) < 1 or int(hour) > 23 or int(minute) > 59:
-                raise ValueError("invalid Jalali source timestamp")
-            gregorian = jalali_to_gregorian(int(year), months[month_name], int(day))
-            tehran = datetime.datetime.combine(
-                gregorian, datetime.time(int(hour), int(minute)), ZoneInfo("Asia/Tehran")
-            )
-            age = (datetime.datetime.now(ZoneInfo("Asia/Tehran")) - tehran).total_seconds()
-            if age < -300 or age > 6 * 60 * 60:
-                raise ValueError("Arzhaam quote is outside the six-hour freshness window")
-
-            out[pid] = {
-                "price": price, "unit": "IRT", "source_name": "Arzhaam",
-                "source_updated_utc": tehran.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "source_checked_utc": now_iso(), "method": "direct", "stale": False,
-                "source_url": url,
-            }
-        except Exception as exc:  # noqa: BLE001 - one page failure must not abort the workflow
-            print(f"Arzhaam {pid} fallback failed: {type(exc).__name__}", file=sys.stderr)
-    return out
-
+        return {"aed": {
+            "price": price, "unit": "IRT", "source_name": "Arzhaam",
+            "source_updated_utc": tehran.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "source_checked_utc": now_iso(), "method": "direct", "stale": False,
+        }}
+    except Exception as e:  # noqa: BLE001
+        print("Arzhaam AED fallback failed:", type(e).__name__, file=sys.stderr)
+        return {}
 
 def jalali_text_to_tehran_epoch(date_text, time_text):
     """('1405/08/16', '19:35') in Tehran time -> epoch seconds, or None."""
@@ -448,11 +430,13 @@ def jalali_text_to_tehran_epoch(date_text, time_text):
 
 
 def fetch_nerkhsanj():
-    """Fetch direct quotes for extra currencies and USDT from NerkhSanj.
+    """Independent direct Iranian free-market quotes (euro, pound, dirham, yuan, lira ...).
 
-    NerkhSanj is NOT a source for USD/EUR/GBP/AED. Those four use NerkhAra
-    first and Arzhaam only as fallback. The file carries a Jalali date and a
-    Tehran clock time; stale quotes are retained only for diagnostics.
+    The file carries a Jalali date and a Tehran clock time. Fresh quotes are accepted for up to
+    72 h when the market is closed and 3 h while open. Older observations are retained as stale
+    diagnostics for up to seven days, but are never selected or published as live prices.
+    A fresh quote is a direct Iranian market observation and may fill a missing/derived primary
+    EUR/GBP/AED quote; it is never allowed to replace a fresh primary market quote.
     """
     try:
         d = get_json(NERKHSANJ)
@@ -596,17 +580,13 @@ def fill_changes_from_own_history(items, series):
     print("Filled change_pct from own hourly history:", filled)
 
 
-def select_currency_quotes(items, fallback):
-    """Keep fresh NerkhAra quotes; use Arzhaam only if primary is missing/stale/derived.
-
-    The fallback mapping passed here must contain Arzhaam quotes only. NerkhSanj
-    is intentionally not eligible for USD/EUR/GBP/AED under any condition.
-    """
+def select_currency_quotes(items, secondary):
+    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
         primary = by_id.get(pid)
-        alt = fallback.get(pid)
+        alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
                     not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)) and
@@ -619,8 +599,8 @@ def select_currency_quotes(items, fallback):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
-        # Arzhaam may replace only a missing, stale, invalid, or derived NerkhAra quote.
-        # A fresh NerkhAra quote is always authoritative, regardless of disagreement.
+        # A fresh direct Iranian quote may replace a derived/missing primary value.
+        # It must never replace a fresh primary quote; stale validation data is rejected above.
         if a_ok and (not p_ok):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
@@ -655,12 +635,6 @@ def select_currency_quotes(items, fallback):
             primary["source_updated_utc"] = primary.get("updated_utc") or primary.get("as_of")
     return checks
 
-
-
-
-def apply_arzhaam_currency_priority(items, arz):
-    """Compatibility wrapper for the explicit NerkhAra -> Arzhaam priority."""
-    return select_currency_quotes(items, arz)
 
 
 def fill_missing_changes_from_source_history(items):
@@ -965,12 +939,13 @@ def main():
     fx, fx_date = fetch_fx()
     irm = fetch_iran_market()
     ns = fetch_nerkhsanj()
-    # Strict source order for USD/EUR/GBP/AED:
-    #   1) NerkhAra latest.json (primary payload)
-    #   2) Arzhaam public rates pages (the ONLY fallback)
-    # NerkhSanj and Iran Market Data must never become the source of these four.
-    arz = fetch_arzhaam_currencies()
-    iran_direct = {pid: arz[pid] for pid in DIRECT_CURRENCY_IDS if pid in arz}
+    # Arzhaam (public page) is only a last resort / third opinion for the dirham.
+    arz = fetch_arzhaam_aed() if sum(1 for q in (irm.get("aed"), ns.get("aed")) if q) < 2 else {}
+    iran_direct = {}
+    for pid in DIRECT_CURRENCY_IDS:
+        chosen = choose_independent([irm.get(pid), ns.get(pid), arz.get(pid)])
+        if chosen:
+            iran_direct[pid] = chosen
     cg = fetch_coingecko()
     eia = fetch_eia()
     fred = fetch_fred_energy()
@@ -1092,14 +1067,13 @@ def main():
         })
 
     currency_checks = select_currency_quotes(items, iran_direct)
-    # Strictly preserves NerkhAra first; Arzhaam is the only eligible fallback.
     add_extra_currencies(items, ns)
     prefer_direct_usdt(items, ns)
     removed_derived = drop_derived(items)
     print("Removed dollar-derived items:", len(removed_derived))
     fill_missing_changes_from_source_history(items)
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
-                                 "arzhaam_currencies": sorted(arz),
+                                 "arzhaam_aed": "aed" in arz,
                                  "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
                                  "stooq": sorted(stooq), "eia": sorted(eia), "fred": sorted(fred),
                                  "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
