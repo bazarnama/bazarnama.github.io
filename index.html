@@ -34,11 +34,19 @@
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
   
 /* Price-first homepage: compact introduction so live market prices stay visible immediately. */
-.market-intro{padding:8px 0 2px!important;margin:0!important}
+.market-intro{padding:18px 22px!important;margin:6px 0 4px!important}
 .market-intro .marketIntroLine{padding:0 2px}
-.market-intro .eyebrow{font-size:10px;color:var(--muted);opacity:1}
-.market-intro h1{font-size:clamp(18px,2.4vw,23px)!important;line-height:1.4;margin:2px 0!important;color:var(--text)}
-.market-intro p{font-size:11px!important;line-height:1.5!important;margin:0!important;color:var(--muted)!important}
+.market-intro .eyebrow{font-size:12px;color:#fff;opacity:.85}
+.market-intro h1{font-size:clamp(22px,4vw,29px)!important;line-height:1.45;margin:5px 0!important;color:#fff}
+.market-intro p{font-size:14px!important;line-height:1.75!important;margin:0!important;color:#e2f7f1!important}
+.market-intro{position:relative;overflow:hidden}
+.market-intro::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;left:-60px;top:-120px;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 0 26px rgba(255,255,255,.05),0 0 0 54px rgba(255,255,255,.04);pointer-events:none}
+.market-intro .marketIntroLine{position:relative;z-index:1}
+.market-intro .eyebrow{display:inline-flex;align-items:center;gap:7px;padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);opacity:1;color:#fff}
+.liveDot{width:8px;height:8px;border-radius:50%;background:#7dffc4;box-shadow:0 0 0 0 rgba(125,255,196,.7);animation:livePulse 2s infinite}
+@keyframes livePulse{70%{box-shadow:0 0 0 7px rgba(125,255,196,0)}100%{box-shadow:0 0 0 0 rgba(125,255,196,0)}}
+@media(prefers-reduced-motion:reduce){.liveDot{animation:none}}
+.market-intro p.introMore{margin-top:9px!important;font-size:13px!important;line-height:1.9!important;opacity:.9;max-width:760px}
 #markets{padding-top:7px!important}
 #markets .sectionHead{margin-bottom:5px!important}
 #markets .sectionHead h2{font-size:17px}
@@ -48,9 +56,11 @@
 #filters .chip{flex:0 0 auto;padding:6px 10px;font-size:11px}
 #assetCards{margin-top:8px!important;gap:8px!important}
 @media(max-width:700px){
-  .market-intro{padding:6px 0 0!important}
-  .market-intro h1{font-size:18px!important}
-  .market-intro p{font-size:10px!important}
+  .market-intro{padding:14px 16px!important;margin:4px 0 2px!important;border-radius:20px!important}
+  .market-intro h1{font-size:21px!important}
+  .market-intro p{font-size:12.5px!important}
+  .market-intro::after{width:170px;height:170px;left:-50px;top:-90px}
+  .market-intro p.introMore{margin-top:7px!important;font-size:12px!important;line-height:1.85!important}
   #markets{padding-top:5px!important}
   #markets .sectionHead{flex-direction:row!important;align-items:center!important;gap:7px!important}
   #markets .sectionHead .sub{display:none!important}
@@ -65,10 +75,61 @@
   .assetFoot{font-size:9px!important;line-height:1.5}
 }
 @media(max-width:380px){
-  .market-intro h1{font-size:17px!important}
+  .market-intro h1{font-size:19px!important}
   #assetCards{gap:7px!important}
   .asset{padding:9px!important}
   .assetPrice{font-size:14px!important}
+}
+
+
+/* بازگردانی چیدمان نوار بالای صفحه در موبایل */
+@media(max-width:700px){
+  .topinner{display:flex;flex-wrap:wrap;min-height:0!important;gap:5px 10px!important;padding-top:8px;padding-bottom:7px}
+  .brand{font-size:18px!important;gap:8px!important}
+  .brandmark{width:34px;height:34px;border-radius:11px}
+  #themeBtn{margin-inline-start:auto;min-width:38px;padding:6px 9px}
+  .nav{display:flex!important;order:3;flex:0 0 calc(100% + 26px);width:calc(100% + 26px);margin-inline:-13px;padding:5px 13px 7px;gap:7px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;border-top:1px solid var(--line);font-size:12px}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{flex:0 0 auto;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2)}
+}
+@media(max-width:380px){
+  .wrap{padding-inline:11px}
+  .brand{font-size:17px!important}
+  .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}
+}
+
+/* آراستن نوار بالای صفحه */
+.brand>span:last-child{background:linear-gradient(120deg,var(--brand),var(--brand2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.brandmark{box-shadow:0 6px 18px rgba(8,126,110,.38),inset 0 1px 0 rgba(255,255,255,.5)}
+.topbar::after{content:"";position:absolute;left:28px;right:28px;bottom:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--brand2),var(--brand),transparent);opacity:.6;pointer-events:none}
+.iconbtn#themeBtn{border-radius:999px}
+/* دکمه‌های شیشه‌ای نوار بالا */
+.nav a{background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.08) 48%,rgba(255,255,255,.28)),var(--g-bg);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);border:1px solid var(--g-border);border-radius:999px;box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+[data-theme="dark"] .nav a{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,0) 48%),var(--g-bg);box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)}
+.nav a:hover{transform:translateY(-1px);color:var(--brand);background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.12) 48%,rgba(255,255,255,.34)),color-mix(in srgb,var(--brand) 16%,var(--g-bg));box-shadow:0 4px 0 rgba(8,126,110,.20),0 10px 16px rgba(8,126,110,.20),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)}
+[data-theme="dark"] .nav a:hover{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.02) 48%),color-mix(in srgb,var(--brand) 22%,var(--g-bg))}
+.iconbtn#themeBtn{box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)!important}
+[data-theme="dark"] .iconbtn#themeBtn{box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)!important}
+@media(min-width:701px){.nav{gap:5px}.nav a{padding:6px 12px}}
+@media(prefers-reduced-motion:reduce){.nav a:hover{transform:none}}
+@media(min-width:701px) and (max-width:980px){.nav{font-size:12px}.nav a{padding:6px 8px}}
+
+/* نوار بالا: حالت برجسته (ریلیف) */
+.topbar{box-shadow:0 3px 0 rgba(8,126,110,.14),0 12px 26px rgba(16,70,62,.20),0 26px 44px rgba(16,70,62,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -4px 8px rgba(16,70,62,.08),inset 0 0 0 1px rgba(255,255,255,.35)!important;border-bottom:1px solid rgba(8,126,110,.24)!important}
+[data-theme="dark"] .topbar{box-shadow:0 3px 0 rgba(0,0,0,.45),0 14px 28px rgba(0,0,0,.50),0 28px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -4px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.06)!important;border-bottom:1px solid rgba(0,0,0,.45)!important}
+.nav a:active,.iconbtn#themeBtn:active{transform:translateY(2px)}
+.nav a:active{box-shadow:0 1px 0 rgba(8,126,110,.16),inset 0 2px 5px rgba(16,70,62,.18)}
+[data-theme="dark"] .nav a:active{box-shadow:0 1px 0 rgba(0,0,0,.40),inset 0 2px 5px rgba(0,0,0,.45)}
+@media(max-width:700px){.nav a{box-shadow:0 2px 0 rgba(8,126,110,.16),0 4px 6px rgba(16,70,62,.12),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 3px rgba(16,70,62,.08)}[data-theme="dark"] .nav a{box-shadow:0 2px 0 rgba(0,0,0,.40),0 4px 6px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.30)}}
+
+/* نوار بالا به‌صورت ریل: قابل کشیدن و لغزیدن به چپ و راست */
+.nav{--mL:0px;--mR:0px;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);scroll-snap-type:x proximity;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none}
+.nav.dragging{cursor:grabbing;scroll-snap-type:none}
+.nav.dragging a{pointer-events:none}
+.nav a{flex:0 0 auto;white-space:nowrap;scroll-snap-align:center}
+@media(min-width:701px){
+  .nav{flex:1 1 auto;min-width:0;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:4px 8px 10px;margin-top:6px}
+  .nav::-webkit-scrollbar{display:none}
 }
 
 </style>
@@ -118,7 +179,6 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag{border-radius:999px!important}
 .field input,.field select{padding-inline:16px!important}
 .result{border-style:solid!important;border-radius:20px!important}
-.result small{display:block;margin-top:4px}
 .chip.active{background:linear-gradient(135deg,rgba(32,190,160,.75),rgba(8,126,110,.75))!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
 
 /* nested items inside a glass panel: lighter, no extra blur */
@@ -183,45 +243,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 .heroBox{padding:15px 18px!important;border-radius:20px!important}
 .heroBox .eyebrow{font-size:12px!important;margin:0!important}
 .hero .heroBox h1{font-size:clamp(19px,4.4vw,27px)!important;line-height:1.4!important;margin:4px 0!important}
-.heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important}
+.heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .heroBox .heroActions{margin-top:10px!important;gap:7px!important}
 .heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
 @media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
-
-@media(max-width:700px){
-#markets .sectionHead .sub{display:none!important}
-#markets .sectionHead h2{font-size:19px!important;margin:0!important}
-#markets .sectionHead{margin-bottom:4px!important;gap:6px!important}
-#markets{padding-top:6px!important}
-#marketStatus{font-size:11px!important;line-height:1.5!important;margin:4px 0!important}
-#filters{margin-top:6px!important}
-}
-
-/* Mobile top area: keep primary navigation reachable and prevent the hero buttons
-   from pushing the market overview too far below the fold. */
-@media(max-width:700px){
-  .topinner{display:flex;flex-wrap:wrap;min-height:0!important;gap:5px 10px!important;padding-top:8px;padding-bottom:7px}
-  .brand{font-size:18px!important;gap:8px!important}
-  .brandmark{width:34px;height:34px;border-radius:11px}
-  #themeBtn{margin-inline-start:auto;min-width:38px;padding:6px 9px}
-  .nav{display:flex!important;order:3;flex:0 0 calc(100% + 26px);width:calc(100% + 26px);margin-inline:-13px;padding:5px 13px 7px;gap:7px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;border-top:1px solid var(--line);font-size:12px}
-  .nav::-webkit-scrollbar{display:none}
-  .nav a{flex:0 0 auto;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2)}
-  .hero:has(.heroBox){padding:7px 0 4px!important}
-  .heroBox{padding:13px 14px!important;border-radius:17px!important}
-  .hero .heroBox h1{font-size:20px!important;line-height:1.5!important}
-  .heroBox .heroContent>p{font-size:12px!important;line-height:1.7!important}
-  .heroBox .heroActions{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding:2px 1px 5px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .heroBox .heroActions::-webkit-scrollbar{display:none}
-  .heroBox .heroActions .btn{flex:0 0 auto!important}
-}
-@media(max-width:380px){
-  .wrap{padding-inline:11px}
-  .brand{font-size:17px!important}
-  .hero .heroBox h1{font-size:18px!important}
-  .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}
-}
-
 </style></head>
 <body>
   <header class="topbar">
@@ -237,9 +262,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   <main id="home" class="wrap">
     <section class="hero market-intro" aria-label="معرفی بازارنما">
       <div class="marketIntroLine">
-        <div><div class="eyebrow">رصد بازارهای مالی ایران و جهان</div>
+        <div class="eyebrow"><span class="liveDot" aria-hidden="true"></span>رصد بازارهای مالی ایران و جهان</div>
         <h1>قیمت لحظه‌ای بازار</h1>
-        <p>ارز، طلا، سکه، انرژی و رمزارز؛ یک‌جا و با زمان به‌روزرسانی هر داده.</p></div>
+        <p>ارز، طلا، سکه، انرژی و رمزارز؛ یک‌جا و با زمان به‌روزرسانی هر داده.</p>
+        <p class="introMore">نرخ‌های بازار آزاد با نرخ رسمی متفاوت‌اند؛ زمان و منبع هر قیمت جداگانه نمایش داده می‌شود.</p>
       </div>
     </section>
 
@@ -464,8 +490,21 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     const tableList=assets.filter(a=>a.core);
     $('priceRows').innerHTML=tableList.length?tableList.map(a=>{
       const p=market.get(a.id); const ok=p&&typeof p.price==='number';
-      return `<tr><td><span class="assetIdentity">${iconMarkup(a.id)}<strong>${a.name}</strong></span></td><td>${ok?fmt(p.price):'—'}</td><td>${ok?unitLabel(p.unit):a.unit}</td><td>${ok?changeMarkup(p.change_pct,p.change_basis):'—'}</td><td><span class="tag">${!ok?'ناموجود':p.stale?'داده قدیمی':'دریافت‌شده'}</span></td></tr>`;
+      const freshness=p?.freshness?.status||'unknown';
+      const state=!ok?'ناموجود':p.stale||freshness==='stale'?'داده قدیمی':freshness==='aging'?'در آستانه کهنگی':freshness==='unknown'?'زمان نامشخص':'تازه';
+      return `<tr><td><span class="assetIdentity">${iconMarkup(a.id)}<strong>${a.name}</strong></span></td><td>${ok?fmt(p.price):'—'}</td><td>${ok?unitLabel(p.unit):a.unit}</td><td>${ok?changeMarkup(p.change_pct,p.change_basis):'—'}</td><td><span class="tag">${state}</span></td></tr>`;
     }).join(''):'<tr><td colspan="5" class="empty">موردی در این فهرست نیست.</td></tr>';
+  }
+  function renderMarketStatus() {
+    const availableCount = assets.filter(asset => {
+      const item = market.get(asset.id);
+      return item && typeof item.price === 'number' && Number.isFinite(item.price);
+    }).length;
+    const staleCount = assets.filter(asset => market.get(asset.id)?.stale === true || market.get(asset.id)?.freshness?.status === 'stale').length;
+    const agingCount = assets.filter(asset => market.get(asset.id)?.freshness?.status === 'aging').length;
+    const unknownCount = assets.filter(asset => market.has(asset.id) && (!market.get(asset.id)?.freshness?.status || market.get(asset.id)?.freshness?.status === 'unknown')).length;
+    $('marketStatus').textContent = `${fmt(availableCount)} از ${fmt(assets.length)} دارایی قیمت دارند؛ ${fmt(staleCount)} قدیمی، ${fmt(agingCount)} در آستانه کهنگی و ${fmt(unknownCount)} بدون زمان معتبر منبع.`;
+    $('marketStatus').className = staleCount || unknownCount ? 'status' : 'status ok';
   }
   function renderFilters() {
     document.querySelectorAll('#filters .chip').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
@@ -511,19 +550,19 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     let count=0;
     for(const [id,symbol] of Object.entries(symbols)) {
       const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
-      let price=Number(row?.price);
-      if(!Number.isFinite(price)||price<=0) continue;
+      const rawPrice=Number(row?.price);
+      const unitRaw=String(row?.currency||payload.meta?.unit||'').toUpperCase();
+      const price=(unitRaw==='IRR'||unitRaw==='RIAL'||unitRaw==='RIALS')?rawPrice/10:rawPrice;
+      if(!Number.isFinite(price)||price<=0||!['IRT','IRR','TOMAN','TOMANS','RIAL','RIALS'].includes(unitRaw)||row?.stale===true||payload.meta?.stale===true) continue;
       const primary=market.get(id);
-      // The symbols say IRR (rial) but the site shows toman: if the value is ~10x the primary feed, convert it.
-      if(primary&&typeof primary.price==='number'&&primary.price>0){const ratio=price/primary.price; if(ratio>7&&ratio<14) price=price/10;}
-      const quote={id,provider:'Iran Market Data',price,unit:'IRT',updatedAt:row.updated_utc||row.updated_at||row.timestamp||payload.generated_utc||payload.updated_at||null,method:'direct'};
+      const quote={id,provider:'Iran Market Data',price,unit:'IRT',change_pct:typeof row.change_pct==='number'?row.change_pct:null,updatedAt:row.timestamp||row.updated_utc||row.updated_at||payload.meta?.updated_at||null,method:'direct'};
       // Used only when the primary feed has no fresh value (missing, stale or derived).
       const rawStamp=quote.updatedAt==null?'':String(quote.updatedAt);
       const hasZone=/[zZ]|[+-]\d{2}:?\d{2}$/.test(rawStamp);
       const stamp=quote.updatedAt ? (typeof quote.updatedAt==='number' ? new Date(quote.updatedAt>1e12?quote.updatedAt:quote.updatedAt*1000).getTime() : new Date(hasZone?rawStamp:rawStamp+'Z').getTime()) : NaN;
       const age=Number.isFinite(stamp)?Date.now()-stamp:Infinity;
       const fresh=Number.isFinite(stamp)&&age<90*60*1000&&age>-5*60*1000;
-      if(fresh&&(!primary||primary.stale)) {
+      if(fresh&&(!primary||primary.stale||primary.derived===true||primary.method==='derived')) {
         market.set(id,{...quote,source:quote.provider,stale:false,change_pct:primary?.change_pct??null,
           freshness:{status:age>60*60*1000?'aging':'fresh',observed_utc:new Date(stamp).toISOString(),age_seconds:Math.max(0,Math.floor(age/1000)),clock_basis:'provider_timestamp'}});
       }
@@ -577,7 +616,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 
       const receivedAt = new Date().toISOString();
       const nextMarket = new Map(payload.items
-        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price))
+        .filter(item => item && item.id && typeof item.price === 'number' && Number.isFinite(item.price) && (!(item.derived === true || item.method === 'derived') || item.id === 'usdt'))
         .map(item => [item.id, { ...item, source:item.source || 'NerkhAra' }]));
       if (!nextMarket.size) throw new Error('هیچ قیمت معتبری از منبع دریافت نشد');
       market = nextMarket;
@@ -594,21 +633,13 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       renderAssets();
       checkAlerts();
 
-      const availableCount = assets.filter(asset => {
-        const item = market.get(asset.id);
-        return item && typeof item.price === 'number' && Number.isFinite(item.price);
-      }).length;
-      const staleCount = assets.filter(asset => market.get(asset.id)?.stale === true).length;
-      const agingCount = assets.filter(asset => market.get(asset.id)?.freshness?.status === 'aging').length;
-      const unknownCount = assets.filter(asset => market.has(asset.id) && !market.get(asset.id)?.freshness?.status).length;
-      $('marketStatus').textContent = `${fmt(availableCount)} از ${fmt(assets.length)} دارایی قیمت دارند؛ ${fmt(staleCount)} قدیمی، ${fmt(agingCount)} در آستانه کهنگی و ${fmt(unknownCount)} بدون زمان معتبر منبع.`;
-      $('marketStatus').className = staleCount || unknownCount ? 'status' : 'status ok';
+      renderMarketStatus();
       $('updateLabel').textContent = payload.generated_utc
         ? 'زمان تولید داده منبع: ' + dateLabel(payload.generated_utc)
         : 'زمان تولید داده از سوی منبع اعلام نشده';
       updateConverter();
       ensureFx(payload).then(updateConverter);
-      Promise.allSettled([fetchCryptoExternal(), fetchIranMarketData()]).then(()=>{ renderAssets(); checkAlerts(); updateConverter(); });
+      Promise.allSettled([fetchCryptoExternal(), fetchIranMarketData()]).then(()=>{ renderMarketStatus(); renderAssets(); checkAlerts(); updateConverter(); });
     } catch (error) {
       console.error('Market refresh failed:', error);
       secondaryQuotes.clear();
@@ -912,5 +943,22 @@ walk(document.body);
 new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'){if(T.test(m.target.nodeValue))m.target.nodeValue=f(m.target.nodeValue);}else m.addedNodes.forEach(walk);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.nodeName==='INPUT'&&t.type!=='number'&&T.test(t.value)){const p=t.selectionStart;t.value=f(t.value);try{t.setSelectionRange(p,p);}catch(x){}}});
 })();</script>
+<script id="nav-rail">
+(function(){var n=document.querySelector('.nav');if(!n)return;
+function edges(){var max=n.scrollWidth-n.clientWidth,rtl=getComputedStyle(n).direction==='rtl',s=n.scrollLeft,a=Math.abs(s);
+var lh=rtl?max-a:s,rh=rtl?a:max-s;
+n.style.setProperty('--mL',lh>2?'28px':'0px');n.style.setProperty('--mR',rh>2?'28px':'0px');}
+n.addEventListener('scroll',edges,{passive:true});window.addEventListener('resize',edges);edges();
+n.addEventListener('wheel',function(e){if(n.scrollWidth<=n.clientWidth||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+var rtl=getComputedStyle(n).direction==='rtl',max=n.scrollWidth-n.clientWidth,a=Math.abs(n.scrollLeft);
+var toEnd=e.deltaY>0;if((toEnd&&a>=max-1)||(!toEnd&&a<=0))return;
+e.preventDefault();n.scrollLeft+=(rtl?-1:1)*e.deltaY;},{passive:false});
+var down=false,sx=0,sl=0,moved=false;
+n.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||e.button!==0)return;down=true;moved=false;sx=e.clientX;sl=n.scrollLeft;});
+window.addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-sx;if(!moved&&Math.abs(dx)>5){moved=true;n.classList.add('dragging');}
+if(moved)n.scrollLeft=sl-dx;});
+window.addEventListener('pointerup',function(){if(!down)return;down=false;if(moved)setTimeout(function(){n.classList.remove('dragging');},0);});
+})();
+</script>
 </body>
 </html>
