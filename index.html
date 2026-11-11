@@ -32,7 +32,56 @@
     @media(max-width:850px){.nav{gap:10px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.newsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:560px){.wrap{padding:0 13px}.topinner{min-height:60px}.brand{font-size:18px}.nav{display:none}.hero{padding-top:18px}.heroBox{padding:23px 19px;border-radius:21px}.hero h1{font-size:25px}.sectionHead{align-items:start;flex-direction:column}.stats{gap:9px}.asset{padding:12px}.assetPrice{font-size:17px}.newsGrid{grid-template-columns:1fr}.panel{padding:14px}.chartArea{height:210px}.formrow{grid-template-columns:1fr 1fr}.toolbar{width:100%}.toolbar .select{flex:1}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
-  </style>
+  
+/* Price-first homepage: compact introduction so live market prices stay visible immediately. */
+.market-intro{padding:18px 22px!important;margin:6px 0 4px!important}
+.market-intro .marketIntroLine{padding:0 2px}
+.market-intro .eyebrow{font-size:12px;color:#fff;opacity:.85}
+.market-intro h1{font-size:clamp(22px,4vw,29px)!important;line-height:1.45;margin:5px 0!important;color:#fff}
+.market-intro p{font-size:14px!important;line-height:1.75!important;margin:0!important;color:#e2f7f1!important}
+.market-intro{position:relative;overflow:hidden}
+.market-intro::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;left:-60px;top:-120px;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 0 26px rgba(255,255,255,.05),0 0 0 54px rgba(255,255,255,.04);pointer-events:none}
+.market-intro .marketIntroLine{position:relative;z-index:1}
+.market-intro .eyebrow{display:inline-flex;align-items:center;gap:7px;padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);opacity:1;color:#fff}
+.liveDot{width:8px;height:8px;border-radius:50%;background:#7dffc4;box-shadow:0 0 0 0 rgba(125,255,196,.7);animation:livePulse 2s infinite}
+@keyframes livePulse{70%{box-shadow:0 0 0 7px rgba(125,255,196,0)}100%{box-shadow:0 0 0 0 rgba(125,255,196,0)}}
+@media(prefers-reduced-motion:reduce){.liveDot{animation:none}}
+.market-intro p.introMore{margin-top:9px!important;font-size:13px!important;line-height:1.9!important;opacity:.9;max-width:760px}
+#markets{padding-top:7px!important}
+#markets .sectionHead{margin-bottom:5px!important}
+#markets .sectionHead h2{font-size:17px}
+#marketStatus{margin:3px 0!important;padding:3px 0!important;font-size:10px!important}
+#filters{margin-top:4px!important;gap:5px!important;flex-wrap:nowrap!important;overflow-x:auto;white-space:nowrap;scrollbar-width:none;padding-bottom:3px}
+#filters::-webkit-scrollbar{display:none}
+#filters .chip{flex:0 0 auto;padding:6px 10px;font-size:11px}
+#assetCards{margin-top:8px!important;gap:8px!important}
+@media(max-width:700px){
+  .market-intro{padding:14px 16px!important;margin:4px 0 2px!important;border-radius:20px!important}
+  .market-intro h1{font-size:21px!important}
+  .market-intro p{font-size:12.5px!important}
+  .market-intro::after{width:170px;height:170px;left:-50px;top:-90px}
+  .market-intro p.introMore{margin-top:7px!important;font-size:12px!important;line-height:1.85!important}
+  #markets{padding-top:5px!important}
+  #markets .sectionHead{flex-direction:row!important;align-items:center!important;gap:7px!important}
+  #markets .sectionHead .sub{display:none!important}
+  #markets .sectionHead h2{font-size:16px!important}
+  #markets .sectionHead .toolbar{width:auto!important;flex:0 0 auto}
+  #markets .sectionHead .smallbtn{padding:6px 8px;font-size:10px}
+  #assetCards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .asset{padding:10px!important}
+  .assetIcon{width:32px!important;height:32px!important;flex-basis:32px!important}
+  .assetIcon svg{width:21px!important;height:21px!important}
+  .assetPrice{font-size:15px!important;margin:6px 0 1px!important}
+  .assetFoot{font-size:9px!important;line-height:1.5}
+}
+@media(max-width:380px){
+  .market-intro h1{font-size:19px!important}
+  #assetCards{gap:7px!important}
+  .asset{padding:9px!important}
+  .assetPrice{font-size:14px!important}
+}
+
+</style>
   <script type="application/ld+json">
   [
     {
@@ -183,6 +232,40 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}
 }
 
+
+/* آراستن نوار بالای صفحه */
+.brand>span:last-child{background:linear-gradient(120deg,var(--brand),var(--brand2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.brandmark{box-shadow:0 6px 18px rgba(8,126,110,.38),inset 0 1px 0 rgba(255,255,255,.5)}
+.topbar::after{content:"";position:absolute;left:28px;right:28px;bottom:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--brand2),var(--brand),transparent);opacity:.6;pointer-events:none}
+.iconbtn#themeBtn{border-radius:999px}
+/* دکمه‌های شیشه‌ای نوار بالا */
+.nav a{background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.08) 48%,rgba(255,255,255,.28)),var(--g-bg);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);border:1px solid var(--g-border);border-radius:999px;box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+[data-theme="dark"] .nav a{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,0) 48%),var(--g-bg);box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)}
+.nav a:hover{transform:translateY(-1px);color:var(--brand);background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.12) 48%,rgba(255,255,255,.34)),color-mix(in srgb,var(--brand) 16%,var(--g-bg));box-shadow:0 4px 0 rgba(8,126,110,.20),0 10px 16px rgba(8,126,110,.20),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)}
+[data-theme="dark"] .nav a:hover{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.02) 48%),color-mix(in srgb,var(--brand) 22%,var(--g-bg))}
+.iconbtn#themeBtn{box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)!important}
+[data-theme="dark"] .iconbtn#themeBtn{box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)!important}
+@media(min-width:701px){.nav{gap:5px}.nav a{padding:6px 12px}}
+@media(prefers-reduced-motion:reduce){.nav a:hover{transform:none}}
+@media(min-width:701px) and (max-width:980px){.nav{font-size:12px}.nav a{padding:6px 8px}}
+
+/* نوار بالا: حالت برجسته (ریلیف) */
+.topbar{box-shadow:0 3px 0 rgba(8,126,110,.14),0 12px 26px rgba(16,70,62,.20),0 26px 44px rgba(16,70,62,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -4px 8px rgba(16,70,62,.08),inset 0 0 0 1px rgba(255,255,255,.35)!important;border-bottom:1px solid rgba(8,126,110,.24)!important}
+[data-theme="dark"] .topbar{box-shadow:0 3px 0 rgba(0,0,0,.45),0 14px 28px rgba(0,0,0,.50),0 28px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -4px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.06)!important;border-bottom:1px solid rgba(0,0,0,.45)!important}
+.nav a:active,.iconbtn#themeBtn:active{transform:translateY(2px)}
+.nav a:active{box-shadow:0 1px 0 rgba(8,126,110,.16),inset 0 2px 5px rgba(16,70,62,.18)}
+[data-theme="dark"] .nav a:active{box-shadow:0 1px 0 rgba(0,0,0,.40),inset 0 2px 5px rgba(0,0,0,.45)}
+@media(max-width:700px){.nav a{box-shadow:0 2px 0 rgba(8,126,110,.16),0 4px 6px rgba(16,70,62,.12),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 3px rgba(16,70,62,.08)}[data-theme="dark"] .nav a{box-shadow:0 2px 0 rgba(0,0,0,.40),0 4px 6px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.30)}}
+
+/* نوار بالا به‌صورت ریل: قابل کشیدن و لغزیدن به چپ و راست */
+.nav{--mL:0px;--mR:0px;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);scroll-snap-type:x proximity;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none}
+.nav.dragging{cursor:grabbing;scroll-snap-type:none}
+.nav.dragging a{pointer-events:none}
+.nav a{flex:0 0 auto;white-space:nowrap;scroll-snap-align:center}
+@media(min-width:701px){
+  .nav{flex:1 1 auto;min-width:0;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:4px 8px 10px;margin-top:6px}
+  .nav::-webkit-scrollbar{display:none}
+}
 </style></head>
 <body>
   <header class="topbar">
@@ -196,14 +279,13 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
   </header>
 
   <main id="home" class="wrap">
-    <section class="hero">
-      <div class="heroBox"><div class="heroContent">
-        <div class="eyebrow">نمای روز بازارهای مالی؛ ارز، طلا، رمزارز و نفت</div>
-        <h1>قیمت روز دلار، طلا، ارز دیجیتال و نفت؛ نرخ ارزهای بازار</h1>
-        <p>قیمت ارز، طلا، سکه، نقره، رمزارز و نفت را در یک صفحه ببین؛ همراه با نمودار و ماشین‌حساب تبدیل ارز.</p>
-        <div class="heroActions"><a class="btn ghost" href="#markets">مشاهده قیمت‌ها</a><a class="btn ghost" href="/prices.html">لیست قیمت‌ها</a><a class="btn ghost" href="#chart">نمودار</a><a class="btn ghost" href="/currency.html">ارز</a><a class="btn ghost" href="#converter">ماشین‌حساب ارز</a><a class="btn ghost" href="/gold.html">قیمت طلا</a><a class="btn ghost" href="/crypto.html">قیمت رمزارز</a><a class="btn ghost" href="/energy.html">نفت و انرژی</a></div>
-      </div></div>
-    
+    <section class="hero market-intro" aria-label="معرفی بازارنما">
+      <div class="marketIntroLine">
+        <div class="eyebrow"><span class="liveDot" aria-hidden="true"></span>رصد بازارهای مالی ایران و جهان</div>
+        <h1>قیمت لحظه‌ای بازار</h1>
+        <p>ارز، طلا، سکه، انرژی و رمزارز؛ یک‌جا و با زمان به‌روزرسانی هر داده.</p>
+        <p class="introMore">قیمت‌ها مربوط به بازار آزادن و با نرخ رسمی فرق دارن؛ پیشنهاد خرید یا فروش نیست.</p>
+      </div>
     </section>
 
     <section id="markets" class="section">
@@ -875,5 +957,22 @@ walk(document.body);
 new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'){if(T.test(m.target.nodeValue))m.target.nodeValue=f(m.target.nodeValue);}else m.addedNodes.forEach(walk);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.nodeName==='INPUT'&&t.type!=='number'&&T.test(t.value)){const p=t.selectionStart;t.value=f(t.value);try{t.setSelectionRange(p,p);}catch(x){}}});
 })();</script>
+<script id="nav-rail">
+(function(){var n=document.querySelector('.nav');if(!n)return;
+function edges(){var max=n.scrollWidth-n.clientWidth,rtl=getComputedStyle(n).direction==='rtl',s=n.scrollLeft,a=Math.abs(s);
+var lh=rtl?max-a:s,rh=rtl?a:max-s;
+n.style.setProperty('--mL',lh>2?'28px':'0px');n.style.setProperty('--mR',rh>2?'28px':'0px');}
+n.addEventListener('scroll',edges,{passive:true});window.addEventListener('resize',edges);edges();
+n.addEventListener('wheel',function(e){if(n.scrollWidth<=n.clientWidth||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+var rtl=getComputedStyle(n).direction==='rtl',max=n.scrollWidth-n.clientWidth,a=Math.abs(n.scrollLeft);
+var toEnd=e.deltaY>0;if((toEnd&&a>=max-1)||(!toEnd&&a<=0))return;
+e.preventDefault();n.scrollLeft+=(rtl?-1:1)*e.deltaY;},{passive:false});
+var down=false,sx=0,sl=0,moved=false;
+n.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||e.button!==0)return;down=true;moved=false;sx=e.clientX;sl=n.scrollLeft;});
+window.addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-sx;if(!moved&&Math.abs(dx)>5){moved=true;n.classList.add('dragging');}
+if(moved)n.scrollLeft=sl-dx;});
+window.addEventListener('pointerup',function(){if(!down)return;down=false;if(moved)setTimeout(function(){n.classList.remove('dragging');},0);});
+})();
+</script>
 </body>
 </html>
