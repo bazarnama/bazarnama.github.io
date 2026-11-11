@@ -1032,39 +1032,9 @@ def main():
         payload["fx_usd"] = fx
         payload["fx_date"] = fx_date
 
-    # Resolve USD from the current item list immediately before the USDT fallback.
-    # Do not rely on a variable created in another branch: the previous version
-    # referenced `usd` without ever defining it, which crashed every workflow run.
-    usd = next(
-        (item for item in items
-         if isinstance(item, dict) and item.get("id") == "usd"),
-        None,
-    )
-    existing_price_ids = {
-        item.get("id") for item in items
-        if isinstance(item, dict)
-        and isinstance(item.get("price"), (int, float))
-        and item.get("price") > 0
-    }
-    if (
-        usd
-        and isinstance(usd.get("price"), (int, float))
-        and usd.get("price") > 0
-        and not usd.get("stale")
-        and "usdt" not in existing_price_ids
-    ):
-        # This is explicitly marked derived and is removed/replaced below if a
-        # direct USDT quote is available. It must never masquerade as a direct quote.
-        items.append({
-            "id": "usdt",
-            "price": usd["price"],
-            "unit": usd.get("unit", "IRT"),
-            "change_pct": usd.get("change_pct"),
-            "updated_utc": usd.get("updated_utc"),
-            "sources": 0,
-            "derived": True,
-            "derived_from": "usd",
-        })
+    if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and "usdt" not in {i.get("id") for i in items if isinstance(i.get("price"), (int, float))}:
+        items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
+                      "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
     currency_checks = select_currency_quotes(items, iran_direct)
     add_extra_currencies(items, ns)

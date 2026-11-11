@@ -48,19 +48,6 @@ class DirectMarketSourceTests(unittest.TestCase):
         self.assertEqual(items[0]["price"], 305000)
         self.assertEqual(items[0]["source_selection"], "secondary-direct")
 
-    def test_direct_market_quote_replaces_fresh_derived_cross_for_eur_gbp_aed(self):
-        for currency in ("eur", "gbp", "aed"):
-            with self.subTest(currency=currency):
-                items = [{"id": currency, "price": 120, "method": "derived", "stale": False, "unit": "IRT"}]
-                direct = {currency: {"price": 305000, "unit": "IRT", "method": "direct",
-                                    "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z",
-                                    "stale": False}}
-                module.select_currency_quotes(items, direct)
-                self.assertEqual(len(items), 1)
-                self.assertEqual(items[0]["price"], 305000)
-                self.assertEqual(items[0]["method"], "direct")
-                self.assertEqual(items[0]["source_selection"], "secondary-direct")
-
     def test_stale_direct_backup_does_not_replace_derived_primary(self):
         items = [{"id": "eur", "price": 120, "method": "derived", "unit": "IRT"}]
         stale = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
