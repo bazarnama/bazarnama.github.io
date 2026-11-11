@@ -26,8 +26,9 @@ SITE_ASSETS = {"usd", "eur", "gbp", "aed", "usdt", "gold-18k", "coin-emami", "co
                "gold-24k", "gold-mesghal", "coin-bahar-azadi", "coin-gram", "silver-999", "xag", "xpt", "xpd", "paxg",
                "natural-gas", "opec-basket", "brent-spot", "wti-spot",
                "sol", "xrp", "bnb", "doge", "ltc", "trx", "ada", "ton", "bch", "dot"}
-# Independent Iranian free-market quotes (never computed from the dollar). Used only as
-# fallback/validation sources for usd/eur/gbp/aed and as sources for extra currencies.
+# NerkhAra is the primary source for USD/EUR/GBP/AED. Arzhaam is the ONLY
+# fallback for those four currencies. NerkhSanj is reserved for extra currencies
+# (CNY/TRY/CAD/AUD/CHF/SAR) and direct USDT; it must not replace these four quotes.
 NERKHSANJ = "https://nerkh.jahankhahan.shop/data/live.json"
 NERKHSANJ_IDS = {"dollar": "usd", "euro": "eur", "pound": "gbp", "aed": "aed", "yuan": "cny", "lira": "try",
                  "cad": "cad", "aud": "aud", "chf": "chf", "sar": "sar", "tether": "usdt"}
@@ -362,11 +363,11 @@ def jalali_to_gregorian(jy, jm, jd):
 
 
 def fetch_arzhaam_currencies():
-    """Fetch direct USD/EUR/GBP/AED quotes from Arzhaam as a fallback.
+    """Fetch direct USD/EUR/GBP/AED quotes from Arzhaam as NerkhAra's fallback.
 
-    NerkhAra remains the primary source. These public pages are consulted only
-    when a NerkhAra quote is missing, invalid, derived, or stale. Each page is
-    parsed independently so one failure never blocks the other currencies.
+    NerkhAra is always primary. Arzhaam is the only fallback for these four
+    currency IDs; NerkhSanj and other feeds are deliberately excluded.
+    Each page is parsed independently so one failure never blocks the others.
     """
     urls = {pid: f"https://arzhaam.ir/rates/{pid}" for pid in DIRECT_CURRENCY_IDS}
     months = {"فروردین": 1, "اردیبهشت": 2, "خرداد": 3, "تیر": 4, "مرداد": 5,
@@ -447,13 +448,11 @@ def jalali_text_to_tehran_epoch(date_text, time_text):
 
 
 def fetch_nerkhsanj():
-    """Independent direct Iranian free-market quotes (euro, pound, dirham, yuan, lira ...).
+    """Fetch direct quotes for extra currencies and USDT from NerkhSanj.
 
-    The file carries a Jalali date and a Tehran clock time. Fresh quotes are accepted for up to
-    72 h when the market is closed and 3 h while open. Older observations are retained as stale
-    diagnostics for up to seven days, but are never selected or published as live prices.
-    A fresh quote is a direct Iranian market observation and may fill a missing/derived primary
-    EUR/GBP/AED quote; it is never allowed to replace a fresh primary market quote.
+    NerkhSanj is NOT a source for USD/EUR/GBP/AED. Those four use NerkhAra
+    first and Arzhaam only as fallback. The file carries a Jalali date and a
+    Tehran clock time; stale quotes are retained only for diagnostics.
     """
     try:
         d = get_json(NERKHSANJ)
@@ -597,13 +596,17 @@ def fill_changes_from_own_history(items, series):
     print("Filled change_pct from own hourly history:", filled)
 
 
-def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
+def select_currency_quotes(items, fallback):
+    """Keep fresh NerkhAra quotes; use Arzhaam only if primary is missing/stale/derived.
+
+    The fallback mapping passed here must contain Arzhaam quotes only. NerkhSanj
+    is intentionally not eligible for USD/EUR/GBP/AED under any condition.
+    """
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
         primary = by_id.get(pid)
-        alt = secondary.get(pid)
+        alt = fallback.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
                     not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)) and
@@ -616,8 +619,8 @@ def select_currency_quotes(items, secondary):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
-        # A fresh direct Iranian quote may replace a derived/missing primary value.
-        # It must never replace a fresh primary quote; stale validation data is rejected above.
+        # Arzhaam may replace only a missing, stale, invalid, or derived NerkhAra quote.
+        # A fresh NerkhAra quote is always authoritative, regardless of disagreement.
         if a_ok and (not p_ok):
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
@@ -656,11 +659,8 @@ def select_currency_quotes(items, secondary):
 
 
 def apply_arzhaam_currency_priority(items, arz):
-    """Compatibility no-op: Arzhaam must never override a valid NerkhAra quote.
-
-    Fallback selection is handled by select_currency_quotes().
-    """
-    return None
+    """Compatibility wrapper for the explicit NerkhAra -> Arzhaam priority."""
+    return select_currency_quotes(items, arz)
 
 
 def fill_missing_changes_from_source_history(items):
@@ -965,14 +965,12 @@ def main():
     fx, fx_date = fetch_fx()
     irm = fetch_iran_market()
     ns = fetch_nerkhsanj()
-    # NerkhAra (PRIMARY) remains authoritative for USD/EUR/GBP/AED.
-    # Arzhaam is the first direct fallback; other independent feeds are later fallbacks.
+    # Strict source order for USD/EUR/GBP/AED:
+    #   1) NerkhAra latest.json (primary payload)
+    #   2) Arzhaam public rates pages (the ONLY fallback)
+    # NerkhSanj and Iran Market Data must never become the source of these four.
     arz = fetch_arzhaam_currencies()
-    iran_direct = {}
-    for pid in DIRECT_CURRENCY_IDS:
-        chosen = choose_independent([arz.get(pid), irm.get(pid), ns.get(pid)])
-        if chosen:
-            iran_direct[pid] = chosen
+    iran_direct = {pid: arz[pid] for pid in DIRECT_CURRENCY_IDS if pid in arz}
     cg = fetch_coingecko()
     eia = fetch_eia()
     fred = fetch_fred_energy()
@@ -1094,8 +1092,7 @@ def main():
         })
 
     currency_checks = select_currency_quotes(items, iran_direct)
-    # select_currency_quotes preserves every fresh NerkhAra quote and uses
-    # Arzhaam only when the NerkhAra quote is unavailable or stale.
+    # Strictly preserves NerkhAra first; Arzhaam is the only eligible fallback.
     add_extra_currencies(items, ns)
     prefer_direct_usdt(items, ns)
     removed_derived = drop_derived(items)
