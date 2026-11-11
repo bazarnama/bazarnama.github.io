@@ -27,6 +27,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Run data and source regression tests
+        run: python -m unittest discover -s tests -v
+
       - name: Fetch prices and update history
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}

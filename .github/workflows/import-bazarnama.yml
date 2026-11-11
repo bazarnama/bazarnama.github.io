@@ -19,13 +19,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Verify and extract project ZIP
         run: |
+          set -euo pipefail
           test -f bazarnama-final.zip || { echo 'bazarnama-final.zip is missing from the repository root'; exit 1; }
           unzip -t bazarnama-final.zip
           mkdir -p .bazarnama-import
           unzip -oq bazarnama-final.zip -d .bazarnama-import
-          rsync -a --exclude='.git/' --exclude='.github/workflows/' .bazarnama-import/ ./
+          PROJECT_ROOT="$(find .bazarnama-import -maxdepth 5 -type f -name index.html -printf '%h\n' | head -n 1)"
+          test -n "$PROJECT_ROOT" || { echo 'index.html not found in imported ZIP'; exit 1; }
+          test -f "$PROJECT_ROOT/update_prices.py" || { echo 'Project root is invalid: update_prices.py is missing'; exit 1; }
+          echo "Detected project root: $PROJECT_ROOT"
+          python -m unittest discover -s "$PROJECT_ROOT/tests" -v
+          rsync -a --exclude='.git/' --exclude='.github/workflows/' --exclude='__pycache__/' --exclude='*.pyc' "$PROJECT_ROOT/" ./
           rm -rf .bazarnama-import
           rm -f bazarnama-final.zip
 
