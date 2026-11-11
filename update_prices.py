@@ -136,6 +136,74 @@ EIA_SERIES = [  # (id, route, series code, unit)
     ("wti", "petroleum/pri/spt", "RWTC", "USD"),
 ]
 
+FRED_SERIES = {
+    "brent-spot": ("DCOILBRENTEU", "USD"),
+    "wti-spot": ("DCOILWTICO", "USD"),
+    "natural-gas": ("DHHNGSP", "USD/MMBtu"),
+}
+
+
+def fetch_fred_energy():
+    """Fetch daily physical spot references from FRED's public CSV endpoint (no API key)."""
+    out = {}
+    for asset_id, (series_id, unit) in FRED_SERIES.items():
+        try:
+            url = "https://fred.stlouisfed.org/graph/fredgraph.csv?" + urllib.parse.urlencode({"id": series_id})
+            req = urllib.request.Request(url, headers={"User-Agent": "bazarnama-updater"})
+            with urllib.request.urlopen(req, timeout=20) as response:
+                lines = response.read().decode("utf-8-sig", "replace").strip().splitlines()
+            if len(lines) < 2:
+                continue
+            rows = []
+            for line in lines[1:]:
+                parts = line.split(",", 1)
+                if len(parts) != 2:
+                    continue
+                date_text, raw = parts[0].strip(), parts[1].strip().strip('"')
+                try:
+                    value = float(raw)
+                    datetime.date.fromisoformat(date_text)
+                except (TypeError, ValueError):
+                    continue
+                if value > 0:
+                    rows.append((date_text, value))
+            if not rows:
+                continue
+            rows.sort(key=lambda x: x[0])
+            date_text, price = rows[-1]
+            previous = rows[-2][1] if len(rows) > 1 else None
+            change = (price - previous) / previous * 100 if previous else None
+            out[asset_id] = {
+                "price": price, "unit": unit, "date": date_text,
+                "source_name": "FRED", "backup_source": "fred",
+                "market_type": "daily-spot", "change_pct": round(change, 4) if change is not None else None,
+                "source_updated_utc": date_text + "T00:00:00Z",
+                "_history_points": rows,
+            }
+        except Exception as exc:  # noqa: BLE001
+            print("FRED failed for", asset_id, type(exc).__name__, file=sys.stderr)
+    return out
+
+
+def normalize_local_currency_unit(row):
+    """Normalize only explicitly labeled IRR values to toman; never guess by magnitude."""
+    if not isinstance(row, dict):
+        return None
+    unit = str(row.get("unit") or "").strip().upper()
+    if unit == "IRR":
+        try:
+            price = float(row.get("price"))
+        except (TypeError, ValueError):
+            return None
+        normalized = dict(row)
+        normalized["price"] = price / 10
+        normalized["unit"] = "IRT"
+        normalized["unit_normalization"] = "IRR_to_IRT_divide_by_10"
+        return normalized
+    if unit == "IRT":
+        return dict(row)
+    return None
+
 
 STOOQ_SYMBOLS = {  # id -> candidate symbols (first plausible one wins), plausible price range
     "brent": (["cb.f", "lco.f"], 10, 400),
@@ -235,6 +303,13 @@ def fetch_iran_market():
                 price = float(row.get("price"))
             except (TypeError, ValueError):
                 continue
+            explicit_unit = str(row.get("unit") or "").strip().upper()
+            if explicit_unit:
+                normalized = normalize_local_currency_unit({"price": price, "unit": explicit_unit})
+                if normalized is None:
+                    continue
+                price = normalized["price"]
+            # Iran Market Data's documented default quote unit is toman (IRT).
             if price <= 0:
                 continue
             stamp_raw = row.get("updated_utc") or row.get("updated_at") or row.get("timestamp") or payload.get("generated_utc") or payload.get("updated_at")
@@ -357,9 +432,9 @@ def jalali_text_to_tehran_epoch(date_text, time_text):
 def fetch_nerkhsanj():
     """Independent direct Iranian free-market quotes (euro, pound, dirham, yuan, lira ...).
 
-    The file carries a Jalali date and a Tehran clock time. An empty time means the market is closed
-    (last close); such a quote is accepted for up to 72 h and keeps its real source date. A quote with a
-    time is accepted for up to 3 h. Anything older is rejected, never shown as live.
+    The file carries a Jalali date and a Tehran clock time. Fresh quotes are accepted for up to
+    72 h when the market is closed and 3 h while open. Older observations are retained as stale
+    diagnostics for up to seven days, but are never selected or published as live prices.
     """
     try:
         d = get_json(NERKHSANJ)
@@ -374,8 +449,8 @@ def fetch_nerkhsanj():
         if closed:
             stamp = min(stamp + 20.5 * 3600, time.time())   # a closed day: the quote is the evening close
         age = time.time() - stamp
-        if age < -300 or age > (72 if closed else 3) * 3600:
-            raise ValueError("NerkhSanj quote is stale")
+        if age < -300 or age > 7 * 24 * 3600:
+            raise ValueError("NerkhSanj timestamp is outside the diagnostic retention window")
         out = {}
         for key, pid in NERKHSANJ_IDS.items():
             try:
@@ -384,9 +459,16 @@ def fetch_nerkhsanj():
                 continue
             if price <= 0:
                 continue
-            out[pid] = {"price": price, "unit": "IRT", "source_name": "NerkhSanj",
+            change_key = key
+            change = (d.get("change") or {}).get(change_key) if isinstance(d.get("change"), dict) else None
+            try:
+                change = float(change) if change is not None else None
+            except (TypeError, ValueError):
+                change = None
+            out[pid] = {"price": price, "unit": "IRT", "source_name": "NerkhSanj (validation only)",
                         "source_updated_utc": datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                        "source_checked_utc": now_iso(), "method": "direct", "stale": False, "market_closed": closed}
+                        "source_checked_utc": now_iso(), "method": "validation-only", "change_pct": change,
+                        "stale": age > (72 if closed else 3) * 3600, "market_closed": closed}
         return out
     except Exception as e:  # noqa: BLE001
         print("NerkhSanj failed:", type(e).__name__, str(e)[:100], file=sys.stderr)
@@ -440,7 +522,7 @@ def add_extra_currencies(items, ns):
     for pid in sorted(EXTRA_DIRECT):
         items[:] = [i for i in items if i.get("id") != pid]
         q = ns.get(pid)
-        if q:
+        if q and not q.get("stale"):
             row = dict(q)
             row.update({"id": pid, "change_pct": None, "updated_utc": q["source_updated_utc"], "sources": 1,
                         "source_selection": "direct-single"})
@@ -450,7 +532,7 @@ def add_extra_currencies(items, ns):
 def prefer_direct_usdt(items, ns):
     """Tether: a direct quote beats a copy of the dollar price."""
     cur = next((i for i in items if i.get("id") == "usdt"), None)
-    if ns.get("usdt") and (cur is None or cur.get("derived") or cur.get("stale")):
+    if ns.get("usdt") and not ns["usdt"].get("stale") and (cur is None or cur.get("derived") or cur.get("stale")):
         row = dict(ns["usdt"])
         row.update({"id": "usdt", "change_pct": None, "updated_utc": row["source_updated_utc"], "sources": 1,
                     "source_selection": "direct-single"})
@@ -460,16 +542,16 @@ def prefer_direct_usdt(items, ns):
             items.append(row)
 
 
-KEEP_FROM_PRIMARY = {"usd", "usdt", "eur", "gbp", "aed"}   # NerkhAra is their first source (user's decision)
-
-
 def drop_derived(items):
     """Public data must not contain dollar-cross calculations presented as market quotes.
     (A flagged copy of the dollar price is kept only for USDT when no direct tether quote exists.)"""
-    def drop(i):   # our own usd x fx rows always go (except flagged USDT); NerkhAra's own derived rows only outside the kept ids
-        return bool(i.get("derived") and i.get("id") != "usdt") or (i.get("method") == "derived" and i.get("id") not in KEEP_FROM_PRIMARY)
+    def drop(i):
+        return bool(i.get("derived") and i.get("id") != "usdt") or i.get("method") == "derived"
     removed = [i.get("id") for i in items if drop(i)]
     items[:] = [i for i in items if not drop(i)]
+    for item in items:
+        if str(item.get("unit") or "").upper() == "USDT":
+            item.pop("price_irt", None)
     return removed
 
 
@@ -503,7 +585,7 @@ def select_currency_quotes(items, secondary):
         primary = by_id.get(pid)
         alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and not primary.get("derived"))   # NerkhAra's own method=derived is accepted
+                    not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)))
         discrepancy = None
         if p_ok and a_ok and primary.get("price"):
@@ -513,8 +595,10 @@ def select_currency_quotes(items, secondary):
             "discrepancy_pct": round(discrepancy, 3) if discrepancy is not None else None,
             "threshold_pct": 5.0,
         }
+        # NerkhSanj is validation-only; it must never be promoted to a market quote.
+        alt_validation_only = bool(alt and (alt.get("method") == "validation-only" or "nerkhsanj" in str(alt.get("source_name", "")).lower()))
         # Direct independent quote is preferred over a derived cross-rate.
-        if a_ok and (not p_ok):
+        if a_ok and (not p_ok) and not alt_validation_only:
             chosen = dict(alt)
             chosen.update({"id": pid, "change_pct": None,
                            "updated_utc": chosen.get("source_updated_utc"),
@@ -534,11 +618,13 @@ def select_currency_quotes(items, secondary):
             if a_ok:
                 primary["secondary_source"] = alt.get("source_name", "Iran Market Data")
                 primary["secondary_price"] = alt["price"]
+                primary["validation_source"] = alt.get("source_name", "independent source")
+                primary["validation_price"] = alt["price"]
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
-                # Large disagreement is retained as a quality flag; don't silently average markets.
-                primary["discrepancy_warning"] = discrepancy is not None and discrepancy > 5.0
-        elif primary and pid in ("eur", "gbp", "aed") and primary.get("derived"):
-            # Never publish a dollar-cross calculation as a direct Iranian free-market quote.
+                primary["validation_warning"] = discrepancy is not None and discrepancy > DISCREPANCY_PCT
+                primary["discrepancy_warning"] = primary["validation_warning"]
+        elif primary and (primary.get("derived") or primary.get("method") == "derived"):
+            # A validation-only feed must not be promoted to a quote; remove the derived value.
             items.remove(primary)
         elif primary:
             primary["stale"] = True
@@ -789,8 +875,8 @@ def annotate_freshness(items, checked_at=None):
             continue
         family = str(item.get("family") or "").lower()
         limit = FRESHNESS_LIMITS.get(family, FRESHNESS_DEFAULT)
-        if item.get("backup_source") == "eia":
-            limit = 72 * 60 * 60  # EIA benchmark series are daily publications.
+        if item.get("backup_source") in {"eia", "fred"}:
+            limit = 72 * 60 * 60  # EIA/FRED benchmark series are daily publications.
         elif item.get("id") in {"opec-basket", "natural-gas"}:
             limit = 4 * 24 * 60 * 60
         observed = item_source_epoch(item)
@@ -859,6 +945,7 @@ def main():
             iran_direct[pid] = chosen
     cg = fetch_coingecko()
     eia = fetch_eia()
+    fred = fetch_fred_energy()
     stooq = {}
 
     if primary:
@@ -908,14 +995,14 @@ def main():
         payload["external_energy"] = eia
     if any(k in stooq for k in STOOQ_ALWAYS):
         payload["delayed_energy"] = {k: v for k, v in stooq.items() if k in STOOQ_ALWAYS}
-    for pid in ("brent", "wti", "xau", "xag", "xpt", "xpd", "natural-gas"):
+    for pid in ("brent", "wti", "brent-spot", "wti-spot", "xau", "xag", "xpt", "xpd", "natural-gas"):
         cur = by_id.get(pid)
         has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
         if has:
             continue
         if pid in stooq:
             e = stooq[pid]
-            row = {"id": pid, "family": "energy" if pid in {"brent", "wti", "natural-gas"} else "metal", "price": e["price"], "unit": e["unit"], "change_pct": None,
+            row = {"id": pid, "family": "energy" if pid in {"brent", "wti", "brent-spot", "wti-spot", "natural-gas"} else "metal", "price": e["price"], "unit": e["unit"], "change_pct": None,
                    "updated_utc": e.get("source_updated_utc"), "source_updated_utc": e.get("source_updated_utc"),
                    "source_checked_utc": now_iso(), "sources": 1, "backup_source": "stooq", "delayed": True,
                    "source_name": "Stooq (جایگزین)"}
@@ -924,6 +1011,12 @@ def main():
             row = {"id": pid, "family": "energy", "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
                    "updated_utc": e["date"] + "T00:00:00Z", "source_updated_utc": e["date"] + "T00:00:00Z",
                    "source_checked_utc": now_iso(), "sources": 1, "backup_source": "eia", "delayed": True}
+        elif pid in fred:
+            e = fred[pid]
+            row = {"id": pid, "family": "energy", "price": e["price"], "unit": e["unit"], "change_pct": e["change_pct"],
+                   "updated_utc": e["source_updated_utc"], "source_updated_utc": e["source_updated_utc"],
+                   "source_checked_utc": now_iso(), "sources": 1, "backup_source": "fred", "source_name": "FRED (جایگزین)",
+                   "delayed": True, "market_type": e["market_type"]}
         else:
             continue
         if cur:
@@ -964,7 +1057,7 @@ def main():
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
                                  "arzhaam_aed": "aed" in arz,
                                  "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
-                                 "stooq": sorted(stooq), "eia": sorted(eia),
+                                 "stooq": sorted(stooq), "eia": sorted(eia), "fred": sorted(fred),
                                  "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
     freshness = annotate_freshness(items)
