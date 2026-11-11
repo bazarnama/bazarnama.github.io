@@ -19,25 +19,120 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify and extract project ZIP
+      - name: Validate and flatten ZIP into repository root
+        shell: bash
         run: |
-          test -f bazarnama-final.zip || { echo 'bazarnama-final.zip is missing from the repository root'; exit 1; }
-          unzip -t bazarnama-final.zip
-          mkdir -p .bazarnama-import
-          unzip -oq bazarnama-final.zip -d .bazarnama-import
-          rsync -a --exclude='.git/' --exclude='.github/workflows/' .bazarnama-import/ ./
-          rm -rf .bazarnama-import
-          rm -f bazarnama-final.zip
+          set -euo pipefail
+          ZIP_FILE="bazarnama-final.zip"
+          test -f "$ZIP_FILE" || { echo "::error::Upload bazarnama-final.zip to the repository root first."; exit 1; }
 
-      - name: Commit imported website files (keep workflow files untouched)
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+          import shutil
+
+          archive = Path("bazarnama-final.zip")
+          staging = Path(".bazarnama-import-staging")
+          if staging.exists():
+              shutil.rmtree(staging)
+          staging.mkdir()
+
+          with ZipFile(archive) as zf:
+              bad = zf.testzip()
+              if bad:
+                  raise SystemExit(f"Invalid ZIP member: {bad}")
+              if not zf.infolist():
+                  raise SystemExit("ZIP is empty")
+              for info in zf.infolist():
+                  name = info.filename.replace("\\", "/")
+                  rel = PurePosixPath(name)
+                  if rel.is_absolute() or ".." in rel.parts:
+                      raise SystemExit(f"Unsafe ZIP path: {info.filename}")
+                  if ((info.external_attr >> 16) & 0o170000) == 0o120000:
+                      raise SystemExit(f"Symlink not allowed: {info.filename}")
+                  if not rel.parts:
+                      continue
+                  dest = staging.joinpath(*rel.parts)
+                  if info.is_dir():
+                      dest.mkdir(parents=True, exist_ok=True)
+                  else:
+                      dest.parent.mkdir(parents=True, exist_ok=True)
+                      with zf.open(info) as source, dest.open("wb") as target:
+                          shutil.copyfileobj(source, target)
+
+          # Unwrap any number of enclosing directories, even if ZIP metadata adds noise.
+          source = staging
+          while True:
+              children = [p for p in source.iterdir() if p.name not in {"__MACOSX", ".DS_Store"}]
+              if len(children) == 1 and children[0].is_dir():
+                  source = children[0]
+              else:
+                  break
+          if not any(source.iterdir()):
+              raise SystemExit("ZIP contains no project files")
+
+          # Replace imported project entries at repository root, never copy the wrapper folder.
+          for item in list(source.iterdir()):
+              if item.name in {".git", ".bazarnama-import-staging"}:
+                  continue
+              target = Path(item.name)
+              if item.name == ".github" and item.is_dir():
+                  target.mkdir(exist_ok=True)
+                  for child in item.iterdir():
+                      if child.name == "workflows":
+                          continue  # preserve active workflow files
+                      dest = target / child.name
+                      if dest.is_dir():
+                          shutil.rmtree(dest)
+                      elif dest.exists():
+                          dest.unlink()
+                      if child.is_dir():
+                          shutil.copytree(child, dest)
+                      else:
+                          shutil.copy2(child, dest)
+                  continue
+              if target.is_dir():
+                  shutil.rmtree(target)
+              elif target.exists():
+                  target.unlink()
+              if item.is_dir():
+                  shutil.copytree(item, target)
+              else:
+                  shutil.copy2(item, target)
+
+          # Explicit cleanup of wrapper directories created by previous faulty runs.
+          for stale_name in ("bazarnama.github.io-main", "bazarnama-final"):
+              stale = Path(stale_name)
+              if stale.is_dir():
+                  shutil.rmtree(stale)
+              elif stale.exists():
+                  stale.unlink()
+
+          shutil.rmtree(staging)
+          archive.unlink()
+          print("SUCCESS: imported project files at repository root; wrapper directories removed.")
+          PY
+
+      - name: Run project tests when available
+        shell: bash
         run: |
+          if [ -d tests ]; then
+            python -m unittest discover -s tests -v
+          else
+            echo "No tests directory; skipping tests."
+          fi
+
+      - name: Commit imported website files
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo 'No website file changes to import.'
+            echo "No changes to import."
             exit 0
           fi
-          git commit -m "Import Bazarnama website files"
+          git commit -m "Import Bazarnama ZIP directly into repository root"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
