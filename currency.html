@@ -559,28 +559,6 @@ function timeLabel(value){
    }).replace(/[,،]\s*/,' ساعت ');
 }
 
-async function mergeDirectCurrencies(data){
- if(!data||!Array.isArray(data.items))return data;
- const symbols={usd:'USD_IRR_FREE',eur:'EUR_IRR_FREE',gbp:'GBP_IRR_FREE',aed:'AED_IRR_FREE'};
- try{
-  const r=await fetch('https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json?x='+Date.now(),{cache:'no-store'});
-  if(!r.ok)throw Error('secondary source unavailable');
-  const payload=await r.json(),rows=Array.isArray(payload.data)?payload.data:[];
-  for(const [id,symbol] of Object.entries(symbols)){
-   const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
-   const rawPrice=Number(row?.price),unitRaw=String(row?.currency||payload.meta?.unit||'').toUpperCase(),price=(unitRaw==='IRR'||unitRaw==='RIAL'||unitRaw==='RIALS')?rawPrice/10:rawPrice,raw=row?.timestamp||row?.updated_utc||row?.updated_at||payload.meta?.updated_at;
-   const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const age=Date.now()-stamp,fresh=Number.isFinite(stamp)&&age>=-5*60*1000&&age<=2*60*60*1000&&Number.isFinite(price)&&price>0&&!!row&&!row.stale&&!(payload.meta&&payload.meta.stale)&&['IRT','IRR','TOMAN','TOMANS','RIAL','RIALS'].includes(unitRaw);
-   const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
-   if(fresh&&(!primary||primary.stale||primary.derived===true||primary.method==='derived')){
-    const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct',freshness:{status:age>90*60*1000?'aging':'fresh',observed_utc:new Date(stamp).toISOString(),age_seconds:Math.max(0,Math.floor(age/1000)),max_age_seconds:2*60*60,clock_basis:'provider_timestamp'}};
-    if(at>=0)data.items[at]=direct;else data.items.push(direct);
-   }else if(['eur','gbp','aed'].includes(id)&&primary&&(primary.derived===true||primary.method==='derived'))data.items.splice(at,1);
-  }
- }catch(e){data.items=data.items.filter(x=>!(['eur','gbp','aed'].includes(x.id)&&(x.derived===true||x.method==='derived')));}
- return data;
-}
-
 async function getPrices(){
  let old=null;
 
@@ -594,7 +572,7 @@ async function getPrices(){
     old=d;
 
     if(d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<20*60*1000){
-     return await mergeDirectCurrencies(d);
+     return d;
     }
    }
   }
@@ -616,16 +594,16 @@ async function getPrices(){
 
    if(!r.ok)throw Error('HTTP '+r.status);
 
-   return await mergeDirectCurrencies(await r.json());
+   return await r.json();
   }finally{
    clearTimeout(t);
   }
  }catch(e){
   if(old){
-   return await mergeDirectCurrencies({
+   return {
     ...old,
     items:old.items.map(i=>({...i,stale:true}))
-   });
+   };
   }
 
   throw e;

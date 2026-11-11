@@ -74,26 +74,26 @@ async function mergeDirectCurrencies(data){
   const payload=await r.json(),rows=Array.isArray(payload.data)?payload.data:[];
   for(const [id,symbol] of Object.entries(symbols)){
    const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
-   const rawPrice=Number(row?.price),unitRaw=String(row?.currency||payload.meta?.unit||'').toUpperCase(),price=(unitRaw==='IRR'||unitRaw==='RIAL'||unitRaw==='RIALS')?rawPrice/10:rawPrice,raw=row?.timestamp||row?.updated_utc||row?.updated_at||payload.meta?.updated_at;
+   const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
    const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0&&!!row&&!row.stale&&!(payload.meta&&payload.meta.stale)&&['IRT','IRR','TOMAN','TOMANS','RIAL','RIALS'].includes(unitRaw);
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};
-    if(!primary||primary.stale||primary.derived===true||primary.method==='derived'){if(at>=0)data.items[at]=direct;else data.items.push(direct);}
+    if(!primary||primary.stale||primary.derived){if(at>=0)data.items[at]=direct;else data.items.push(direct);}
     else {primary.source_name=primary.source_name||'NerkhAra';primary.source_updated_utc=primary.source_updated_utc||primary.updated_utc;primary.secondary_source='Iran Market Data';primary.secondary_price=price;primary.source_discrepancy_pct=primary.price?Math.abs(primary.price-price)/primary.price*100:null;}
-   }else if(['eur','gbp','aed'].includes(id)&&primary&&(primary.derived===true||primary.method==='derived')){data.items.splice(at,1);}
+   }else if(['eur','gbp','aed'].includes(id)&&primary&&primary.derived){data.items.splice(at,1);}
   }
  }catch(e){
-  data.items=data.items.filter(x=>!(['eur','gbp','aed'].includes(x.id)&&(x.derived===true||x.method==='derived')));
+  data.items=data.items.filter(x=>!(['eur','gbp','aed'].includes(x.id)&&x.derived));
  }
  return data;
 }
 async function getPrices(early){
  let old=null;
- try{const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(early)early(d);if(d.primary_ok!==false&&d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<25*60*1000)return await mergeDirectCurrencies(d);}}}catch(e){}
- try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);try{const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await mergeDirectCurrencies(await r.json());}finally{clearTimeout(t);}}
- catch(e){if(old)return await mergeDirectCurrencies({...old,items:old.items.map(i=>({...i,stale:true}))});throw e;}
+ try{const r=await fetch('/data/prices.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&Array.isArray(d.items)&&d.items.length){old=d;if(early)early(d);if(d.primary_ok!==false&&d.fetched_utc&&Date.now()-Date.parse(d.fetched_utc)<25*60*1000)return d;}}}catch(e){}
+ try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);try{const r=await fetch('https://nerkhara.com/api/v1/latest.json?refresh='+Date.now(),{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await r.json();}finally{clearTimeout(t);}}
+ catch(e){if(old)return {...old,items:old.items.map(i=>({...i,stale:true}))};throw e;}
 }
 async function load(){
  try{
@@ -152,7 +152,7 @@ async function loadHistory(){
   if(!points.length){
    try{const r=await fetch('/data/history.json?x='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();points=parsePoints({points:j?.series?.[ID]||[]});}}catch(e){}
   }
-  if(!points.length&&!['eur','gbp','aed'].includes(ID)){const r=await fetch('https://nerkhara.com/api/v1/history/'+encodeURIComponent(ID)+'.json',{cache:'no-store'});if(r.ok)points=parsePoints(await r.json());}
+  if(!points.length){const r=await fetch('https://nerkhara.com/api/v1/history/'+encodeURIComponent(ID)+'.json',{cache:'no-store'});if(r.ok)points=parsePoints(await r.json());}
   const cutoff=rangeDays?Date.now()/1000-rangeDays*86400:0;
   ALLPTS=points.slice();renderReturns();
   points=points.filter(p=>p.t>=cutoff);
@@ -437,9 +437,8 @@ LIST_JS = """const fmt=(v,d)=>new Intl.NumberFormat('fa-IR-u-nu-latn',{maximumFr
 const U={IRT:'تومان',USD:'دلار',USDT:'تتر'};
 fetch('/data/prices.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{
  const m=new Map((d.items||[]).map(i=>[i.id,i]));let n=0;
- document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);const invalidDerived=x&&(x.derived===true||x.method==='derived')&&x.id!=='usdt';if(x&&typeof x.price==='number'&&!invalidDerived){el.textContent=fmt(x.price);n++;
-  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent='\\u2066'+(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪\\u2069';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}
-  const note=x.stale||x.freshness?.status==='stale'?' · داده قدیمی':x.freshness?.status==='aging'?' · در آستانه کهنگی':x.freshness?.status==='unknown'?' · زمان منبع نامشخص':'';if(note){const small=el.closest('.price')?.querySelector('small');if(small)small.append(document.createTextNode(note));}}
+ document.querySelectorAll('[data-p]').forEach(el=>{const x=m.get(el.dataset.p);if(x&&typeof x.price==='number'){el.textContent=fmt(x.price);n++;
+  const c=document.querySelector('[data-c="'+el.dataset.p+'"]');if(c&&typeof x.change_pct==='number'){c.textContent='\\u2066'+(x.change_pct>0?'+':'')+fmt(x.change_pct,2)+'٪\\u2069';c.className='pc '+(x.change_pct>0?'up':x.change_pct<0?'down':'');}}
   else el.textContent='ناموجود';});
  const st=document.getElementById('st'),t=d.fetched_utc||d.generated_utc;
  if(st&&t){const dt=new Date(t);st.textContent='آخرین به‌روزرسانی داده: '+dt.toLocaleString('fa-IR-u-nu-latn',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Tehran'}).replace(/[,،]\\s*/,' ساعت ');}
@@ -478,7 +477,7 @@ def about():
     title = "درباره بازارنما و روش جمع‌آوری قیمت‌ها"
     desc = "بازارنما چیست، قیمت‌ها از کجا می‌آیند، هر چند وقت به‌روز می‌شوند و محدودیت‌های داده‌ها چیست."
     body = """<section class="hero"><div class="eyebrow">بازارنما</div><h1>درباره بازارنما و روش کار</h1><p>بازارنما نمای ساده و سریعی از قیمت ارز، طلا، سکه، رمزارز و نفت است.</p></section>
-<section class="panel"><h2>قیمت‌ها از کجا می‌آیند؟</h2><p>قیمت‌ها از رابط داده <a href="https://nerkhara.com/en/api/" rel="noopener noreferrer">NerkhAra</a> گرفته می‌شوند که نرخ را از چند منبع گردآوری می‌کند. بازارنما خودش قیمت‌گذاری نمی‌کند؛ فقط نمایش می‌دهد.</p><p>برای دلار، یورو، پوند و درهم، بازارنما دادهٔ NerkhAra را با دادهٔ مستقل Iran Market Data بررسی می‌کند. نرخ مستقیم بازار آزاد برای یورو، پوند و درهم جایگزین تبدیل از دلار می‌شود؛ نرخ‌های دو منبع نیز از نظر اختلاف کنترل می‌شوند. اگر نرخ مستقیم معتبر نباشد، به‌جای عدد محاسبه‌شده قیمت نمایش داده نمی‌شود. Frankfurter فقط برای نرخ‌های مرجع جهانی و CoinGecko برای پشتیبان قیمت رمزارزها استفاده می‌شود، نه برای ساخت نرخ مستقل ارزهای بازار آزاد ایران.</p><p>برای نفت برنت و WTI فیزیکی و گاز طبیعی هنری‌هاب، از داده‌های روزانه FRED با منبع U.S. Energy Information Administration استفاده می‌شود. این نرخ‌ها قیمت روزانهٔ بازار فیزیکی‌اند و نباید با قیمت لحظه‌ای یا قرارداد آتی اشتباه گرفته شوند؛ تاریخ مشاهده و وضعیت تازگی کنار قیمت ثبت می‌شود.</p><h2>هر چند وقت به‌روز می‌شود؟</h2><p>فرایند خودکار GitHub Actions تقریباً هر 10 دقیقه داده‌ها را دریافت و ذخیره می‌کند؛ اجرای دقیق ممکن است گاهی دیرتر انجام شود. تاریخچهٔ روزانهٔ منبع و نقاط ساعتی بازارنما در مخزن نگه‌داری می‌شوند و با انتشارهای بعدی حذف نمی‌شوند. اگر منبع در دسترس نباشد، آخرین قیمت ذخیره‌شده با برچسب «قدیمی» نمایش داده می‌شود و به‌عنوان نرخ زنده معرفی نمی‌شود.</p><h2>زمان داده یعنی چه؟</h2><p>کنار هر قیمت، زمان انتشار داده توسط منبع و تعداد منابع نوشته می‌شود تا بتوانی تازگی عدد را بسنجی.</p><h2>اخبار</h2><p>فقط تیتر، نام منبع، تاریخ و پیوند خبرها از RSS رسانه‌های خبری نمایش داده می‌شود و متن کامل در وب‌سایت ناشر خوانده می‌شود.</p><h2>محدودیت‌ها و سلب مسئولیت</h2><p>قیمت‌ها برای آگاهی عمومی‌اند و تضمین‌کننده قیمت نهایی معامله نیستند. بازار آزاد ممکن است در لحظه با عدد نمایش‌داده‌شده تفاوت داشته باشد. اطلاعات این سایت توصیه سرمایه‌گذاری، خرید یا فروش نیست.</p><h2>هشدار قیمت</h2><p>هشدارهای قیمت در مرورگر خودت ذخیره می‌شوند و فقط وقتی کار می‌کنند که صفحه بازارنما باز باشد؛ اطلاعاتی از تو روی سرور ما نگه داشته نمی‌شود.</p></section>"""
+<section class="panel"><h2>قیمت‌ها از کجا می‌آیند؟</h2><p>قیمت‌ها از رابط داده <a href="https://nerkhara.com/en/api/" rel="noopener noreferrer">NerkhAra</a> گرفته می‌شوند که نرخ را از چند منبع گردآوری می‌کند. بازارنما خودش قیمت‌گذاری نمی‌کند؛ فقط نمایش می‌دهد.</p><p>برای دلار، یورو، پوند و درهم، بازارنما دادهٔ NerkhAra را با دادهٔ مستقل Iran Market Data بررسی می‌کند. نرخ مستقیم بازار آزاد برای یورو، پوند و درهم جایگزین تبدیل از دلار می‌شود؛ نرخ‌های دو منبع نیز از نظر اختلاف کنترل می‌شوند. Frankfurter فقط برای نرخ‌های مرجع جهانی و CoinGecko برای پشتیبان قیمت بیت‌کوین و اتریوم استفاده می‌شود، نه برای ساخت نرخ مستقل ارزهای بازار آزاد ایران.</p><h2>هر چند وقت به‌روز می‌شود؟</h2><p>فرایند خودکار GitHub Actions تقریباً هر 10 دقیقه داده‌ها را دریافت و ذخیره می‌کند؛ اجرای دقیق ممکن است گاهی دیرتر انجام شود. تاریخچهٔ روزانهٔ منبع و نقاط ساعتی بازارنما در مخزن نگه‌داری می‌شوند و با انتشارهای بعدی حذف نمی‌شوند. اگر منبع در دسترس نباشد، آخرین قیمت ذخیره‌شده با برچسب «قدیمی» نمایش داده می‌شود و به‌عنوان نرخ زنده معرفی نمی‌شود.</p><h2>زمان داده یعنی چه؟</h2><p>کنار هر قیمت، زمان انتشار داده توسط منبع و تعداد منابع نوشته می‌شود تا بتوانی تازگی عدد را بسنجی.</p><h2>اخبار</h2><p>فقط تیتر، نام منبع، تاریخ و پیوند خبرها از RSS رسانه‌های خبری نمایش داده می‌شود و متن کامل در وب‌سایت ناشر خوانده می‌شود.</p><h2>محدودیت‌ها و سلب مسئولیت</h2><p>قیمت‌ها برای آگاهی عمومی‌اند و تضمین‌کننده قیمت نهایی معامله نیستند. بازار آزاد ممکن است در لحظه با عدد نمایش‌داده‌شده تفاوت داشته باشد. اطلاعات این سایت توصیه سرمایه‌گذاری، خرید یا فروش نیست.</p><h2>هشدار قیمت</h2><p>هشدارهای قیمت در مرورگر خودت ذخیره می‌شوند و فقط وقتی کار می‌کنند که صفحه بازارنما باز باشد؛ اطلاعاتی از تو روی سرور ما نگه داشته نمی‌شود.</p></section>"""
     ld = {"@context": "https://schema.org", "@type": "AboutPage", "name": title, "url": BASE + "/about.html", "inLanguage": "fa-IR", "description": desc}
     return page(title + " | بازارنما", desc, "/about.html", body, ld)
 

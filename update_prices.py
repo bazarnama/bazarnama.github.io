@@ -12,11 +12,11 @@ Sources
                                      lira, yuan ... when the market feed has no value)
   3) CoinGecko (public endpoint)   - backup BTC / ETH / USDT prices in USD
   4) Stooq CSV (no key)            - delayed futures prices for Brent / WTI
-  5) FRED public CSV (no key)       - daily Brent / WTI physical spot and Henry Hub gas
-  6) EIA Open Data (US gov, optional free key) - daily reference for Brent and WTI
+  5) EIA Open Data (US gov, needs a free key in env EIA_API_KEY) - external reference for
+     Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, statistics, sys, time, csv, io, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
+import json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
 from zoneinfo import ZoneInfo
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
@@ -179,66 +179,6 @@ def fetch_stooq(ids=None):
     return out
 
 
-FRED_ENERGY_SERIES = {
-    # Daily physical spot benchmarks, published by the U.S. EIA and distributed by FRED.
-    "brent-spot": ("DCOILBRENTEU", "نفت برنت فیزیکی", "USD/barrel"),
-    "wti-spot": ("DCOILWTICO", "نفت WTI فیزیکی", "USD/barrel"),
-    "natural-gas": ("DHHNGSP", "گاز طبیعی هنری‌هاب", "USD/MMBtu"),
-}
-
-
-def fetch_fred_energy():
-    """Fetch daily Brent/WTI spot and Henry Hub prices from FRED's public CSV export.
-
-    These are daily benchmark observations, not intraday quotes or futures prices.
-    The observation date is preserved as the source timestamp; fetch time is never
-    substituted for the provider's publication date.
-    """
-    out = {}
-    for pid, (series_id, _label, unit) in FRED_ENERGY_SERIES.items():
-        start_day = (datetime.datetime.now(datetime.timezone.utc).date() - datetime.timedelta(days=14)).isoformat()
-        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}&cosd={start_day}"
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "bazarnama-updater", "Accept": "text/csv"})
-            with urllib.request.urlopen(req, timeout=20) as response:
-                body = response.read().decode("utf-8-sig", "replace")
-            rows = []
-            for row in csv.DictReader(io.StringIO(body)):
-                day = (row.get("observation_date") or row.get("DATE") or "").strip()
-                raw = (row.get(series_id) or "").strip()
-                if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day) or raw in ("", ".", "NA", "N/A"):
-                    continue
-                try:
-                    value = float(raw)
-                except ValueError:
-                    continue
-                if value > 0:
-                    rows.append((day, value))
-            rows.sort(key=lambda x: x[0])
-            if not rows:
-                continue
-            day, price = rows[-1]
-            observation_date = datetime.date.fromisoformat(day)
-            if (datetime.datetime.now(datetime.timezone.utc).date() - observation_date).days > 7:
-                print("FRED observation too old for", pid, day, file=sys.stderr)
-                continue
-            change = None
-            if len(rows) > 1 and rows[-2][1] > 0:
-                change = round((price - rows[-2][1]) / rows[-2][1] * 100, 4)
-            out[pid] = {
-                "id": pid, "family": "energy", "price": price, "unit": "USD",
-                "change_pct": change, "change_basis": "source_daily_history",
-                "date": day, "as_of": day, "updated_utc": day,
-                "source_updated_utc": day, "source_checked_utc": now_iso(),
-                "sources": 1, "backup_source": "fred", "source_name": "FRED / U.S. EIA",
-                "market_type": "daily-spot", "delayed": True,
-                "source_url": f"https://fred.stlouisfed.org/series/{series_id}",
-            }
-        except Exception as e:  # noqa: BLE001
-            print("FRED failed for", pid, type(e).__name__, file=sys.stderr)
-    return out
-
-
 def fetch_eia():
     """Daily Brent / WTI / Henry Hub from the US EIA. Returns {id: {...}} (empty without a key)."""
     key = os.environ.get("EIA_API_KEY", "").strip()
@@ -289,20 +229,15 @@ def fetch_iran_market():
         for pid, symbol in DIRECT_CURRENCY_IDS.items():
             row = next((r for r in rows if isinstance(r, dict) and
                         str(r.get("symbol") or r.get("id") or "").upper() == symbol), None)
-            if not row or row.get("stale") is True or (isinstance(payload.get("meta"), dict) and payload["meta"].get("stale") is True):
+            if not row:
                 continue
             try:
                 price = float(row.get("price"))
             except (TypeError, ValueError):
                 continue
-            unit_raw = str(row.get("currency") or (payload.get("meta") or {}).get("unit") or "").strip().upper()
-            if unit_raw in {"IRR", "RIAL", "RIALS"}:
-                price /= 10
-            elif unit_raw not in {"IRT", "TOMAN", "TOMANS"}:
-                continue
             if price <= 0:
                 continue
-            stamp_raw = row.get("timestamp") or row.get("updated_utc") or row.get("updated_at") or payload.get("generated_utc") or (payload.get("meta") or {}).get("updated_at")
+            stamp_raw = row.get("updated_utc") or row.get("updated_at") or row.get("timestamp") or payload.get("generated_utc") or payload.get("updated_at")
             stamp = parse_timestamp(stamp_raw)
             if stamp is None:
                 continue
@@ -310,8 +245,7 @@ def fetch_iran_market():
             if age < -300 or age > 2 * 60 * 60:
                 continue
             result[pid] = {
-                "price": price, "unit": "IRT", "change_pct": row.get("change_pct") if isinstance(row.get("change_pct"), (int, float)) else None,
-                "source_name": "Iran Market Data",
+                "price": price, "unit": "IRT", "source_name": "Iran Market Data",
                 "source_updated_utc": datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "source_checked_utc": now_iso(), "method": "direct", "stale": False,
             }
@@ -516,7 +450,7 @@ def add_extra_currencies(items, ns):
 def prefer_direct_usdt(items, ns):
     """Tether: a direct quote beats a copy of the dollar price."""
     cur = next((i for i in items if i.get("id") == "usdt"), None)
-    if ns.get("usdt") and (cur is None or is_derived(cur) or cur.get("stale")):
+    if ns.get("usdt") and (cur is None or cur.get("derived") or cur.get("stale")):
         row = dict(ns["usdt"])
         row.update({"id": "usdt", "change_pct": None, "updated_utc": row["source_updated_utc"], "sources": 1,
                     "source_selection": "direct-single"})
@@ -526,18 +460,16 @@ def prefer_direct_usdt(items, ns):
             items.append(row)
 
 
+KEEP_FROM_PRIMARY = {"usd", "usdt", "eur", "gbp", "aed"}   # NerkhAra is their first source (user's decision)
+
+
 def drop_derived(items):
     """Public data must not contain dollar-cross calculations presented as market quotes.
     (A flagged copy of the dollar price is kept only for USDT when no direct tether quote exists.)"""
-    def drop(i):
-        return is_derived(i) and i.get("id") != "usdt"
+    def drop(i):   # our own usd x fx rows always go (except flagged USDT); NerkhAra's own derived rows only outside the kept ids
+        return bool(i.get("derived") and i.get("id") != "usdt") or (i.get("method") == "derived" and i.get("id") not in KEEP_FROM_PRIMARY)
     removed = [i.get("id") for i in items if drop(i)]
     items[:] = [i for i in items if not drop(i)]
-    # Do not publish a local-currency amount calculated from USD/USDT quotes.
-    # The site may display the original quote, but must not imply a direct IRR/IRT market feed.
-    for item in items:
-        if str(item.get("unit") or "").upper() not in {"IRT", "IRR"}:
-            item.pop("price_irt", None)
     return removed
 
 
@@ -564,14 +496,14 @@ def fill_changes_from_own_history(items, series):
 
 
 def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; a calculated cross-rate is never direct market data."""
+    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
         primary = by_id.get(pid)
         alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and not is_derived(primary))
+                    not primary.get("stale") and not primary.get("derived"))   # NerkhAra's own method=derived is accepted
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)))
         discrepancy = None
         if p_ok and a_ok and primary.get("price"):
@@ -584,7 +516,7 @@ def select_currency_quotes(items, secondary):
         # Direct independent quote is preferred over a derived cross-rate.
         if a_ok and (not p_ok):
             chosen = dict(alt)
-            chosen.update({"id": pid, "change_pct": chosen.get("change_pct"),
+            chosen.update({"id": pid, "change_pct": None,
                            "updated_utc": chosen.get("source_updated_utc"),
                            "sources": chosen.get("sources", 1),
                            "backup_source": str(chosen.get("source_name", "Iran Market Data")).lower().replace(" ", "-"),
@@ -605,9 +537,8 @@ def select_currency_quotes(items, secondary):
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
                 # Large disagreement is retained as a quality flag; don't silently average markets.
                 primary["discrepancy_warning"] = discrepancy is not None and discrepancy > 5.0
-        elif primary and is_derived(primary):
-            # A calculated cross-rate is not a direct local-market quote. If no
-            # independent quote exists, omit it rather than presenting it as live.
+        elif primary and pid in ("eur", "gbp", "aed") and primary.get("derived"):
+            # Never publish a dollar-cross calculation as a direct Iranian free-market quote.
             items.remove(primary)
         elif primary:
             primary["stale"] = True
@@ -796,19 +727,8 @@ def update_history(items):
     attempts = data.get("seed_attempted", {})
     if not isinstance(attempts, dict):
         attempts = {}
-    # NerkhAra marks EUR/GBP/AED spot quotes as derived in this snapshot. Preserve
-    # their old imported history privately, but never mix it into the public direct-rate
-    # series. New hourly points will start only from verified direct quotes.
-    unverified_history = data.get("unverified_currency_history", {})
-    if not isinstance(unverified_history, dict):
-        unverified_history = {}
-    for pid in ("eur", "gbp", "aed"):
-        if pid in series:
-            unverified_history[pid] = series.pop(pid)
-        seeded.discard(pid)
-        attempts.pop(pid, None)
-    # Import provider history once per symbol; exclude currencies that require direct local quotes.
-    seed_history(series, [i.get("id") for i in items if i.get("id") in SITE_ASSETS and i.get("id") not in {"eur", "gbp", "aed"}], seeded, attempts)
+    # Import provider history once per symbol; retain it across every future run.
+    seed_history(series, [i.get("id") for i in items if i.get("id") in SITE_ASSETS], seeded, attempts)
     now = time.time()
     hour = int(now) // 3600 * 3600
     for item in items:
@@ -824,8 +744,7 @@ def update_history(items):
     for pid, points in list(series.items()):
         unique = {int(p[0]): [int(p[0]), float(p[1])] for p in points if isinstance(p, (list, tuple)) and len(p) >= 2}
         series[pid] = compact_points(sorted(unique.values(), key=lambda p: p[0]), now)
-    archive = {"v": 3, "seeded": sorted(seeded), "seed_attempted": attempts,
-               "unverified_currency_history": unverified_history, "series": series}
+    archive = {"v": 2, "seeded": sorted(seeded), "seed_attempted": attempts, "series": series}
     write_if_changed(HIST_ARCHIVE, dumps(archive))
     lean = {"v": 3, "lean": True, "series": {
         pid: [p for p in series[pid] if p[0] >= now - HIST_LEAN_DAYS * 86400] for pid in sorted(SITE_ASSETS) if pid in series}}
@@ -870,8 +789,8 @@ def annotate_freshness(items, checked_at=None):
             continue
         family = str(item.get("family") or "").lower()
         limit = FRESHNESS_LIMITS.get(family, FRESHNESS_DEFAULT)
-        if item.get("backup_source") in {"eia", "fred"}:
-            limit = 72 * 60 * 60  # Daily benchmark observations.
+        if item.get("backup_source") == "eia":
+            limit = 72 * 60 * 60  # EIA benchmark series are daily publications.
         elif item.get("id") in {"opec-basket", "natural-gas"}:
             limit = 4 * 24 * 60 * 60
         observed = item_source_epoch(item)
@@ -940,7 +859,6 @@ def main():
             iran_direct[pid] = chosen
     cg = fetch_coingecko()
     eia = fetch_eia()
-    fred = fetch_fred_energy()
     stooq = {}
 
     if primary:
@@ -990,34 +908,10 @@ def main():
         payload["external_energy"] = eia
     if any(k in stooq for k in STOOQ_ALWAYS):
         payload["delayed_energy"] = {k: v for k, v in stooq.items() if k in STOOQ_ALWAYS}
-    if fred:
-        payload["daily_energy"] = {k: {key: value for key, value in v.items() if not key.startswith("_")} for k, v in fred.items()}
-    # The explicit spot pages use daily physical benchmarks from FRED when the
-    # primary spot quote is missing, stale, or older than the FRED observation.
-    for pid in ("brent-spot", "wti-spot"):
-        fresh_spot = fred.get(pid)
-        current = by_id.get(pid)
-        current_epoch = item_source_epoch(current) if current else None
-        fred_epoch = item_source_epoch(fresh_spot) if fresh_spot else None
-        if fresh_spot and (current is None or current.get("stale") or current_epoch is None or
-                           (fred_epoch is not None and fred_epoch > current_epoch)):
-            if current:
-                items[items.index(current)] = fresh_spot
-            else:
-                items.append(fresh_spot)
-            by_id[pid] = fresh_spot
     for pid in ("brent", "wti", "xau", "xag", "xpt", "xpd", "natural-gas"):
         cur = by_id.get(pid)
         has = cur and isinstance(cur.get("price"), (int, float)) and not cur.get("stale")
         if has:
-            continue
-        if pid == "natural-gas" and pid in fred:
-            row = fred[pid]
-            if cur:
-                items[items.index(cur)] = row
-            else:
-                items.append(row)
-            by_id[pid] = row
             continue
         if pid in stooq:
             e = stooq[pid]
@@ -1070,7 +964,7 @@ def main():
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
                                  "arzhaam_aed": "aed" in arz,
                                  "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
-                                 "stooq": sorted(stooq), "eia": sorted(eia), "fred": sorted(fred),
+                                 "stooq": sorted(stooq), "eia": sorted(eia),
                                  "eia_key_set": bool(os.environ.get("EIA_API_KEY", "").strip())}
     payload["fetched_utc"] = now_iso()
     freshness = annotate_freshness(items)
@@ -1084,7 +978,7 @@ def main():
     s = build_summary(payload)
     if s:
         write_if_changed(SUMMARY, json.dumps(s, ensure_ascii=False))
-    print("Updated", OUT, "primary_ok =", payload["primary_ok"], "fx =", bool(fx), "coingecko =", sorted(cg), "stooq =", sorted(stooq), "eia =", sorted(eia), "fred =", sorted(fred))
+    print("Updated", OUT, "primary_ok =", payload["primary_ok"], "fx =", bool(fx), "coingecko =", sorted(cg), "stooq =", sorted(stooq), "eia =", sorted(eia))
     return 0
 
 
