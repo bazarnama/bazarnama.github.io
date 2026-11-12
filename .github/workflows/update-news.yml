@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: bazarnama-data-writes
+  group: bazarnama-news
   cancel-in-progress: false
 
 jobs:

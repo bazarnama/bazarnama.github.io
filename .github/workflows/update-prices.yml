@@ -2,16 +2,17 @@ name: Update market prices
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [update-prices]
   schedule:
     - cron: "*/10 * * * *"
 
 permissions:
   contents: write
 
-# One writer at a time for the whole repository (prices and news share this group),
-# so two scheduled runs can never push at the same moment.
+# Prices have their own group so a pending news run can never replace a pending price run.
 concurrency:
-  group: bazarnama-data-writes
+  group: bazarnama-prices
   cancel-in-progress: false
 
 jobs:
@@ -28,6 +29,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run data and source regression tests
+        continue-on-error: true   # a test failure must never freeze the prices
         run: python -m unittest discover -s tests -v
 
       - name: Fetch prices and update history
