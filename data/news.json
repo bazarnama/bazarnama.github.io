@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-12T22:10:08.861172+00:00",
+  "updated_at": "2026-11-12T22:56:56.192335+00:00",
   "items": [
     {
-      "title": "رحمانی: امسال برای نخستین بار مجوز صادرات سیب به عراق دریافت شد",
-      "url": "https://www.mehrnews.com/news/7009136/%D8%B1%D8%AD%D9%85%D8%A7%D9%86%DB%8C-%D8%A7%D9%85%D8%B3%D8%A7%D9%84-%D8%A8%D8%B1%D8%A7%DB%8C-%D9%86%D8%AE%D8%B3%D8%AA%DB%8C%D9%86-%D8%A8%D8%A7%D8%B1-%D9%85%D8%AC%D9%88%D8%B2-%D8%B5%D8%A7%D8%AF%D8%B1%D8%A7%D8%AA-%D8%B3%DB%8C%D8%A8-%D8%A8%D9%87-%D8%B9%D8%B1%D8%A7%D9%82-%D8%AF%D8%B1%DB%8C%D8%A7%D9%81%D8%AA",
-      "source": "مهر",
-      "published_at": "2026-11-12T21:18:34+00:00",
+      "title": "حمله پهپادی مجدد یمن به خط لوله نفت راهبردی عربستان",
+      "url": "https://www.irna.ir/news/86320254/%D8%AD%D9%85%D9%84%D9%87-%D9%BE%D9%87%D9%BE%D8%A7%D8%AF%DB%8C-%D9%85%D8%AC%D8%AF%D8%AF-%DB%8C%D9%85%D9%86-%D8%A8%D9%87-%D8%AE%D8%B7-%D9%84%D9%88%D9%84%D9%87-%D9%86%D9%81%D8%AA-%D8%B1%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%DB%8C-%D8%B9%D8%B1%D8%A8%D8%B3%D8%AA%D8%A7%D9%86",
+      "source": "ایرنا",
+      "published_at": "2026-11-12T22:15:14+00:00",
       "category": "macro",
       "category_label": "اقتصاد کلان",
       "relevance": 2,
@@ -102,16 +102,6 @@
       "date_status": "ok"
     },
     {
-      "title": "تعریف ۱۲ طرح اقتصادی جدید در کهگیلویه و بویراحمد",
-      "url": "https://www.isna.ir/news/1405082114813/%D8%AA%D8%B9%D8%B1%DB%8C%D9%81-%DB%B1%DB%B2-%D8%B7%D8%B1%D8%AD-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C-%D8%AC%D8%AF%DB%8C%D8%AF-%D8%AF%D8%B1-%DA%A9%D9%87%DA%AF%DB%8C%D9%84%D9%88%DB%8C%D9%87-%D9%88-%D8%A8%D9%88%DB%8C%D8%B1%D8%A7%D8%AD%D9%85%D8%AF",
-      "source": "ایسنا",
-      "published_at": "2026-11-12T18:58:44+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
       "title": "درخواست فوری ترامپ برای بودجه نظامی سنگین",
       "url": "https://tabnak.ir/fa/news/4201499/%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA-%D9%81%D9%88%D8%B1%DB%8C-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%A8%D9%88%D8%AF%D8%AC%D9%87-%D9%86%D8%B8%D8%A7%D9%85%DB%8C-%D8%B3%D9%86%DA%AF%DB%8C%D9%86-0d46ad176a5f435ca9ddfed2",
       "source": "تابناک",
@@ -144,11 +134,11 @@
   ],
   "stats": {
     "seen": 210,
-    "off_topic": 196,
+    "off_topic": 197,
     "no_valid_date": 0,
     "too_old": 0,
     "duplicates": 0,
-    "published": 14
+    "published": 13
   },
   "sources_ok": [
     "ایران اینترنشنال",
