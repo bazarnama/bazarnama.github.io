@@ -1,16 +1,19 @@
 name: Update market prices
 
+# GitHub's own cron is throttled to roughly hourly. To get real 5-minute updates this workflow
+# runs several fetch cycles inside ONE run (every ~5 min for ~6 min), then starts itself again
+# with repository_dispatch (that event is allowed even when sent with GITHUB_TOKEN).
+# The cron below is only a safety net that restarts the chain if it ever stops.
 on:
   workflow_dispatch:
   repository_dispatch:
     types: [update-prices]
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/15 * * * *"
 
 permissions:
   contents: write
 
-# Prices have their own group so a pending news run can never replace a pending price run.
 concurrency:
   group: bazarnama-prices
   cancel-in-progress: false
@@ -18,7 +21,7 @@ concurrency:
 jobs:
   update-prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,24 +35,32 @@ jobs:
         continue-on-error: true   # a test failure must never freeze the prices
         run: python -m unittest discover -s tests -v
 
-      - name: Fetch prices and update history
+      - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
-        run: python update_prices.py
-
-      - name: Commit price and history data
+          STOOQ_API_KEY: ${{ secrets.STOOQ_API_KEY }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A data/ api/
-          if git diff --cached --quiet; then
-            echo "No price or history changes."
-            exit 0
-          fi
-          git commit -m "Update market prices and history"
-          for attempt in 1 2 3 4; do
-            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
-            echo "Push attempt $attempt failed; retrying..."
-            sleep $((attempt * 5))
+          for cycle in 1 2; do
+            echo "=== cycle $cycle ==="
+            python update_prices.py || echo "update_prices failed in cycle $cycle (continuing)"
+            git add -A data/ api/
+            if ! git diff --cached --quiet; then
+              git commit -m "Update market prices and history"
+              for attempt in 1 2 3 4; do
+                git pull --rebase --autostash origin main && git push origin HEAD:main && break
+                echo "Push attempt $attempt failed; retrying..."
+                sleep $((attempt * 5))
+              done
+            fi
+            [ "$cycle" -lt 2 ] && sleep 270
           done
-          exit 1
+          exit 0
+
+      - name: Start the next run (self-chaining)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/dispatches" -f event_type=update-prices || echo "dispatch failed; cron will restart the chain"
