@@ -1,0 +1,181 @@
+{
+ "pages": {
+  "about.html": {
+   "lastmod": "2026-11-12",
+   "sha256": "21644aaaaaa9faee9f2eed1eb79a03a681b4160f091b082bf46d9c2a2e61034a"
+  },
+  "crypto.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "7da812188b3740def2ce79c2fff095ba81e2c2b5bc1f485e36e5fabb461d84c3"
+  },
+  "currency.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "5edae55c13fa851e025ee8d40779749372f11f91fa96336e47b552f5ebb3ab56"
+  },
+  "energy.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "85a99b954094c64bc7d744b2e0b38bcbe9813e45cb308276f7671bed58fa8a27"
+  },
+  "gold.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "a574b1d5e033c2c605caf67426e56eb1a7b3a0f39e0043e4fb3f3ba7525f507e"
+  },
+  "index.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "7d822af171b5635cf6ad8e0743409fe0f2b2f862b98cc3aa8068aaba9f2b4c3e"
+  },
+  "price-ada.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "d3428a3ae9c2d64f86220dce537d066c99d2c200a36163e7d58f70ba344a950b"
+  },
+  "price-aed.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "01208b888c497de52f29ffac7671c005dd1bbc0795b9188dc532cf0ee226d392"
+  },
+  "price-bch.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "d250c40e0117a389174ab3c00cdcd763e774398553a842a986ac6921ae69dd4e"
+  },
+  "price-bnb.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "d0f150847d23cb1dac026cc9facf12ea059a5a3859506fbd97157ca526f51495"
+  },
+  "price-brent-spot.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "c01d861cf99412bda7953042bed5e97622915ef8da6a706eb4a05af1dbf29856"
+  },
+  "price-brent.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "f4ed30020577cf90e65b3c74c6eaf23354f548f7034277b86a1c282b6ef26932"
+  },
+  "price-btc.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "541827991955e636cbd1dafe1ba872bbca84529e42e12574e638acfea12a4511"
+  },
+  "price-coin-bahar-azadi.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "bfd1ff2fd20f3e4570cfdc3744033648e8517dab567aceabf2c798dca6674357"
+  },
+  "price-coin-emami.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "9c66054591d00d78e846f905b21e5f6de9d603ab666902d2f58262a034b86cda"
+  },
+  "price-coin-gram.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "2147f366b53fefc0f7beceb0d4d893ce69bef36a2a814aa5c1c5ca8b4a648822"
+  },
+  "price-coin-half.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "2bd4f3d9ed1624eb14d9ccd48717119c0b307b6046414375f729a8d6cccf563b"
+  },
+  "price-coin-quarter.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "f17b48a917b26fde0c8c4f13c99c9cfadb473e403a70852f62b175296d38e862"
+  },
+  "price-doge.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "4fba2e59000a1131c02e7bcb6895e3cbe43186e03bb980a91944ef3d1e7b8b70"
+  },
+  "price-dot.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "0074bfddd6ee843fe67ab1f8a794fd4e3d7ca7c99e25f8a65a45713eec53485b"
+  },
+  "price-eth.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "df06a854a92ba9e58acd7006f2ba731e8e67d468c0a6443a0366da3ac06dd0cf"
+  },
+  "price-eur.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "ce1afa578a0652784194a484500275db3a674b0cf115112125c90e25b954ba17"
+  },
+  "price-gbp.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "1d95c1833702ad70d984c548f86a210550623289099f0dadd8eba937c0589479"
+  },
+  "price-gold-18k.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "be507be20c91e26a59c4603df700a31e10922a8abc6f6127faf73d9b7640da48"
+  },
+  "price-gold-24k.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "cf500c9a2122ea3443d5620964b395957fa12714a8b5f57d77cc11c98abf5790"
+  },
+  "price-gold-mesghal.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "a932bd43e408dd4bfbe8b658df1f4733501aa9b880c42866e7efc6c595040534"
+  },
+  "price-ltc.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "c959d0feafc305180a44d13cd450edd7ecc3206f22810a99c1932cfd2dfa4c45"
+  },
+  "price-natural-gas.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "2c06132785f1190494638c6b771654dce4cacecd4f86c794c78707f86bc1d420"
+  },
+  "price-opec-basket.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "0ab4149c75163d66a63905f87a12f87715f930a1717f715455b114e3ce92737a"
+  },
+  "price-paxg.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "955c53c453584615e1ef45c4962ee94f66e12ae809dcbf98a5a438dffed5f704"
+  },
+  "price-silver-999.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "0880e329c65057bf6af8435337ff739ba348088c9d52ec0e7f5205949e500be8"
+  },
+  "price-sol.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "c755ade779804b3515f37ffc46f92251019380b6ff812ed5504e1ec204498ead"
+  },
+  "price-ton.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "893bcee0b7d2fd31bc92f5831d7a7fbb90c33aa76984d9696f6dde41f25b5a1c"
+  },
+  "price-trx.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "d3a183cf1905dd8e0a2985bee655686a24b273126372ab8bf586c4b19f758296"
+  },
+  "price-usd.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "7e8b29b9167ba3963649bff0beb614e8dd75431af71fe9e5eab9150d9a1a891b"
+  },
+  "price-usdt.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "d64c0dd8d06a501cbe3dfcfda87f06877479172df9365381c83f68fb68bac31f"
+  },
+  "price-wti-spot.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "db0e01a378b2969abff2959ce3f3da0887d4ecd14eff7764b1ae1cbb71c8ea80"
+  },
+  "price-wti.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "bda4885c8156bf92431ed371fc1ae9eca8219fce98b7ec43bf341cf1229a5c6b"
+  },
+  "price-xag.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "516aa0e8f791b2753afe7aa134dd094420acc42927eee047bf962ca19197b9dc"
+  },
+  "price-xau.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "06d1d775ebb0be29fdd58846e6a72f6483555b0150c9b332408c73d2fed4c21c"
+  },
+  "price-xpd.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "e053f995d21c1c5724c95402533e3345fd50433e68200b75bf9b37f90604b645"
+  },
+  "price-xpt.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "e8f768167e63fcfe59a8c27ac3f6d10ee8c0d0b8be2c750af4f95a51938d7969"
+  },
+  "price-xrp.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "389d4d78cc6d60ce1d65e1ef1c1b4de707d2eb9e17ae2ef0ad94c71e512980b8"
+  },
+  "prices.html": {
+   "lastmod": "2026-11-10",
+   "sha256": "239d0db7d295a02230c5c1aa6d12a649dcdf05e3e1f5cee352d703518aa9b6d2"
+  }
+ },
+ "v": 1
+}

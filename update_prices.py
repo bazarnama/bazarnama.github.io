@@ -16,7 +16,7 @@ Sources
      Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
+import copy, json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
 from zoneinfo import ZoneInfo
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
@@ -45,6 +45,8 @@ CG_IDS = {"bitcoin": "btc", "ethereum": "eth", "tether": "usdt_usd", "solana": "
           "bitcoin-cash": "bch", "polkadot": "dot", "pax-gold": "paxg"}
 
 ROOT = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+import price_validation  # noqa: E402
 OUT = ROOT / "data" / "prices.json"
 HIST = ROOT / "data" / "history.json"               # lean file read by the site (last days, main assets only)
 HIST_ARCHIVE = ROOT / "data" / "history-archive.json"  # full store, never read by the browser
@@ -52,6 +54,8 @@ HIST_RECENT_DAYS = 14        # hourly resolution is kept this long, older points
 HIST_LEAN_DAYS = 8           # days published in the lean data/history.json
 SUMMARY = ROOT / "data" / "summary.json"
 SOURCE_HEALTH = ROOT / "data" / "source-health.json"
+VALIDATION_LOG = ROOT / "data" / "validation-log.json"      # decision + reason for every price of the last run
+VALIDATION_STATE = ROOT / "data" / "validation-state.json"  # readings held back until a second run confirms them
 HIST_MAX = None  # preserve the full series; old points are never discarded
 
 NAMES = {
@@ -989,7 +993,19 @@ def write_source_health(payload, health):
     write_if_changed(SOURCE_HEALTH, dumps(health_doc))
 
 
+def write_validation_files(payload, vlog, vcounts, vpending):
+    notable = [e for e in vlog if e["decision"] not in ("accepted", "skipped")]
+    doc = {"schema": "bazarnama/validation-log/v1", "generated_utc": payload.get("generated_utc"),
+           "fetched_utc": payload.get("fetched_utc"), "counts": vcounts,
+           "reasons": price_validation.REASONS, "notable": notable,
+           "decisions": [{"id": e["id"], "decision": e["decision"], "reason": e["reason"]} for e in vlog]}
+    write_if_changed(VALIDATION_LOG, dumps(doc))
+    write_if_changed(VALIDATION_STATE, dumps({"v": 1, "pending": vpending}))
+
+
 def main():
+    previously_published = copy.deepcopy((load_json(OUT) or {}).get("items") or []) if isinstance(load_json(OUT), dict) else []
+
     def _primary():
         try:
             p = get_json(PRIMARY)
@@ -1113,6 +1129,16 @@ def main():
     removed_derived = drop_derived(items)
     print("Removed dollar-derived items:", len(removed_derived))
     fill_missing_changes_from_source_history(items)
+    # Quality control: 24h band, source conflict, invalid numbers. A suspicious reading never replaces the
+    # last valid price and never enters the history; every decision is logged with its reason.
+    archive_now = load_json(HIST_ARCHIVE)
+    series_now = archive_now.get("series", {}) if isinstance(archive_now, dict) else {}
+    state_now = load_json(VALIDATION_STATE)
+    pending_now = state_now.get("pending", {}) if isinstance(state_now, dict) else {}
+    vlog, vpending = price_validation.validate_items(items, previously_published, series_now, pending_now, time.time())
+    vcounts = price_validation.summarize(vlog)
+    print("Validation:", vcounts)
+    payload["validation"] = {"counts": vcounts, "policy_version": 1}
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
                                  "arzhaam_aed": "aed" in arz,
                                  "currency_checks": currency_checks, "fx": bool(fx), "coingecko": sorted(cg),
@@ -1126,6 +1152,7 @@ def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     atomic_write(OUT, dumps(payload))
     write_source_health(payload, freshness)
+    write_validation_files(payload, vlog, vcounts, vpending)
     write_api_files(payload, history)
     s = build_summary(payload)
     if s:

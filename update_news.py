@@ -1,10 +1,19 @@
+#!/usr/bin/env python3
+"""Collect economic headlines from the RSS feeds of Iranian news outlets and write data/news.json.
 
+Only title, outlet name, link and the publisher's own date are stored (no generated summaries or quotes).
+Relevance, category, de-duplication and date rules live in news_quality.py.
+If every source fails, or nothing passes the quality rules, the previous data/news.json is left untouched.
+"""
 import json
-import re
 import os
-import feedparser
+import pathlib
+import sys
 from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
+
+ROOT = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+import news_quality  # noqa: E402
 
 SOURCES = {
     "ایران اینترنشنال": "https://www.iranintl.com/feed",
@@ -14,87 +23,64 @@ SOURCES = {
     "باشگاه خبرنگاران جوان": "https://www.yjc.ir/fa/rss/allnews",
     "تابناک": "https://www.tabnak.ir/fa/rss/allnews",
     "خبرآنلاین": "https://www.khabaronline.ir/rss",
-    "ایرنا": "https://www.irna.ir/rss"
+    "ایرنا": "https://www.irna.ir/rss",
 }
+OUT = ROOT / "data" / "news.json"
+PER_SOURCE = 40
 
-KEYWORDS = [
-    "اقتصاد", "اقتصادی", "دلار", "ارز", "طلا", "سکه",
-    "بورس", "تورم", "بانک", "نفت", "بازار", "قیمت",
-    "تجارت", "صادرات", "واردات", "مسکن", "خودرو",
-    "بودجه", "رمزارز", "بیت کوین", "معیشت"
-]
 
-def get_date(item):
+def entry_date(item):
+    """Publisher date of an RSS entry: the raw text first, the parsed struct as a fallback."""
     for field in ("published", "updated"):
-        value = item.get(field)
-        if value:
-            try:
-                return parsedate_to_datetime(value).astimezone(
-                    timezone.utc
-                ).isoformat()
-            except Exception:
-                pass
-    return ""
+        if item.get(field):
+            return item.get(field)
+    for field in ("published_parsed", "updated_parsed"):
+        if item.get(field):
+            return tuple(item.get(field))[:6]      # feedparser gives UTC struct_time
+    return None
 
-def main():
-    news = []
-    seen = set()
-    successful = 0
 
+def collect():
+    import feedparser  # imported here so the pure logic can be tested without it
+    raw, ok_sources, failed = [], [], []
     for source, url in SOURCES.items():
         try:
             feed = feedparser.parse(url)
             if not feed.entries:
                 print("No entries:", source)
+                failed.append(source)
                 continue
-
-            successful += 1
-
-            for item in feed.entries[:40]:
-                title = item.get("title", "").strip()
-                link = item.get("link", "").strip()
-
-                if not title or not link.startswith("https://"):
-                    continue
-
-                if not any(word in title for word in KEYWORDS):
-                    continue
-
-                key = re.sub(r"\W", "", title.lower())
-                if key in seen:
-                    continue
-
-                seen.add(key)
-
-                news.append({
-                    "title": title,
-                    "url": link,
-                    "source": source,
-                    "published_at": get_date(item)
-                })
-
-        except Exception as error:
+            ok_sources.append(source)
+            for item in feed.entries[:PER_SOURCE]:
+                raw.append({"title": item.get("title", ""), "url": item.get("link", ""), "source": source,
+                            "date": entry_date(item)})
+        except Exception as error:  # noqa: BLE001
             print("Error:", source, error)
+            failed.append(source)
+    return raw, ok_sources, failed
 
-    if successful == 0:
-        raise SystemExit("All news sources failed")
 
-    news.sort(
-        key=lambda x: x["published_at"],
-        reverse=True
-    )
-
-    os.makedirs("data", exist_ok=True)
-
+def main():
+    raw, ok_sources, failed = collect()
+    if not ok_sources:
+        raise SystemExit("All news sources failed; keeping the previous data/news.json")
+    items, stats = news_quality.build_items(raw, datetime.now(timezone.utc))
+    print("News stats:", stats)
+    if not items:
+        raise SystemExit("No headline passed the quality rules; keeping the previous data/news.json")
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "items": news[:24]
+        "items": items,
+        "stats": stats,
+        "sources_ok": ok_sources,
+        "sources_failed": failed,
     }
+    os.makedirs(OUT.parent, exist_ok=True)
+    tmp = OUT.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, OUT)
+    print("Saved", len(items), "news items")
 
-    with open("data/news.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, ensure_ascii=False, indent=2)
-
-    print("Saved", len(news[:24]), "news items")
 
 if __name__ == "__main__":
     main()
