@@ -1,6 +1,16 @@
 {
-  "updated_at": "2026-11-12T21:16:45.335755+00:00",
+  "updated_at": "2026-11-12T22:10:08.861172+00:00",
   "items": [
+    {
+      "title": "رحمانی: امسال برای نخستین بار مجوز صادرات سیب به عراق دریافت شد",
+      "url": "https://www.mehrnews.com/news/7009136/%D8%B1%D8%AD%D9%85%D8%A7%D9%86%DB%8C-%D8%A7%D9%85%D8%B3%D8%A7%D9%84-%D8%A8%D8%B1%D8%A7%DB%8C-%D9%86%D8%AE%D8%B3%D8%AA%DB%8C%D9%86-%D8%A8%D8%A7%D8%B1-%D9%85%D8%AC%D9%88%D8%B2-%D8%B5%D8%A7%D8%AF%D8%B1%D8%A7%D8%AA-%D8%B3%DB%8C%D8%A8-%D8%A8%D9%87-%D8%B9%D8%B1%D8%A7%D9%82-%D8%AF%D8%B1%DB%8C%D8%A7%D9%81%D8%AA",
+      "source": "مهر",
+      "published_at": "2026-11-12T21:18:34+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
+      "relevance": 2,
+      "date_status": "ok"
+    },
     {
       "title": "از کم‌فروشی نان تا تخلف در توزیع برنج؛ مردم قربانی بی‌نظارتی بازار شدند!",
       "url": "https://tabnak.ir/fa/news/4200930/%D8%A7%D8%B2-%DA%A9%D9%85%D9%81%D8%B1%D9%88%D8%B4%DB%8C-%D9%86%D8%A7%D9%86-%D8%AA%D8%A7-%D8%AA%D8%AE%D9%84%D9%81-%D8%AF%D8%B1-%D8%AA%D9%88%D8%B2%DB%8C%D8%B9-%D8%A8%D8%B1%D9%86%D8%AC-%D9%85%D8%B1%D8%AF%D9%85-%D9%82%D8%B1%D8%A8%D8%A7%D9%86%DB%8C-%D8%A8%DB%8C%D9%86%D8%B8%D8%A7%D8%B1%D8%AA%DB%8C-%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1-10438a6ff3684ca495e5f1c2",
@@ -18,16 +28,6 @@
       "published_at": "2026-11-12T20:45:00+00:00",
       "category": "currency",
       "category_label": "ارز",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "حمله مجدد پهپادی ارتش یمن به خط لوله راهبردی نفت عربستان",
-      "url": "https://www.mehrnews.com/news/7009122/%D8%AD%D9%85%D9%84%D9%87-%D9%85%D8%AC%D8%AF%D8%AF-%D9%BE%D9%87%D9%BE%D8%A7%D8%AF%DB%8C-%D8%A7%D8%B1%D8%AA%D8%B4-%DB%8C%D9%85%D9%86-%D8%A8%D9%87-%D8%AE%D8%B7-%D9%84%D9%88%D9%84%D9%87-%D8%B1%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%DB%8C-%D9%86%D9%81%D8%AA-%D8%B9%D8%B1%D8%A8%D8%B3%D8%AA%D8%A7%D9%86",
-      "source": "مهر",
-      "published_at": "2026-11-12T20:44:36+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
       "relevance": 2,
       "date_status": "ok"
     },
@@ -102,26 +102,6 @@
       "date_status": "ok"
     },
     {
-      "title": "حمله یمن به تاسیسات نفتی ینبع و ایستگاه پمپاژ نفت عربستان",
-      "url": "https://www.yjc.ir/fa/news/9148322/حمله-یمن-به-تاسیسات-نفتی-ینبع-و-ایستگاه-پمپاژ-نفت-عربستان",
-      "source": "باشگاه خبرنگاران جوان",
-      "published_at": "2026-11-12T19:02:02+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "سقوط ۳ درصدی قیمت طلا در پی افزایش بهای نفت",
-      "url": "https://www.yjc.ir/fa/news/9148310/سقوط-۳-درصدی-قیمت-طلا-در-پی-افزایش-بهای-نفت",
-      "source": "باشگاه خبرنگاران جوان",
-      "published_at": "2026-11-12T19:00:02+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 5,
-      "date_status": "ok"
-    },
-    {
       "title": "تعریف ۱۲ طرح اقتصادی جدید در کهگیلویه و بویراحمد",
       "url": "https://www.isna.ir/news/1405082114813/%D8%AA%D8%B9%D8%B1%DB%8C%D9%81-%DB%B1%DB%B2-%D8%B7%D8%B1%D8%AD-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C-%D8%AC%D8%AF%DB%8C%D8%AF-%D8%AF%D8%B1-%DA%A9%D9%87%DA%AF%DB%8C%D9%84%D9%88%DB%8C%D9%87-%D9%88-%D8%A8%D9%88%DB%8C%D8%B1%D8%A7%D8%AD%D9%85%D8%AF",
       "source": "ایسنا",
@@ -164,11 +144,11 @@
   ],
   "stats": {
     "seen": 210,
-    "off_topic": 194,
+    "off_topic": 196,
     "no_valid_date": 0,
     "too_old": 0,
     "duplicates": 0,
-    "published": 16
+    "published": 14
   },
   "sources_ok": [
     "ایران اینترنشنال",
