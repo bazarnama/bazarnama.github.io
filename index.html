@@ -531,7 +531,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       }
     } catch {}
     try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 4000); }
-    catch (e) { if (old) return {...old, items:old.items.map(i=>({...i,stale:true}))}; throw e; }
+    catch (e) { if (old) return old; throw e; }   // the file's own per-item stale/freshness flags decide what is shown as old
   }
   // ---------- Supplementary sources (added in the ChatGPT revision) ----------
   async function fetchCoinGecko() {
