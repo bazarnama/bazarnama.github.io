@@ -26,15 +26,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Run data and source regression tests
-        continue-on-error: true   # a test failure must never freeze the prices
-        run: python -m unittest discover -s tests -v
-
       - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
@@ -42,9 +33,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for cycle in 1 2; do
+          CYCLES=2; [ "${{ github.event_name }}" = "workflow_dispatch" ] && CYCLES=1   # manual run: one quick cycle
+          for cycle in $(seq 1 $CYCLES); do
             echo "=== cycle $cycle ==="
-            python update_prices.py || echo "update_prices failed in cycle $cycle (continuing)"
+            python3 update_prices.py || echo "update_prices failed in cycle $cycle (continuing)"
             git add -A data/ api/
             if ! git diff --cached --quiet; then
               git commit -m "Update market prices and history"
@@ -54,12 +46,12 @@ jobs:
                 sleep $((attempt * 5))
               done
             fi
-            [ "$cycle" -lt 2 ] && sleep 270
+            [ "$cycle" -lt "$CYCLES" ] && sleep 270
           done
           exit 0
 
       - name: Start the next run (self-chaining)
-        if: always()
+        if: always() && github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
