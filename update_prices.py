@@ -500,6 +500,15 @@ def choose_independent(candidates):
     return chosen
 
 
+def atomic_write(path, text):
+    """Write via a temp file + rename so an interrupted run can never leave a half-written JSON file."""
+    path = pathlib.Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
+
+
 def write_if_changed(path, text):
     """Write only when the content differs, so unchanged files do not create new commits."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -508,7 +517,7 @@ def write_if_changed(path, text):
             return False
     except FileNotFoundError:
         pass
-    path.write_text(text, encoding="utf-8")
+    atomic_write(path, text)
     return True
 
 
@@ -823,6 +832,31 @@ def compact_points(points, now):
     return sorted(daily.values(), key=lambda p: p[0]) + [p for p in points if p[0] >= cut]
 
 
+# Largest believable move between two consecutive hourly points, by family. A bigger move is held back
+# ("quarantined") until the next run confirms it; a one-off spike is dropped and never reaches the chart.
+JUMP_LIMIT_PCT = {"currency": 8.0, "gold": 10.0, "coin": 10.0, "metal": 10.0, "crypto": 25.0, "energy": 15.0}
+JUMP_DEFAULT_PCT = 15.0
+JUMP_MAX_GAP = 6 * 3600       # beyond this gap a large difference is a normal market move
+JUMP_CONFIRM_PCT = 2.0        # the next reading must agree with the held point within this band
+
+
+def jump_limit(family):
+    return JUMP_LIMIT_PCT.get(str(family or "").lower(), JUMP_DEFAULT_PCT)
+
+
+def screen_point(points, pending, pid, hour, price, family):
+    """Decide whether to append (hour, price). Returns the points to append (0, 1 or 2) and updates pending."""
+    last = points[-1] if points else None
+    held = pending.pop(pid, None)
+    if last and last[1] and hour - last[0] <= JUMP_MAX_GAP:
+        if abs(price / last[1] - 1) * 100 > jump_limit(family):
+            if held and held[1] and abs(price / held[1] - 1) * 100 <= JUMP_CONFIRM_PCT:
+                return [held, [hour, price]]       # two agreeing readings: it is a real move
+            pending[pid] = [hour, price]           # hold it; one reading is not enough
+            return []
+    return [[hour, price]]
+
+
 def update_history(items):
     """Full store -> data/history-archive.json (never read by the browser, compacted so it stays small).
     The site reads the lean data/history.json (last days of the main assets only)."""
@@ -839,6 +873,9 @@ def update_history(items):
         attempts = {}
     # Import provider history once per symbol; retain it across every future run.
     seed_history(series, [i.get("id") for i in items if i.get("id") in SITE_ASSETS], seeded, attempts)
+    pending = data.get("pending", {})
+    if not isinstance(pending, dict):
+        pending = {}
     now = time.time()
     hour = int(now) // 3600 * 3600
     for item in items:
@@ -847,14 +884,17 @@ def update_history(items):
             continue
         points = series.setdefault(pid, [])
         if not points or points[-1][0] < hour:     # at most one observation per hour
-            points.append([hour, float(price)])
+            points.extend(screen_point(points, pending, pid, hour, float(price), item.get("family")))
     keep = SITE_ASSETS | EXTRA_DIRECT | {i.get("id") for i in items if i.get("id")}
     for pid in [k for k in series if k not in keep]:
         del series[pid]                            # leftovers of removed (dollar-derived) currencies
     for pid, points in list(series.items()):
         unique = {int(p[0]): [int(p[0]), float(p[1])] for p in points if isinstance(p, (list, tuple)) and len(p) >= 2}
         series[pid] = compact_points(sorted(unique.values(), key=lambda p: p[0]), now)
+    pending = {k: v for k, v in pending.items() if k in series and v and v[0] >= hour - 2 * 3600}
     archive = {"v": 2, "seeded": sorted(seeded), "seed_attempted": attempts, "series": series}
+    if pending:
+        archive["pending"] = pending
     write_if_changed(HIST_ARCHIVE, dumps(archive))
     lean = {"v": 3, "lean": True, "series": {
         pid: [p for p in series[pid] if p[0] >= now - HIST_LEAN_DAYS * 86400] for pid in sorted(SITE_ASSETS) if pid in series}}
@@ -875,6 +915,7 @@ FRESHNESS_LIMITS = {
     "energy": 2 * 60 * 60,
 }
 FRESHNESS_DEFAULT = 2 * 60 * 60
+DAILY_SERIES_IDS = {"opec-basket", "natural-gas", "brent-spot", "wti-spot"}
 
 
 def item_source_epoch(item):
@@ -901,8 +942,8 @@ def annotate_freshness(items, checked_at=None):
         limit = FRESHNESS_LIMITS.get(family, FRESHNESS_DEFAULT)
         if item.get("backup_source") in {"eia", "fred"}:
             limit = 72 * 60 * 60  # EIA/FRED benchmark series are daily publications.
-        elif item.get("id") in {"opec-basket", "natural-gas"}:
-            limit = 4 * 24 * 60 * 60
+        elif item.get("id") in DAILY_SERIES_IDS or item.get("market_type") == "daily-spot":
+            limit = 4 * 24 * 60 * 60  # daily publications (weekends/holidays) are not judged by an intraday limit
         observed = item_source_epoch(item)
         if observed is None:
             status, age = ("stale", None) if item.get("stale") else ("unknown", None)
@@ -1083,7 +1124,7 @@ def main():
     history = update_history(items)
     fill_changes_from_own_history(items, history["series"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(dumps(payload), encoding="utf-8")
+    atomic_write(OUT, dumps(payload))
     write_source_health(payload, freshness)
     write_api_files(payload, history)
     s = build_summary(payload)
