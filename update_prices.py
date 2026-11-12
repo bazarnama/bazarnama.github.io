@@ -228,7 +228,7 @@ def fetch_stooq(ids=None):
         symbols, lo, hi = STOOQ_SYMBOLS[pid]
         for sym in symbols:
             try:
-                req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv",
+                req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv" + (f"&apikey={os.environ['STOOQ_API_KEY']}" if os.environ.get("STOOQ_API_KEY") else ""),
                                              headers={"User-Agent": "bazarnama-updater"})
                 with urllib.request.urlopen(req, timeout=20) as r:
                     lines = r.read().decode("utf-8", "replace").strip().splitlines()
