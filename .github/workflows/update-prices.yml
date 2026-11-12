@@ -26,6 +26,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Run unit tests (never blocks price updates; failures show as an error annotation)
+        run: python3 -m unittest discover -s tests || echo "::error::Unit tests failed - see log"
+
       - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
