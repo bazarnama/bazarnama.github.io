@@ -31,3 +31,4 @@ GitHub Actions در `.github/workflows/update-prices.yml` تقریباً هر ۱
 - `tools/update_sitemap.py`: `lastmod` فقط وقتی تغییر می‌کند که فایل HTML همان صفحه واقعاً تغییر کرده باشد (هش در `data/page-lastmod.json`).
 - اخبار: `news_quality.py` (تطبیق کلمهٔ کامل، دسته‌بندی، حذف تکراری بین رسانه‌ها، پذیرش فقط تاریخ معتبر). فیلدهای قبلی حفظ شده و `category`، `relevance`، `also_reported_by` افزوده شده‌اند.
 - `site-checks.yml`: تست‌ها و اعتبارسنجی روی هر push، و به‌روزرسانی lastmod سایت‌مپ روی main.
+
