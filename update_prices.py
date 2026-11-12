@@ -67,7 +67,7 @@ def get_json(url):
     req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "bazarnama-updater"})
     for attempt in range(2):
         try:
-            with urllib.request.urlopen(req, timeout=15) as r:
+            with urllib.request.urlopen(req, timeout=8) as r:
                 return json.loads(r.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             if attempt or exc.code not in (429, 500, 502, 503, 504):
@@ -150,7 +150,7 @@ def fetch_fred_energy():
         try:
             url = "https://fred.stlouisfed.org/graph/fredgraph.csv?" + urllib.parse.urlencode({"id": series_id})
             req = urllib.request.Request(url, headers={"User-Agent": "bazarnama-updater"})
-            with urllib.request.urlopen(req, timeout=20) as response:
+            with urllib.request.urlopen(req, timeout=8) as response:
                 lines = response.read().decode("utf-8-sig", "replace").strip().splitlines()
             if len(lines) < 2:
                 continue
@@ -230,7 +230,7 @@ def fetch_stooq(ids=None):
             try:
                 req = urllib.request.Request(f"https://stooq.com/q/l/?s={sym}&f=sd2t2ohlcv&h&e=csv" + (f"&apikey={os.environ['STOOQ_API_KEY']}" if os.environ.get("STOOQ_API_KEY") else ""),
                                              headers={"User-Agent": "bazarnama-updater"})
-                with urllib.request.urlopen(req, timeout=20) as r:
+                with urllib.request.urlopen(req, timeout=8) as r:
                     lines = r.read().decode("utf-8", "replace").strip().splitlines()
                 if len(lines) < 2:
                     continue
@@ -369,7 +369,7 @@ def fetch_arzhaam_aed():
             "Accept": "text/html,application/xhtml+xml",
             "User-Agent": "Mozilla/5.0 (compatible; BazarnamaPriceBot/1.0)",
         })
-        with urllib.request.urlopen(req, timeout=20) as response:
+        with urllib.request.urlopen(req, timeout=8) as response:
             page = response.read().decode("utf-8", "replace")
         page = re.sub(r"(?is)<(script|style|noscript)\b.*?</\1>", " ", page)
         visible = html.unescape(re.sub(r"<[^>]+>", " ", page))
@@ -949,17 +949,27 @@ def write_source_health(payload, health):
 
 
 def main():
-    try:
-        primary = get_json(PRIMARY)
-        if not valid_primary(primary):
-            primary = None
-    except Exception as e:  # noqa: BLE001
-        print("primary failed:", e, file=sys.stderr)
-        primary = None
+    def _primary():
+        try:
+            p = get_json(PRIMARY)
+            return p if valid_primary(p) else None
+        except Exception as e:  # noqa: BLE001
+            print("primary failed:", e, file=sys.stderr)
+            return None
 
-    fx, fx_date = fetch_fx()
-    irm = fetch_iran_market()
-    ns = fetch_nerkhsanj()
+    # All independent sources are fetched at the same time: the run lasts as long as the slowest one.
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        f_primary = pool.submit(_primary)
+        f_fx = pool.submit(fetch_fx)
+        f_irm = pool.submit(fetch_iran_market)
+        f_ns = pool.submit(fetch_nerkhsanj)
+        f_cg = pool.submit(fetch_coingecko)
+        f_eia = pool.submit(fetch_eia)
+        f_fred = pool.submit(fetch_fred_energy)
+        primary = f_primary.result()
+        fx, fx_date = f_fx.result()
+        irm, ns, cg, eia, fred = f_irm.result(), f_ns.result(), f_cg.result(), f_eia.result(), f_fred.result()
     # Arzhaam (public page) is only a last resort / third opinion for the dirham.
     arz = fetch_arzhaam_aed() if sum(1 for q in (irm.get("aed"), ns.get("aed")) if q) < 2 else {}
     iran_direct = {}
@@ -967,9 +977,6 @@ def main():
         chosen = choose_independent([irm.get(pid), ns.get(pid), arz.get(pid)])
         if chosen:
             iran_direct[pid] = chosen
-    cg = fetch_coingecko()
-    eia = fetch_eia()
-    fred = fetch_fred_energy()
     stooq = {}
 
     if primary:
@@ -998,7 +1005,8 @@ def main():
         return not (cur and isinstance(cur.get("price"), (int, float)) and cur.get("price") > 0 and not cur.get("stale"))
 
     need = [pid for pid in STOOQ_SYMBOLS if pid not in STOOQ_ALWAYS and _missing(pid)]
-    stooq = fetch_stooq(list(STOOQ_ALWAYS) + need)
+    # Stooq needs an API key since 2026; without one every call fails and only wastes time.
+    stooq = fetch_stooq(list(STOOQ_ALWAYS) + need) if os.environ.get("STOOQ_API_KEY") else {}
 
     # backup crypto prices (USD) when the primary feed does not have them
     for key in [k for k in cg if k != "usdt_usd"]:
