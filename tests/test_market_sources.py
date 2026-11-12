@@ -22,14 +22,20 @@ class FakeResponse:
 
 
 class DirectMarketSourceTests(unittest.TestCase):
-    def test_derived_prices_are_removed(self):
+    def test_own_dollar_derived_prices_are_removed(self):
         items = [
             {"id": "usd", "price": 100, "method": "average"},
-            {"id": "eur", "price": 120, "method": "derived"},
+            {"id": "eur", "price": 120, "derived": True, "derived_from": "usd"},
+            {"id": "xyz", "price": 5, "method": "derived"},
         ]
         removed = module.drop_derived(items)
-        self.assertEqual(removed, ["eur"])
+        self.assertEqual(sorted(removed), ["eur", "xyz"])
         self.assertEqual([x["id"] for x in items], ["usd"])
+
+    def test_nerkhara_method_derived_is_kept_for_main_currencies(self):
+        items = [{"id": "eur", "price": 120, "method": "derived"}, {"id": "cny", "price": 40, "method": "derived"}]
+        self.assertEqual(module.drop_derived(items), [])
+        self.assertEqual([x["id"] for x in items], ["eur", "cny"])
 
     def test_independent_source_selection_ignores_stale_quotes(self):
         chosen = module.choose_independent([
@@ -38,23 +44,41 @@ class DirectMarketSourceTests(unittest.TestCase):
         ])
         self.assertEqual(chosen["source_name"], "fresh")
 
-    def test_fresh_direct_nerkhsanj_quote_replaces_derived_primary(self):
-        items = [{"id": "eur", "price": 120, "method": "derived", "unit": "IRT"}]
+    def test_nerkhara_eur_stays_first_source_even_if_method_derived(self):
+        items = [{"id": "eur", "price": 300000, "method": "derived", "unit": "IRT", "source_name": "NerkhAra",
+                  "source_updated_utc": "2026-11-11T13:30:00Z"}]
         direct = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
-                          "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z",
-                          "stale": False}}
+                          "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z", "stale": False}}
+        module.select_currency_quotes(items, direct)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["price"], 300000)
+        self.assertEqual(items[0]["source_name"], "NerkhAra")
+
+    def test_fresh_direct_quote_fills_in_when_primary_is_our_own_estimate(self):
+        items = [{"id": "eur", "price": 120, "derived": True, "unit": "IRT"}]
+        direct = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
+                          "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z", "stale": False}}
         module.select_currency_quotes(items, direct)
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0]["price"], 305000)
-        self.assertEqual(items[0]["source_selection"], "secondary-direct")
 
-    def test_stale_direct_backup_does_not_replace_derived_primary(self):
-        items = [{"id": "eur", "price": 120, "method": "derived", "unit": "IRT"}]
-        stale = {"eur": {"price": 305000, "unit": "IRT", "method": "direct",
-                          "source_name": "NerkhSanj", "stale": True}}
-        module.select_currency_quotes(items, stale)
+    def test_own_estimate_without_backup_is_removed(self):
+        items = [{"id": "eur", "price": 120, "derived": True, "unit": "IRT"}]
+        module.select_currency_quotes(items, {})
         self.assertEqual(items, [])
 
+    def test_extra_currency_prefers_nerkhara(self):
+        items = [{"id": "cny", "price": 39500, "method": "derived", "unit": "IRT", "source_name": "NerkhAra"}]
+        ns = {"cny": {"price": 39600, "unit": "IRT", "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z"}}
+        module.add_extra_currencies(items, ns)
+        self.assertEqual(items[0]["price"], 39500)
+        self.assertEqual(items[0]["source_name"], "NerkhAra")
+
+    def test_extra_currency_falls_back_to_nerkhsanj(self):
+        items = []
+        ns = {"cny": {"price": 39600, "unit": "IRT", "source_name": "NerkhSanj", "source_updated_utc": "2026-11-11T13:40:00Z"}}
+        module.add_extra_currencies(items, ns)
+        self.assertEqual(items[0]["price"], 39600)
 
     def test_newer_direct_backup_does_not_replace_fresh_primary(self):
         items = [{"id": "usd", "price": 263000, "method": "average", "unit": "IRT",

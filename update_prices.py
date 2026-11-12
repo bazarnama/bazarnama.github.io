@@ -520,15 +520,32 @@ def is_derived(item):
     return bool(item.get("derived")) or item.get("method") == "derived"
 
 
+def _fresh_primary_quote(row):
+    return bool(row and isinstance(row.get("price"), (int, float)) and row.get("price") > 0 and not row.get("stale")
+                and not row.get("derived"))     # `derived` = our own usd x fx calculation; NerkhAra's own method is accepted
+
+
 def add_extra_currencies(items, ns):
-    """yuan, lira, ... come only from an independent Iranian quote; never from usd x fx."""
+    """yuan, lira, ...: NerkhAra is the FIRST source (user's decision). NerkhSanj is used only when NerkhAra has no
+    fresh value for that currency, and otherwise just as an independent cross-check. Never usd x fx."""
     for pid in sorted(EXTRA_DIRECT):
-        items[:] = [i for i in items if i.get("id") != pid]
+        cur = next((i for i in items if i.get("id") == pid), None)
         q = ns.get(pid)
-        if q and not q.get("stale"):
+        q_ok = bool(q and isinstance(q.get("price"), (int, float)) and not q.get("stale"))
+        if _fresh_primary_quote(cur):
+            cur["source_name"] = cur.get("source_name") or "NerkhAra"
+            cur["source_updated_utc"] = cur.get("source_updated_utc") or cur.get("updated_utc") or cur.get("as_of")
+            cur["source_selection"] = "primary-aggregated"
+            if q_ok and cur.get("price"):
+                diff = abs(float(cur["price"]) - float(q["price"])) / float(cur["price"]) * 100
+                cur.update({"secondary_source": q.get("source_name", "NerkhSanj"), "secondary_price": q["price"],
+                            "source_discrepancy_pct": round(diff, 3), "discrepancy_warning": diff > DISCREPANCY_PCT})
+            continue
+        items[:] = [i for i in items if i.get("id") != pid]
+        if q_ok:
             row = dict(q)
             row.update({"id": pid, "change_pct": None, "updated_utc": q["source_updated_utc"], "sources": 1,
-                        "source_selection": "direct-single"})
+                        "backup_source": "nerkhsanj", "source_selection": "secondary-direct"})
             items.append(row)
 
 
@@ -545,11 +562,14 @@ def prefer_direct_usdt(items, ns):
             items.append(row)
 
 
+KEEP_FROM_PRIMARY = {"usd", "usdt", "eur", "gbp", "aed"} | EXTRA_DIRECT   # NerkhAra is their first source (user's decision)
+
+
 def drop_derived(items):
     """Public data must not contain dollar-cross calculations presented as market quotes.
     (A flagged copy of the dollar price is kept only for USDT when no direct tether quote exists.)"""
-    def drop(i):
-        return bool(i.get("derived") and i.get("id") != "usdt") or i.get("method") == "derived"
+    def drop(i):   # our own usd x fx rows go (except flagged USDT); NerkhAra's own derived rows only outside the kept ids
+        return bool(i.get("derived") and i.get("id") != "usdt") or (i.get("method") == "derived" and i.get("id") not in KEEP_FROM_PRIMARY)
     removed = [i.get("id") for i in items if drop(i)]
     items[:] = [i for i in items if not drop(i)]
     for item in items:
@@ -581,14 +601,15 @@ def fill_changes_from_own_history(items, series):
 
 
 def select_currency_quotes(items, secondary):
-    """Compare two independent quotes; reject derived EUR/GBP/AED values."""
+    """NerkhAra stays the first source for usd/eur/gbp/aed; an independent quote only validates it,
+    or replaces it when NerkhAra has no fresh value."""
     by_id = {i.get("id"): i for i in items if isinstance(i, dict)}
     checks = {}
     for pid in DIRECT_CURRENCY_IDS:
         primary = by_id.get(pid)
         alt = secondary.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
+                    not primary.get("stale") and not primary.get("derived"))   # NerkhAra's own method=derived is accepted
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)) and
                     not alt.get("stale") and alt.get("method") != "derived")
         discrepancy = None
@@ -626,8 +647,8 @@ def select_currency_quotes(items, secondary):
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
                 primary["validation_warning"] = discrepancy is not None and discrepancy > DISCREPANCY_PCT
                 primary["discrepancy_warning"] = primary["validation_warning"]
-        elif primary and (primary.get("derived") or primary.get("method") == "derived"):
-            # No fresh direct backup exists; remove the derived value instead of publishing an estimate.
+        elif primary and primary.get("derived"):
+            # Our own usd x fx estimate with no fresh direct backup: never publish it.
             items.remove(primary)
         elif primary:
             primary["stale"] = True
@@ -1032,7 +1053,8 @@ def main():
         payload["fx_usd"] = fx
         payload["fx_date"] = fx_date
 
-    if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and "usdt" not in {i.get("id") for i in items if isinstance(i.get("price"), (int, float))}:
+    usd = next((i for i in items if isinstance(i, dict) and i.get("id") == "usd"), None)   # (the old code used `usd` without defining it)
+    if usd and isinstance(usd.get("price"), (int, float)) and not usd.get("stale") and "usdt" not in {i.get("id") for i in items if isinstance(i, dict) and isinstance(i.get("price"), (int, float))}:
         items.append({"id": "usdt", "price": usd["price"], "unit": usd.get("unit", "IRT"), "change_pct": usd.get("change_pct"),
                       "updated_utc": usd.get("updated_utc"), "sources": 0, "derived": True, "derived_from": "usd"})
 
