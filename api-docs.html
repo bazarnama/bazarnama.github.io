@@ -339,7 +339,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 .heroBox .heroActions{margin-top:10px!important;gap:7px!important}
 .heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
 @media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
-</style><style>pre.code{direction:ltr;text-align:left;overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;unicode-bidi:plaintext}.tw{overflow-x:auto}.tw table{border-collapse:collapse;width:100%;font-size:14px}.tw th,.tw td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}.tw td:first-child{direction:ltr;text-align:left;white-space:nowrap}code{direction:ltr;unicode-bidi:embed}</style></head><body><main class="wrap">
+</style><link rel="stylesheet" href="/bazarnama-redesign.css?v=33"><style>pre.code{direction:ltr;text-align:left;overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;unicode-bidi:plaintext}.tw{overflow-x:auto}.tw table{border-collapse:collapse;width:100%;font-size:14px}.tw th,.tw td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}.tw td:first-child{direction:ltr;text-align:left;white-space:nowrap}code{direction:ltr;unicode-bidi:embed}</style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما</div><h1>مستندات API نسخهٔ ۱</h1><p>API عمومی، ایستا و بدون کلید. نمونه‌های این صفحه از فایل‌های واقعی API ساخته شده‌اند.</p></section>
 <section class="panel"><h2>نقاط دسترسی</h2><div class="tw"><table><thead><tr><th>مسیر</th><th>توضیح</th></tr></thead><tbody><tr><td><code>GET /api/v1/latest.json</code></td><td>آخرین قیمت‌ها (44 قلم؛ coin: 5، crypto: 13، currency: 12، energy: 6، gold: 3، metal: 5)</td></tr><tr><td><code>GET /api/v1/history/{asset_id}.json</code></td><td>تاریخچهٔ قیمت؛ فهرست شناسه‌ها در <code>index.json</code> (44 دارایی)</td></tr><tr><td><code>GET /api/v1/index.json</code></td><td>فهرست دارایی‌ها و الگوی مسیر تاریخچه</td></tr><tr><td><code>GET /api/v1/source-health.json</code></td><td>سلامت منابع، سقف تازگی و تعداد هر وضعیت</td></tr></tbody></table></div>
@@ -356,8 +356,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
       &quot;unknown&quot;: 0
     },
     &quot;checked_utc&quot;: &quot;2026-11-13T11:03:43Z&quot;,
-    &quot;policy_version&quot;: 1,
-    &quot;policy&quot;: {}
+    &quot;policy_version&quot;: 1
   },
   &quot;items&quot;: [
     &quot;... 44 items ...&quot;
@@ -394,7 +393,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     &quot;observed_utc&quot;: &quot;2026-11-13T10:44:43Z&quot;,
     &quot;checked_utc&quot;: &quot;2026-11-13T11:03:43Z&quot;,
     &quot;age_seconds&quot;: 1140,
-    &quot;max_age_seconds&quot;: 10800,
+    &quot;max_age_seconds&quot;: 5400,
     &quot;clock_basis&quot;: &quot;provider_timestamp&quot;
   },
   &quot;source_checked_utc&quot;: &quot;2026-11-13T11:03:43Z&quot;,
@@ -434,16 +433,16 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
     }
   ]
 }</pre><p><code>timestamp</code> یعنی Unix UTC بر حسب ثانیه و <code>price</code> در همان <code>unit</code> سطح بالای فایل است. فاصلهٔ نقاط یکنواخت نیست (سال‌های قدیم معمولاً روزانه‌اند و نقاط اخیر می‌توانند ساعتی باشند) و ممکن است شکاف داشته باشد؛ نقطهٔ گمشده را درون‌یابی نکنید.</p></section>
-<section class="panel"><h2>تازگی و سقف سن</h2><div class="tw"><table><thead><tr><th>گروه</th><th>حداکثر سن</th></tr></thead><tbody><tr><td>crypto</td><td>60 دقیقه</td></tr><tr><td>currency</td><td>180 دقیقه</td></tr><tr><td>gold</td><td>240 دقیقه</td></tr><tr><td>coin</td><td>240 دقیقه</td></tr><tr><td>metal</td><td>240 دقیقه</td></tr><tr><td>energy</td><td>360 دقیقه</td></tr></tbody></table></div><p>وضعیت <code>aging</code> از ۶۵٪ سقف شروع می‌شود. سری‌های روزانه (مثل برنت و WTI فیزیکی، سبد اوپک، گاز طبیعی) آستانه‌های بلندتری دارند؛ جزئیات در <code>DATA-FRESHNESS.md</code>. نمونهٔ <code>source-health.json</code>:</p><pre class="code" dir="ltr">{
+<section class="panel"><h2>تازگی و سقف سن</h2><div class="tw"><table><thead><tr><th>گروه</th><th>حداکثر سن</th></tr></thead><tbody><tr><td>crypto</td><td>20 دقیقه</td></tr><tr><td>currency</td><td>90 دقیقه</td></tr><tr><td>gold</td><td>120 دقیقه</td></tr><tr><td>coin</td><td>120 دقیقه</td></tr><tr><td>metal</td><td>120 دقیقه</td></tr><tr><td>energy</td><td>120 دقیقه</td></tr></tbody></table></div><p>وضعیت <code>aging</code> از ۶۵٪ سقف شروع می‌شود. سری‌های روزانه (مثل برنت و WTI فیزیکی، سبد اوپک، گاز طبیعی) آستانه‌های بلندتری دارند؛ جزئیات در <code>DATA-FRESHNESS.md</code>. نمونهٔ <code>source-health.json</code>:</p><pre class="code" dir="ltr">{
   &quot;schema&quot;: &quot;bazarnama/source-health/v1&quot;,
   &quot;freshness&quot;: {
     &quot;policy&quot;: {
-      &quot;crypto&quot;: 3600,
-      &quot;currency&quot;: 10800,
-      &quot;gold&quot;: 14400,
-      &quot;coin&quot;: 14400,
-      &quot;metal&quot;: 14400,
-      &quot;energy&quot;: 21600
+      &quot;crypto&quot;: 1200,
+      &quot;currency&quot;: 5400,
+      &quot;gold&quot;: 7200,
+      &quot;coin&quot;: 7200,
+      &quot;metal&quot;: 7200,
+      &quot;energy&quot;: 7200
     },
     &quot;counts&quot;: {
       &quot;fresh&quot;: 44,

@@ -19,28 +19,13 @@ class FreshnessTests(unittest.TestCase):
         health = module.annotate_freshness([{"id": "btc", "family": "crypto", "price": 1}], checked_at=1794225600)
         self.assertEqual(health["counts"]["unknown"], 1)
 
-    def test_crypto_remains_fresh_after_one_missed_update_cycle(self):
+    def test_old_crypto_is_marked_stale(self):
         item = {"id": "btc", "family": "crypto", "updated_utc": "2026-11-09T00:00:00Z", "price": 1}
-        checked = module.parse_timestamp("2026-11-09T00:30:00Z")
-        health = module.annotate_freshness([item], checked_at=checked)
-        self.assertFalse(item.get("stale", False))
-        self.assertEqual(item["freshness"]["status"], "fresh")
-        self.assertEqual(health["counts"]["fresh"], 1)
-
-    def test_crypto_is_marked_stale_after_one_hour(self):
-        item = {"id": "btc", "family": "crypto", "updated_utc": "2026-11-09T00:00:00Z", "price": 1}
-        checked = module.parse_timestamp("2026-11-09T01:01:00Z")
+        checked = module.parse_timestamp("2026-11-09T01:00:00Z")
         health = module.annotate_freshness([item], checked_at=checked)
         self.assertTrue(item["stale"])
         self.assertEqual(item["freshness"]["status"], "stale")
         self.assertEqual(health["counts"]["stale"], 1)
-
-    def test_currency_has_three_hour_freshness_window(self):
-        item = {"id": "usd", "family": "currency", "updated_utc": "2026-11-09T00:00:00Z", "price": 1}
-        checked = module.parse_timestamp("2026-11-09T02:30:00Z")
-        module.annotate_freshness([item], checked_at=checked)
-        self.assertEqual(item["freshness"]["status"], "aging")
-        self.assertEqual(item["freshness"]["max_age_seconds"], 3 * 60 * 60)
 
     def test_provider_stale_flag_is_preserved(self):
         item = {"id": "opec-basket", "family": "energy", "updated_utc": "2026-11-08T20:00:00Z", "price": 1, "stale": True}

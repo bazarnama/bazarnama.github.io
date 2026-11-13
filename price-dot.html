@@ -339,7 +339,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:f
 .heroBox .heroActions{margin-top:10px!important;gap:7px!important}
 .heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
 @media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
-</style></head><body><main class="wrap">
+</style><link rel="stylesheet" href="/bazarnama-redesign.css?v=33"></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | ارز دیجیتال</div><h1 style="display:flex;align-items:center;gap:12px"><span class="bni" aria-hidden="true" style="--a:#ee2d8a;--b:#7a1148;--s:48px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="12" r="3.2" fill="#fff"/><circle cx="20" cy="28" r="3.2" fill="#fff"/><circle cx="12" cy="16.5" r="3.2" fill="#fff"/><circle cx="28" cy="16.5" r="3.2" fill="#fff"/><circle cx="12" cy="23.5" r="3.2" fill="#fff"/><circle cx="28" cy="23.5" r="3.2" fill="#fff"/></svg></span><span>قیمت پولکادات امروز</span></h1><p>پولکادات پروتکلی برای اتصال چند بلاک‌چین مستقل به یکدیگر است.</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
 <section class="panel" aria-labelledby="live-title"><h2 id="live-title">نرخ لحظه‌ای پولکادات (DOT)</h2><div class="kv"><div><small>قیمت</small><b id="price">…</b></div><div><small>واحد</small><b id="unit">تتر</b></div><div><small>تغییر 24 ساعته</small><b id="chg">…</b></div><div><small>زمان داده</small><b id="time" style="font-size:15px">…</b></div></div><p><button class="smallbtn" type="button" id="shareBtn">اشتراک‌گذاری قیمت</button> <span id="shareMsg" class="muted" aria-live="polite"></span></p><p id="sourceInfo" class="muted" aria-live="polite">منبع و زمان آخرین به‌روزرسانی در حال دریافت…</p><p id="status" class="status" aria-live="polite">در حال دریافت اطلاعات…</p></section>
@@ -368,7 +368,7 @@ async function mergeDirectCurrencies(data){
    const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
    const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
    const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<3*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};

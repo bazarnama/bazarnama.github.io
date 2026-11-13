@@ -321,7 +321,7 @@ def fetch_iran_market():
             if stamp is None:
                 continue
             age = time.time() - stamp
-            if age < -300 or age > 3 * 60 * 60:
+            if age < -300 or age > 2 * 60 * 60:
                 continue
             result[pid] = {
                 "price": price, "unit": "IRT", "source_name": "Iran Market Data",
@@ -911,16 +911,14 @@ def update_history(items):
 # promises about provider update cadence. The source timestamp is never replaced by
 # the time our workflow happened to fetch the response.
 FRESHNESS_LIMITS = {
-    # Provider publication timestamps can lag behind the actual market and workflow cadence.
-    # Keep conservative safety limits, but avoid marking valid quotes stale after one missed cycle.
-    "crypto": 60 * 60,          # 1 hour
-    "currency": 3 * 60 * 60,    # 3 hours
-    "gold": 4 * 60 * 60,        # 4 hours
-    "coin": 4 * 60 * 60,        # 4 hours
-    "metal": 4 * 60 * 60,       # 4 hours
-    "energy": 6 * 60 * 60,      # 6 hours
+    "crypto": 20 * 60,
+    "currency": 90 * 60,
+    "gold": 2 * 60 * 60,
+    "coin": 2 * 60 * 60,
+    "metal": 2 * 60 * 60,
+    "energy": 2 * 60 * 60,
 }
-FRESHNESS_DEFAULT = 4 * 60 * 60
+FRESHNESS_DEFAULT = 2 * 60 * 60
 DAILY_SERIES_IDS = {"opec-basket", "natural-gas", "brent-spot", "wti-spot"}
 
 

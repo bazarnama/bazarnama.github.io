@@ -76,7 +76,7 @@ async function mergeDirectCurrencies(data){
    const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
    const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
    const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<3*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};

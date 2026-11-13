@@ -52,9 +52,9 @@ class DailySeriesFreshnessTests(unittest.TestCase):
         m.annotate_freshness([item], checked_at=m.parse_timestamp("2026-11-12T00:00:00Z"))
         self.assertEqual(item["freshness"]["status"], "stale")
 
-    def test_intraday_energy_uses_six_hour_tolerance(self):
+    def test_intraday_energy_still_uses_two_hours(self):
         item = {"id": "brent", "family": "energy", "updated_utc": "2026-11-09T00:00:00Z", "price": 1}
-        m.annotate_freshness([item], checked_at=m.parse_timestamp("2026-11-09T06:01:00Z"))
+        m.annotate_freshness([item], checked_at=m.parse_timestamp("2026-11-09T03:00:00Z"))
         self.assertEqual(item["freshness"]["status"], "stale")
 
 
