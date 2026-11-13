@@ -1,6 +1,26 @@
 {
-  "updated_at": "2026-11-13T16:35:13.380727+00:00",
+  "updated_at": "2026-11-13T17:30:40.649086+00:00",
   "items": [
+    {
+      "title": "قیمت لاشه گاوی یک میلیون و ۱۰۰ هزار تومان است، اما گوشت را در بازار کمتر از یک میلیون و ۸۰۰ هزار تومان نمی‌فروشند/ پوریان: قیمت فعلی گوشت منطقی نیست",
+      "url": "https://www.khabaronline.ir/news/2301411/%D9%82%DB%8C%D9%85%D8%AA-%D9%84%D8%A7%D8%B4%D9%87-%DA%AF%D8%A7%D9%88%DB%8C-%DB%8C%DA%A9-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D9%88-%DB%B1%DB%B0%DB%B0-%D9%87%D8%B2%D8%A7%D8%B1-%D8%AA%D9%88%D9%85%D8%A7%D9%86-%D8%A7%D8%B3%D8%AA-%D8%A7%D9%85%D8%A7-%DA%AF%D9%88%D8%B4%D8%AA-%D8%B1%D8%A7-%D8%AF%D8%B1",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-13T17:14:00+00:00",
+      "category": "commodities",
+      "category_label": "کالاهای اساسی",
+      "relevance": 4,
+      "date_status": "ok"
+    },
+    {
+      "title": "قطع ارتباط نفتی ایران و آمریکا؛ نخستین رویارویی اقتصادی دو کشور در آبان ۵۸",
+      "url": "https://www.khabaronline.ir/news/2301624/%D9%82%D8%B7%D8%B9-%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D9%86%D9%81%D8%AA%DB%8C-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D9%88-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D9%86%D8%AE%D8%B3%D8%AA%DB%8C%D9%86-%D8%B1%D9%88%DB%8C%D8%A7%D8%B1%D9%88%DB%8C%DB%8C-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C-%D8%AF%D9%88-%DA%A9%D8%B4%D9%88%D8%B1",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-13T17:00:00+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
+      "relevance": 2,
+      "date_status": "ok"
+    },
     {
       "title": "انتقاد نماینده مجلس انتقاد از وضعیت قیمت گوشت و مرغ/ قیمت هایی را در بازار می بینیم، ظلم به مصرف کننده است",
       "url": "https://www.khabaronline.ir/news/2301622/%D8%A7%D9%86%D8%AA%D9%82%D8%A7%D8%AF-%D9%86%D9%85%D8%A7%DB%8C%D9%86%D8%AF%D9%87-%D9%85%D8%AC%D9%84%D8%B3-%D8%A7%D9%86%D8%AA%D9%82%D8%A7%D8%AF-%D8%A7%D8%B2-%D9%88%D8%B6%D8%B9%DB%8C%D8%AA-%D9%82%DB%8C%D9%85%D8%AA-%DA%AF%D9%88%D8%B4%D8%AA-%D9%88-%D9%85%D8%B1%D8%BA-%D9%82%DB%8C%D9%85%D8%AA-%D9%87%D8%A7%DB%8C%DB%8C",
@@ -71,7 +91,6 @@
       "relevance": 2,
       "date_status": "ok",
       "also_reported_by": [
-        "خبرآنلاین",
         "ایسنا"
       ]
     },
@@ -82,6 +101,16 @@
       "published_at": "2026-11-13T15:18:36+00:00",
       "category": "commodities",
       "category_label": "کالاهای اساسی",
+      "relevance": 2,
+      "date_status": "ok"
+    },
+    {
+      "title": "کاهش احتمالی سفارش‌های نظامی ژاپن زیر فشار کسری بودجه",
+      "url": "https://www.yjc.ir/fa/news/9148513/کاهش-احتمالی-سفارش‌های-نظامی-ژاپن-زیر-فشار-کسری-بودجه",
+      "source": "باشگاه خبرنگاران جوان",
+      "published_at": "2026-11-13T15:12:01+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
       "relevance": 2,
       "date_status": "ok"
     },
@@ -116,36 +145,6 @@
       "date_status": "ok"
     },
     {
-      "title": "اتاق بازرگانی اهواز آماده بهره‌گیری از ظرفیت عشایر برای توسعه اقتصادی است",
-      "url": "https://www.irna.ir/news/86320710/%D8%A7%D8%AA%D8%A7%D9%82-%D8%A8%D8%A7%D8%B2%D8%B1%DA%AF%D8%A7%D9%86%DB%8C-%D8%A7%D9%87%D9%88%D8%A7%D8%B2-%D8%A2%D9%85%D8%A7%D8%AF%D9%87-%D8%A8%D9%87%D8%B1%D9%87-%DA%AF%DB%8C%D8%B1%DB%8C-%D8%A7%D8%B2-%D8%B8%D8%B1%D9%81%DB%8C%D8%AA-%D8%B9%D8%B4%D8%A7%DB%8C%D8%B1-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%AA%D9%88%D8%B3%D8%B9%D9%87",
-      "source": "ایرنا",
-      "published_at": "2026-11-13T14:43:34+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "مدیریت صادرات باید همزمان منافع کشاورزان و معیشت مردم را لحاظ کند",
-      "url": "https://www.irna.ir/news/86320715/%D9%85%D8%AF%DB%8C%D8%B1%DB%8C%D8%AA-%D8%B5%D8%A7%D8%AF%D8%B1%D8%A7%D8%AA-%D8%A8%D8%A7%DB%8C%D8%AF-%D9%87%D9%85%D8%B2%D9%85%D8%A7%D9%86-%D9%85%D9%86%D8%A7%D9%81%D8%B9-%DA%A9%D8%B4%D8%A7%D9%88%D8%B1%D8%B2%D8%A7%D9%86-%D9%88-%D9%85%D8%B9%DB%8C%D8%B4%D8%AA-%D9%85%D8%B1%D8%AF%D9%85-%D8%B1%D8%A7-%D9%84%D8%AD%D8%A7%D8%B8",
-      "source": "ایرنا",
-      "published_at": "2026-11-13T14:42:13+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 4,
-      "date_status": "ok"
-    },
-    {
-      "title": "بزرگان عشایر نقشی تعیین‌کننده در انسجام اجتماعی و توسعه اقتصادی خوزستان دارند",
-      "url": "https://www.isna.ir/news/1405082215169/%D8%A8%D8%B2%D8%B1%DA%AF%D8%A7%D9%86-%D8%B9%D8%B4%D8%A7%DB%8C%D8%B1-%D9%86%D9%82%D8%B4%DB%8C-%D8%AA%D8%B9%DB%8C%DB%8C%D9%86-%DA%A9%D9%86%D9%86%D8%AF%D9%87-%D8%AF%D8%B1-%D8%A7%D9%86%D8%B3%D8%AC%D8%A7%D9%85-%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%DB%8C-%D9%88-%D8%AA%D9%88%D8%B3%D8%B9%D9%87-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C",
-      "source": "ایسنا",
-      "published_at": "2026-11-13T14:40:40+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
       "title": "عضو کمیسیون صنایع و معادن مجلس: شرایط اقتصادی ایران به‌شدت رو به وخامت است",
       "url": "https://www.iranintl.com/202611139320",
       "source": "ایران اینترنشنال",
@@ -167,23 +166,23 @@
     }
   ],
   "stats": {
-    "seen": 190,
-    "off_topic": 172,
+    "seen": 210,
+    "off_topic": 193,
     "no_valid_date": 0,
     "too_old": 0,
-    "duplicates": 2,
+    "duplicates": 1,
     "published": 16
   },
   "sources_ok": [
     "ایران اینترنشنال",
     "ایسنا",
     "مهر",
+    "باشگاه خبرنگاران جوان",
     "تابناک",
     "خبرآنلاین",
     "ایرنا"
   ],
   "sources_failed": [
-    "تسنیم",
-    "باشگاه خبرنگاران جوان"
+    "تسنیم"
   ]
 }
