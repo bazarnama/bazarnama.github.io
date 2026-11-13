@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T21:13:22.952582+00:00",
+  "updated_at": "2026-11-13T22:00:02.986544+00:00",
   "items": [
     {
       "title": "حمله یمن به فرودگاه بین‌المللی ریاض و ایستگاه پمپاژ نفت در عربستان",
@@ -102,10 +102,7 @@
       "category": "gold",
       "category_label": "طلا و سکه",
       "relevance": 2,
-      "date_status": "ok",
-      "also_reported_by": [
-        "ایسنا"
-      ]
+      "date_status": "ok"
     },
     {
       "title": "حذف مرغ از سفره بازنشسته‌ با حقوق ۱۳ میلیون تومان/ وعده ترمیم مستمری‌ها در نیمه دوم سال روی زمین ماند",
@@ -150,10 +147,10 @@
   ],
   "stats": {
     "seen": 210,
-    "off_topic": 194,
+    "off_topic": 195,
     "no_valid_date": 0,
     "too_old": 0,
-    "duplicates": 2,
+    "duplicates": 1,
     "published": 14
   },
   "sources_ok": [
