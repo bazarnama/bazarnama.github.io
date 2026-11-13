@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ماشین‌حساب طلا با عیار و وزن و ماشین‌حساب سود و زیان تاریخی بر پایهٔ نرخ و تاریخچهٔ واقعی بازارنما؛ ابزار محاسباتی است، نه توصیهٔ سرمایه‌گذاری."><meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://bazarnama.github.io/tools.html"><meta name="theme-color" content="#087e6e">
+<meta property="og:type" content="website"><meta property="og:locale" content="fa_IR"><meta property="og:site_name" content="بازارنما"><meta property="og:title" content="ابزارهای بازارنما: ماشین‌حساب طلا و سود و زیان تاریخی | بازارنما"><meta property="og:description" content="ماشین‌حساب طلا با عیار و وزن و ماشین‌حساب سود و زیان تاریخی بر پایهٔ نرخ و تاریخچهٔ واقعی بازارنما؛ ابزار محاسباتی است، نه توصیهٔ سرمایه‌گذاری."><meta property="og:url" content="https://bazarnama.github.io/tools.html">
+<meta property="og:image" content="https://bazarnama.github.io/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:image" content="https://bazarnama.github.io/og-image.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="ابزارهای بازارنما: ماشین‌حساب طلا و سود و زیان تاریخی | بازارنما"><meta name="twitter:description" content="ماشین‌حساب طلا با عیار و وزن و ماشین‌حساب سود و زیان تاریخی بر پایهٔ نرخ و تاریخچهٔ واقعی بازارنما؛ ابزار محاسباتی است، نه توصیهٔ سرمایه‌گذاری.">
+<title>ابزارهای بازارنما: ماشین‌حساب طلا و سود و زیان تاریخی | بازارنما</title><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "ابزارهای بازارنما", "url": "https://bazarnama.github.io/tools.html", "inLanguage": "fa-IR", "description": "ماشین‌حساب طلا با عیار و وزن و ماشین‌حساب سود و زیان تاریخی بر پایهٔ نرخ و تاریخچهٔ واقعی بازارنما؛ ابزار محاسباتی است، نه توصیهٔ سرمایه‌گذاری."}</script>
+<style>
+:root{
+ color-scheme:light;
+ --bg:#f3f7f6;
+ --surface:#fff;
+ --text:#17332e;
+ --muted:#687f78;
+ --line:#dfeae5;
+ --brand:#087e6e;
+ --shadow:0 10px 28px rgba(18,55,47,.07)
+}
+:root[data-theme="dark"]{
+ color-scheme:dark;
+ --bg:#0c1716;
+ --surface:#142321;
+ --text:#e7f2ee;
+ --muted:#9bb0a9;
+ --line:#29413c;
+ --brand:#25a995;
+ --shadow:0 10px 28px rgba(0,0,0,.22)
+}
+:root[data-theme="dark"] .price{background:#192c29}
+:root[data-theme="dark"] .hero{
+ background:linear-gradient(125deg,#073e39,#075e53 70%,#137d69)
+}
+:root[data-theme="dark"] .btn{background:#e7f2ee;color:#075e53}
+:root[data-theme="dark"] .btn.alt{
+ background:#ffffff12;
+ color:white;
+ border-color:#ffffff55
+}
+:root[data-theme="dark"] .top a:not(.brand){color:var(--muted)}
+
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+ font-family:Tahoma,Arial,sans-serif;
+ line-height:1.9
+}
+
+.wrap{
+ width:min(920px,100%);
+ margin:auto;
+ padding:22px 16px
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:12px;
+ padding:12px 0 22px
+}
+
+.brand{
+ font-weight:900;
+ color:var(--brand);
+ font-size:20px;
+ text-decoration:none
+}
+
+.top a:not(.brand){
+ color:var(--muted);
+ text-decoration:none;
+ font-size:13px
+}
+
+.hero,.panel{
+ background:var(--surface);
+ border:1px solid var(--line);
+ border-radius:20px;
+ padding:22px;
+ box-shadow:var(--shadow);
+ margin-bottom:16px
+}
+
+.hero{
+ background:linear-gradient(125deg,#075c55,#0b8b79 70%,#24ad91);
+ color:white
+}
+
+.eyebrow{font-size:12px;opacity:.85}
+
+.hero h1{
+ font-size:clamp(25px,5vw,36px);
+ line-height:1.5;
+ margin:8px 0
+}
+
+.hero p{margin:0;color:#e2f7f1}
+
+.actions{
+ display:flex;
+ flex-wrap:wrap;
+ gap:10px;
+ margin-top:18px
+}
+
+.btn{
+ display:inline-block;
+ padding:10px 15px;
+ border-radius:11px;
+ background:white;
+ color:#087e6e;
+ text-decoration:none;
+ font-weight:700;
+ font-size:13px
+}
+
+.btn.alt{
+ background:#ffffff18;
+ color:white;
+ border:1px solid #ffffff55
+}
+
+.panel h2{font-size:19px;margin:0 0 9px}
+.panel h3{font-size:15px;margin:18px 0 5px}
+.panel p,.panel li{font-size:13px;color:var(--muted)}
+
+.prices{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
+ gap:10px;
+ margin-top:15px
+}
+
+.price{
+ padding:13px;
+ border:1px solid var(--line);
+ border-radius:13px;
+ background:#f8fbfa
+}
+
+.price strong{
+ display:flex;
+ align-items:center;
+ gap:0;
+ min-height:40px
+}
+
+.price b{
+ display:block;
+ font-size:19px;
+ margin:5px 0;
+ direction:ltr;
+ text-align:right
+}
+
+.price small{
+ color:var(--muted);
+ font-size:10px
+}
+
+.status{font-size:12px;color:var(--muted)}
+
+.footer{
+ font-size:11px;
+ color:var(--muted);
+ padding:16px 2px
+}
+
+.footer a{color:var(--brand)}
+
+.top-actions{
+ display:flex;
+ align-items:center;
+ gap:10px
+}
+
+.theme-toggle{
+ border:1px solid var(--line);
+ background:var(--surface);
+ color:var(--text);
+ border-radius:11px;
+ width:40px;
+ height:40px;
+ font-size:19px;
+ cursor:pointer;
+ box-shadow:var(--shadow)
+}
+
+.theme-toggle:focus-visible{
+ outline:2px solid var(--brand);
+ outline-offset:2px
+}
+
+.asset-icon{
+ width:38px;
+ height:38px;
+ flex:0 0 38px;
+ border-radius:13px;
+ display:inline-grid;
+ place-items:center;
+ vertical-align:middle;
+ margin-inline-end:9px;
+ box-shadow:inset 0 1px 0 #ffffff80,0 4px 10px #102a2412
+}
+
+.asset-icon svg{
+ width:25px;
+ height:25px;
+ display:block
+}
+
+.asset-icon.currency{
+ background:linear-gradient(145deg,#e3f5ed,#b9e2d1);
+ color:#08785e
+}
+
+.asset-icon.gold{
+ background:linear-gradient(145deg,#fff2cf,#e9c36f);
+ color:#93620a
+}
+
+.asset-icon.crypto{
+ background:linear-gradient(145deg,#f2eaff,#d9c5ff);
+ color:#6840a8
+}
+
+:root[data-theme="dark"] .asset-icon.currency{
+ background:linear-gradient(145deg,#21483d,#17372f);
+ color:#8ee0bd
+}
+
+:root[data-theme="dark"] .asset-icon.gold{
+ background:linear-gradient(145deg,#59451e,#382d18);
+ color:#f4cf78
+}
+
+:root[data-theme="dark"] .asset-icon.crypto{
+ background:linear-gradient(145deg,#40315b,#2b2340);
+ color:#d0b7ff
+}
+
+@media(max-width:560px){
+ .wrap{padding:12px}
+ .hero,.panel{padding:17px;border-radius:16px}
+ .top{align-items:flex-start}
+ .top-actions{gap:7px}
+ .top-actions a{font-size:12px!important}
+ .theme-toggle{width:36px;height:36px}
+}
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}</style><style id="glass">/* Liquid-glass theme — edit here, applies to every page */
+:root{--g-bg:rgba(255,255,255,.40);--g-bg2:rgba(255,255,255,.28);--g-border:rgba(255,255,255,.65);--g-shadow:0 10px 34px rgba(16,70,62,.14);--g-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 22px rgba(255,255,255,.18);--g-blur:blur(28px) saturate(200%)}
+[data-theme="dark"]{--g-bg:rgba(28,48,45,.42);--g-bg2:rgba(34,56,52,.32);--g-border:rgba(255,255,255,.14);--g-shadow:0 12px 36px rgba(0,0,0,.38);--g-hi:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 22px rgba(255,255,255,.03)}
+
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(520px 420px at 12% 8%,rgba(32,200,165,.75),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(124,92,255,.55),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(255,184,64,.60),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(64,150,255,.50),transparent 70%)}
+[data-theme="dark"] body::before{background:radial-gradient(520px 420px at 12% 8%,rgba(20,150,125,.55),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(100,70,230,.42),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(210,140,30,.30),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(40,110,220,.34),transparent 70%)}
+
+.card,.panel,.newsItem,.tablewrap,.topbar,.result,.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.btn.ghost,.tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.04) 42%,rgba(255,255,255,.16)),var(--g-bg)!important;
+ -webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);
+ border:1px solid var(--g-border)!important;box-shadow:var(--g-shadow),var(--g-hi)!important}
+[data-theme="dark"] .card,[data-theme="dark"] .panel,[data-theme="dark"] .newsItem,[data-theme="dark"] .tablewrap,[data-theme="dark"] .topbar,[data-theme="dark"] .result,[data-theme="dark"] .chip,[data-theme="dark"] .smallbtn,[data-theme="dark"] .iconbtn,[data-theme="dark"] .theme-toggle,[data-theme="dark"] .select,[data-theme="dark"] .field input,[data-theme="dark"] .field select,[data-theme="dark"] .tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.01) 42%,rgba(255,255,255,.05)),var(--g-bg)!important}
+.topbar{border-radius:0 0 22px 22px;border-top:0!important}
+.panel,.card,.newsItem{border-radius:24px!important}
+.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag{border-radius:999px!important}
+.field input,.field select{padding-inline:16px!important}
+.result{border-style:solid!important;border-radius:20px!important}
+.chip.active{background:linear-gradient(135deg,rgba(32,190,160,.75),rgba(8,126,110,.75))!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
+
+/* nested items inside a glass panel: lighter, no extra blur */
+.price{background:linear-gradient(135deg,rgba(255,255,255,.45),rgba(255,255,255,.12))!important;border:1px solid var(--g-border)!important;border-radius:18px!important;box-shadow:var(--g-hi)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+[data-theme="dark"] .price{background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02))!important}
+.panel .card,.panel .newsItem,.panel .select,.panel .smallbtn,.panel .chip,.panel .tag,.panel .result{-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* hero: tinted glass with sheen */
+.hero,.heroBox{background:linear-gradient(135deg,rgba(255,255,255,.30),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,92,85,.80),rgba(11,139,121,.68) 60%,rgba(36,173,145,.58))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 18px 44px rgba(8,100,88,.30),inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 30px rgba(255,255,255,.10)!important}
+.hero{border-radius:28px}
+[data-theme="dark"] .hero,[data-theme="dark"] .heroBox{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,62,57,.78),rgba(7,94,83,.66) 60%,rgba(19,125,105,.55))!important}
+
+/* buttons */
+.btn:not(.ghost){background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.72))!important;color:#075e53!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 6px 18px rgba(0,0,0,.12),inset 0 1px 0 #fff!important;border-radius:999px!important}
+.hero .btn.alt,.heroBox .btn.ghost,.btn.ghost{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.5)!important;border-radius:999px!important}
+[data-theme="dark"] .btn:not(.ghost):not(.alt){background:linear-gradient(180deg,rgba(231,242,238,.92),rgba(231,242,238,.7))!important}
+
+/* motion */
+.card,.chip,.smallbtn,.btn{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .25s}
+.card:hover{transform:translateY(-3px)}
+.chip:hover,.smallbtn:hover,.btn:hover{transform:translateY(-1px)}
+.footer{border-top:1px solid var(--g-border)!important}
+table{border-collapse:separate;border-spacing:0}
+
+/* fallbacks */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--g-bg:rgba(255,255,255,.85)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.92)}}
+@media (prefers-reduced-transparency:reduce){:root{--g-bg:rgba(255,255,255,.92)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.96)}.card,.panel,.topbar,.hero,.heroBox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+@media (prefers-reduced-motion:reduce){.card,.chip,.smallbtn,.btn{transition:none}.card:hover{transform:none}}
+
+/* index: the outer .hero is only a wrapper around .heroBox */
+.hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.panel p a,.panel li a{color:var(--brand);font-weight:700}
+
+/* large screens (Windows desktops 1600px+) */
+@media (min-width:1600px){
+ .wrap{width:min(1480px,100%)}
+ main.wrap:not(#home){width:min(1040px,100%)}
+ .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:2200px){
+ .wrap{width:min(1760px,100%)}
+ main.wrap:not(#home){width:min(1120px,100%)}
+ .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+
+/* no blue box around items you click/tap; keyboard focus stays visible */
+*{-webkit-tap-highlight-color:transparent}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
+:focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
+
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
+.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
+
+.price{position:relative;transition:transform .15s ease,box-shadow .15s ease}.price:hover{transform:translateY(-2px)}
+.price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--brand,#087e6e);outline-offset:2px}
+
+/* فشرده‌سازی بخش معرفی صفحهٔ اصلی تا نمای کلی بازار زودتر دیده شود */
+.hero:has(.heroBox){padding:10px 0 6px!important}
+.heroBox{padding:15px 18px!important;border-radius:20px!important}
+.heroBox .eyebrow{font-size:12px!important;margin:0!important}
+.hero .heroBox h1{font-size:clamp(19px,4.4vw,27px)!important;line-height:1.4!important;margin:4px 0!important}
+.heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.heroBox .heroActions{margin-top:10px!important;gap:7px!important}
+.heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
+@media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
+</style><style>.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}.f label{display:block;color:var(--muted);font-size:14px}.f input,.f select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+.out{margin-top:10px}.out table{border-collapse:collapse;width:100%}.out td{border-bottom:1px solid var(--line);padding:6px 4px}.out td:last-child{text-align:left;font-weight:700}.msg{color:var(--muted)}.warn{color:#c0392b}.fx{direction:ltr;unicode-bidi:embed;color:var(--muted);font-size:13px}</style></head><body><main class="wrap">
+<header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
+<section class="hero"><div class="eyebrow">بازارنما</div><h1>ابزارهای بازارنما</h1><p>ابزارهای محاسباتی بر پایهٔ نرخ‌ها و تاریخچهٔ واقعی. هیچ‌کدام توصیهٔ خرید یا فروش نیستند.</p></section>
+<section class="panel"><h2>ماشین‌حساب طلا</h2>
+<div class="f"><div><label for="gBase">نرخ مبنا</label><select id="gBase"></select></div><div><label for="gKarat">عیار</label><select id="gKarat"></select></div><div><label for="gW">وزن</label><input id="gW" inputmode="decimal" autocomplete="off" placeholder="مثلاً 2.5"></div><div><label for="gU">واحد وزن</label><select id="gU"></select></div>
+<div><label for="gWage">اجرت (٪ از ارزش خام)</label><input id="gWage" inputmode="decimal" value="0"></div><div><label for="gProfit">سود فروشنده (٪ از خام + اجرت)</label><input id="gProfit" inputmode="decimal" value="0"></div><div><label for="gTax">مالیات (٪ از اجرت + سود)</label><input id="gTax" inputmode="decimal" value="0"></div></div>
+<p class="msg" id="gRate" role="status"></p><div class="out" id="gOut"></div><p class="fx" id="gFx"></p>
+<p class="msg">اجرت، سود و مالیات فقط وقتی محاسبه می‌شوند که خودتان درصدشان را وارد کنید؛ پیش‌فرض ۰ است و بازارنما نرخی برای آن‌ها فرض نمی‌کند. «ارزش خام» همان قیمت طلا بدون این هزینه‌هاست.</p></section>
+<section class="panel"><h2>ماشین‌حساب سود و زیان تاریخی</h2>
+<div class="f"><div><label for="pAsset">دارایی</label><select id="pAsset"></select></div><div><label for="pQty">مقدار فرضی (واحد دارایی)</label><input id="pQty" inputmode="decimal" value="1"></div><div><label for="pBuy">تاریخ خرید</label><input id="pBuy" type="date"></div><div><label for="pSell">تاریخ فروش (خالی = آخرین نقطهٔ ثبت‌شده)</label><input id="pSell" type="date"></div></div>
+<button class="btn" id="pGo" type="button">محاسبه</button><p class="msg" id="pMsg" role="status"></p><div class="out" id="pOut"></div>
+<p class="msg">قیمت هر تاریخ، نزدیک‌ترین نقطهٔ ثبت‌شده در ۷ روز پیش از آن است؛ اگر نقطه‌ای نباشد، «داده کافی نیست» نمایش داده می‌شود. نتیجه فقط محاسبهٔ گذشته است و نه پیش‌بینی یا توصیهٔ سرمایه‌گذاری؛ کارمزد و مالیات در آن لحاظ نشده است.</p></section>
+<section class="panel"><h2>ابزارهای دیگر</h2><p>تبدیل‌گر ارز، علاقه‌مندی‌ها و هشدار قیمت در <a href="/">صفحهٔ اصلی</a> هستند. برای مقایسهٔ دارایی‌ها به <a href="/analysis.html">تحلیل بازار</a> بروید.</p></section>
+<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/analysis.html">تحلیل بازار</a> · <a href="/transparency.html">شفافیت و اعتبار داده‌ها</a> · <a href="/tools.html">ابزارهای بازارنما</a> · <a href="/about.html">درباره بازارنما و روش کار</a></footer>
+</main><script>
+/*CALC*/
+const GRAM={gram:1,mesghal:4.6083,ounce:31.1035,kg:1000};
+function num(s){if(s==null)return NaN;const t=String(s).trim().replace(/[,٬\s]/g,'').replace(/٫/g,'.');return t===''||!/^\d*\.?\d+$/.test(t)?NaN:Number(t)}
+function gold(o){const w=num(o.weight),k=o.karat,bk=o.baseKarat,p=o.price,u=GRAM[o.unit];if(!(w>0)||!(p>0)||!u||!(k>0&&k<=24)||!(bk>0))return null;
+const wg=num(o.wagePct||'0'),pf=num(o.profitPct||'0'),tx=num(o.taxPct||'0');if([wg,pf,tx].some(x=>isNaN(x)||x<0||x>100))return null;
+const grams=w*u,raw=grams*(k/bk)*p,wage=raw*wg/100,profit=(raw+wage)*pf/100,tax=(wage+profit)*tx/100;return{grams,raw,wage,profit,tax,total:raw+wage+profit+tax}}
+function onOrBefore(pts,ts,maxDays){let lo=0,hi=pts.length-1,r=-1;while(lo<=hi){const m=(lo+hi)>>1;if(pts[m].timestamp<=ts){r=m;lo=m+1}else hi=m-1}if(r<0||ts-pts[r].timestamp>maxDays*86400)return null;return pts[r]}
+function pnl(qty,buy,sell){if(!(qty>0)||!buy||!sell||!(buy.price>0))return null;const b=qty*buy.price,s=qty*sell.price;return{buy:b,sell:s,diff:s-b,pct:(s/b-1)*100}}
+if(typeof module!=='undefined')module.exports={num,gold,onOrBefore,pnl};
+/*END*/
+(()=>{if(typeof document==='undefined')return;
+const $=id=>document.getElementById(id),fmt=(x,d=0)=>isFinite(x)?x.toLocaleString('en-US',{maximumFractionDigits:d}):'نامشخص';
+const el=(t,x,c)=>{const e=document.createElement(t);if(x!=null)e.textContent=x;if(c)e.className=c;return e};
+const opt=(s,v,t)=>{const o=el('option',t);o.value=v;s.append(o)};let items=[];const cache={};
+const U=[['gram','گرم'],['mesghal','مثقال (۴٫۶۰۸۳ گرم)'],['ounce','اونس تروی (۳۱٫۱۰۳۵ گرم)'],['kg','کیلوگرم']];
+for(const [v,t] of U)opt($('gU'),v,t);for(const k of [24,22,21,20,18,14,10,9])opt($('gKarat'),k,k+' عیار');$('gKarat').value='18';
+const BASES=[['gold-18k',18],['gold-24k',24]];
+function row(t,v){const r=el('tr');r.append(el('td',t),el('td',v));return r}
+function calc(){const b=BASES.find(x=>x[0]===$('gBase').value),it=items.find(i=>i.id===$('gBase').value),out=$('gOut');out.textContent='';$('gFx').textContent='';
+if(!it){$('gRate').textContent='نرخ در دسترس نیست.';return}const st=(it.freshness||{}).status;
+$('gRate').textContent='نرخ مبنا: '+fmt(it.price)+' تومان به ازای هر گرم '+b[1]+' عیار · زمان نرخ: '+(it.updated_utc||'نامشخص')+' · وضعیت: '+({fresh:'به‌روز',aging:'در آستانهٔ تأخیر'}[st]||'قدیمی یا نامشخص');
+if(st!=='fresh'&&st!=='aging'){out.append(el('p','نرخ مبنا به‌روز نیست؛ محاسبه انجام نمی‌شود.','warn'));return}
+const r=gold({weight:$('gW').value,karat:Number($('gKarat').value),baseKarat:b[1],price:it.price,unit:$('gU').value,wagePct:$('gWage').value,profitPct:$('gProfit').value,taxPct:$('gTax').value});
+if(!r){out.append(el('p','ورودی‌ها را بررسی کنید (وزن مثبت؛ درصدها بین ۰ و ۱۰۰).','msg'));return}
+if(st==='aging')out.append(el('p','هشدار: نرخ در آستانهٔ تأخیر است.','warn'));
+const t=el('table');[['وزن به گرم',fmt(r.grams,4)],['ارزش خام (تومان)',fmt(r.raw)],['اجرت',fmt(r.wage)],['سود فروشنده',fmt(r.profit)],['مالیات',fmt(r.tax)],['جمع کل (تومان)',fmt(r.total)]].forEach(x=>t.append(row(x[0],x[1])));out.append(t);
+$('gFx').textContent='raw = grams × (karat / '+b[1]+') × rate ; wage = raw×w ; profit = (raw+wage)×p ; tax = (wage+profit)×t'}
+for(const [id,k] of BASES)opt($('gBase'),id,'طلای '+k+' عیار (تومان/گرم)');
+['gBase','gKarat','gW','gU','gWage','gProfit','gTax'].forEach(i=>{$(i).addEventListener('input',calc);$(i).addEventListener('change',calc)});
+async function J(u){const r=await fetch(u,{cache:'no-cache'});if(!r.ok)throw new Error(r.status);return r.json()}
+async function hist(id){if(!cache[id])cache[id]=J('/api/v1/history/'+encodeURIComponent(id)+'.json').then(d=>d.points||[]).catch(()=>null);return cache[id]}
+async function go(){const m=$('pMsg'),o=$('pOut');o.textContent='';m.textContent='';const id=$('pAsset').value,q=num($('pQty').value),pts=await hist(id);
+if(!pts||!pts.length){m.textContent='تاریخچه در دسترس نیست.';return}if(!(q>0)){m.textContent='مقدار باید عدد مثبت باشد.';return}if(!$('pBuy').value){m.textContent='تاریخ خرید را وارد کنید.';return}
+const bt=Date.parse($('pBuy').value+'T00:00:00Z')/1000,st=$('pSell').value?Date.parse($('pSell').value+'T23:59:59Z')/1000:pts[pts.length-1].timestamp;
+if(st<bt){m.textContent='تاریخ فروش باید بعد از خرید باشد.';return}
+const b=onOrBefore(pts,bt,7),s=onOrBefore(pts,st,7),r=pnl(q,b,s);if(!r){m.textContent='داده کافی نیست: برای یکی از دو تاریخ نقطه‌ای در ۷ روز قبل ثبت نشده است.';return}
+const d=ts=>new Date(ts*1000).toISOString().slice(0,10),u=(items.find(i=>i.id===id)||{}).unit||'';
+const t=el('table');[['قیمت خرید ('+d(b.timestamp)+')',fmt(b.price,2)+' '+u],['قیمت فروش ('+d(s.timestamp)+')',fmt(s.price,2)+' '+u],['ارزش خرید',fmt(r.buy,2)],['ارزش فروش',fmt(r.sell,2)],['سود/زیان',(r.diff>0?'+':'')+fmt(r.diff,2)],['درصد تغییر',(r.pct>0?'+':'')+fmt(r.pct,2)+'٪']].forEach(x=>t.append(row(x[0],x[1])));o.append(t)}
+$('pGo').onclick=go;
+(async()=>{try{const L=await J('/api/v1/latest.json');items=(L.items||[]).filter(i=>i&&i.id);for(const i of items)opt($('pAsset'),i.id,((i.name||{}).fa||i.id)+' ('+i.unit+')');$('pAsset').value='gold-18k'}catch(e){$('gRate').textContent='دریافت نرخ ممکن نشد.'}calc()})();
+})();
+</script><script>(()=>{'use strict';const root=document.documentElement,btn=document.getElementById('themeBtn');
+function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textContent=t==='dark'?'☀':'☾';if(s){try{localStorage.setItem('bazarnama-theme',JSON.stringify(t))}catch(e){}}}
+let st=null;try{st=JSON.parse(localStorage.getItem('bazarnama-theme'))}catch(e){}
+ap(st||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),false);
+if(btn)btn.onclick=()=>ap(root.dataset.theme==='dark'?'light':'dark',true);})();</script><script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script><script id="latin-digits">/* Latin digits everywhere, also for text that arrives later (news headlines, API text) */
+(()=>{const M={'۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9','٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'},T=/[۰-۹٠-٩]/,G=/[۰-۹٠-٩]/g,f=s=>s.replace(G,c=>M[c]);
+function walk(n){if(n.nodeType===3){if(T.test(n.nodeValue))n.nodeValue=f(n.nodeValue);return;}if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.nodeName))return;for(const c of n.childNodes)walk(c);}
+walk(document.body);
+new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'){if(T.test(m.target.nodeValue))m.target.nodeValue=f(m.target.nodeValue);}else m.addedNodes.forEach(walk);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.nodeName==='INPUT'&&t.type!=='number'&&T.test(t.value)){const p=t.selectionStart;t.value=f(t.value);try{t.setSelectionRange(p,p);}catch(x){}}});
+})();</script>
+</body></html>
