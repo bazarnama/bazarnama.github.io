@@ -2,195 +2,195 @@
  "pages": {
   "about.html": {
    "lastmod": "2026-11-13",
-   "sha256": "20836f86e2482cc6cbb05594afe9036dee08cfefb028653a8e6cd44fc512b729"
+   "sha256": "fed47c42905c462736880aea065e084a62943460be7a23b2b5948098bbb71472"
   },
   "analysis.html": {
    "lastmod": "2026-11-13",
-   "sha256": "26ed364b834f6194230addef67f8f018b626d8a926fad792171375f99faae148"
+   "sha256": "523ec0f7b42cdb9037e33ee40857e325871119928f2dbcc9112f873c388331ce"
   },
   "api-docs.html": {
    "lastmod": "2026-11-13",
-   "sha256": "25250783ac8040e9199d54907a8716b3de7cd8d51eb840b28c8f08c07148a058"
+   "sha256": "013354cb69a6d75268dcbe95c5c6eba745e5379c202605f60512b24d7efeea1a"
   },
   "crypto.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "7da812188b3740def2ce79c2fff095ba81e2c2b5bc1f485e36e5fabb461d84c3"
+   "lastmod": "2026-11-13",
+   "sha256": "5ee38c1d90142b4db8ce526301c1003be39e42faf9a8f3d5adb98887b23b1931"
   },
   "currency.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "5edae55c13fa851e025ee8d40779749372f11f91fa96336e47b552f5ebb3ab56"
+   "lastmod": "2026-11-13",
+   "sha256": "7cf3d03e5f6d89844d4365830f0ac873c1c321d0317294536ef04b7909d93746"
   },
   "energy.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "85a99b954094c64bc7d744b2e0b38bcbe9813e45cb308276f7671bed58fa8a27"
+   "lastmod": "2026-11-13",
+   "sha256": "c8f9168be6a48c140b20dd6b20afee6978a2aa4e009bc82dcba2c12ee7365961"
   },
   "gold.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "a574b1d5e033c2c605caf67426e56eb1a7b3a0f39e0043e4fb3f3ba7525f507e"
+   "lastmod": "2026-11-13",
+   "sha256": "95fe5ea49294fd71f31436d38133310fac56992a3916b11119059d9f8f1dcc84"
   },
   "index.html": {
-   "lastmod": "2026-11-12",
-   "sha256": "dc1a86eb8b3645e6239a3a1302d7ce85cb9101db984cd06ffb8775bf2101eccb"
+   "lastmod": "2026-11-13",
+   "sha256": "e9eb4f2ddd6ab61b62e521ae4f7556a3bb66175790d1a59272a23ec6e3a659b7"
   },
   "price-ada.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "d3428a3ae9c2d64f86220dce537d066c99d2c200a36163e7d58f70ba344a950b"
+   "lastmod": "2026-11-13",
+   "sha256": "d6e501874051965f3c002d8bd81e5f86e381810c8f7b62465b77f440f5d545a5"
   },
   "price-aed.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "01208b888c497de52f29ffac7671c005dd1bbc0795b9188dc532cf0ee226d392"
+   "lastmod": "2026-11-13",
+   "sha256": "3494c06811943b62e8194c2ef322610273659da098df5178f398ce199f82e045"
   },
   "price-bch.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "d250c40e0117a389174ab3c00cdcd763e774398553a842a986ac6921ae69dd4e"
+   "lastmod": "2026-11-13",
+   "sha256": "c1d8caf6f5c846c5df24a25a7753801a3c4fde3dc4a080b9ede2750d75e2fa3e"
   },
   "price-bnb.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "d0f150847d23cb1dac026cc9facf12ea059a5a3859506fbd97157ca526f51495"
+   "lastmod": "2026-11-13",
+   "sha256": "58ce16eedc6c38da0bb0ce8ac7ed5afebc42fcdd0217673d5de2231246ccb652"
   },
   "price-brent-spot.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "c01d861cf99412bda7953042bed5e97622915ef8da6a706eb4a05af1dbf29856"
+   "lastmod": "2026-11-13",
+   "sha256": "8006563ac99e35a0d17e35bc15322fae20f4f925032d210d79ccb46b87ac2f1e"
   },
   "price-brent.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "f4ed30020577cf90e65b3c74c6eaf23354f548f7034277b86a1c282b6ef26932"
+   "lastmod": "2026-11-13",
+   "sha256": "31718b5f24ad708d403dbb8a47434ba7412dbb5d01ec1d6ed032224d3f3e7c57"
   },
   "price-btc.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "541827991955e636cbd1dafe1ba872bbca84529e42e12574e638acfea12a4511"
+   "lastmod": "2026-11-13",
+   "sha256": "68b6a9feb58935ed7b372ab901d242b979184fd1c9e0a8d6c038c600a33b7826"
   },
   "price-coin-bahar-azadi.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "bfd1ff2fd20f3e4570cfdc3744033648e8517dab567aceabf2c798dca6674357"
+   "lastmod": "2026-11-13",
+   "sha256": "17f7f2f22f6db5d737d32ce24f0e504f480f9ae1dedd609399296a05738d87b6"
   },
   "price-coin-emami.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "9c66054591d00d78e846f905b21e5f6de9d603ab666902d2f58262a034b86cda"
+   "lastmod": "2026-11-13",
+   "sha256": "b446797012dfea33bc3d003841731831d2ed4af3be454295c89fbeb5be177e0c"
   },
   "price-coin-gram.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "2147f366b53fefc0f7beceb0d4d893ce69bef36a2a814aa5c1c5ca8b4a648822"
+   "lastmod": "2026-11-13",
+   "sha256": "a1d7390cb2466006f8bc1d652c973ea7f1475e7175be59ce5f48c449c4fa96ee"
   },
   "price-coin-half.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "2bd4f3d9ed1624eb14d9ccd48717119c0b307b6046414375f729a8d6cccf563b"
+   "lastmod": "2026-11-13",
+   "sha256": "818aa120a9e7ece0e408ae61772a64b7ff04fc2b9be7258de6ec26bdeb6e10c9"
   },
   "price-coin-quarter.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "f17b48a917b26fde0c8c4f13c99c9cfadb473e403a70852f62b175296d38e862"
+   "lastmod": "2026-11-13",
+   "sha256": "61aaf5276175a5202f7bc8048e0835c8ceea09025707c959e6f921e0b7c94a64"
   },
   "price-doge.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "4fba2e59000a1131c02e7bcb6895e3cbe43186e03bb980a91944ef3d1e7b8b70"
+   "lastmod": "2026-11-13",
+   "sha256": "a509c568a6f514bc74db228dc5c9506014ce14f578f10a994bcca62025921a04"
   },
   "price-dot.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "0074bfddd6ee843fe67ab1f8a794fd4e3d7ca7c99e25f8a65a45713eec53485b"
+   "lastmod": "2026-11-13",
+   "sha256": "338c00398a503b5e363d6b268a32a3b5f0364ba6eae16f8b1698bd86d6435ecb"
   },
   "price-eth.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "df06a854a92ba9e58acd7006f2ba731e8e67d468c0a6443a0366da3ac06dd0cf"
+   "lastmod": "2026-11-13",
+   "sha256": "988a170cffc91a9d351d2898e01c1738c2ad18b3afa05fb6cae7ba0e83772cf4"
   },
   "price-eur.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "ce1afa578a0652784194a484500275db3a674b0cf115112125c90e25b954ba17"
+   "lastmod": "2026-11-13",
+   "sha256": "dc371b8ccf27398a6232ccf37a8342645727e6f95a099360c94ba74fc2e5bc82"
   },
   "price-gbp.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "1d95c1833702ad70d984c548f86a210550623289099f0dadd8eba937c0589479"
+   "lastmod": "2026-11-13",
+   "sha256": "32cde4173a6f41f8ac608b73ef7abf70cb88b175f3fb0dba83937851fe209737"
   },
   "price-gold-18k.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "be507be20c91e26a59c4603df700a31e10922a8abc6f6127faf73d9b7640da48"
+   "lastmod": "2026-11-13",
+   "sha256": "ca63b101485f995efb3c7bc0173c5eadc9e78bdef478334c47734c13db40ac78"
   },
   "price-gold-24k.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "cf500c9a2122ea3443d5620964b395957fa12714a8b5f57d77cc11c98abf5790"
+   "lastmod": "2026-11-13",
+   "sha256": "8e7d1e5724629b7e4699d63edfb4947fb4e38b2b9eca01d68e05de72a59b0e93"
   },
   "price-gold-mesghal.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "a932bd43e408dd4bfbe8b658df1f4733501aa9b880c42866e7efc6c595040534"
+   "lastmod": "2026-11-13",
+   "sha256": "cf623c8b11d168420635aa4527c9c0ad2c29940b76a81edc4cd972968583ca37"
   },
   "price-ltc.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "c959d0feafc305180a44d13cd450edd7ecc3206f22810a99c1932cfd2dfa4c45"
+   "lastmod": "2026-11-13",
+   "sha256": "52a31777311b41674dc27d2ff969c12f43b712d83f34b7842f321d87e4f99fa7"
   },
   "price-natural-gas.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "2c06132785f1190494638c6b771654dce4cacecd4f86c794c78707f86bc1d420"
+   "lastmod": "2026-11-13",
+   "sha256": "856dfb17a63eaca7c945c3c358f2c1ed0d6f7362d07bc04f96d73f4d695715ec"
   },
   "price-opec-basket.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "0ab4149c75163d66a63905f87a12f87715f930a1717f715455b114e3ce92737a"
+   "lastmod": "2026-11-13",
+   "sha256": "83af7319404cb742b1e9b2f29bb9a5947b47d6b8f8bb446d45c0653d3e0f729e"
   },
   "price-paxg.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "955c53c453584615e1ef45c4962ee94f66e12ae809dcbf98a5a438dffed5f704"
+   "lastmod": "2026-11-13",
+   "sha256": "cc9cce78abd8a1fa5e9742c23873cf28e04d8d3d47faa2bbaaa9a0236475bb82"
   },
   "price-silver-999.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "0880e329c65057bf6af8435337ff739ba348088c9d52ec0e7f5205949e500be8"
+   "lastmod": "2026-11-13",
+   "sha256": "f1200882d1c12e95d7d1ae6d1520019d7e4e84375ef65d1ea4f8ff6ea1ce7713"
   },
   "price-sol.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "c755ade779804b3515f37ffc46f92251019380b6ff812ed5504e1ec204498ead"
+   "lastmod": "2026-11-13",
+   "sha256": "2e1dace9b7c5bebea89e543a5cf71116d033a76e6a5fbbb224d0f19a21d8f1c9"
   },
   "price-ton.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "893bcee0b7d2fd31bc92f5831d7a7fbb90c33aa76984d9696f6dde41f25b5a1c"
+   "lastmod": "2026-11-13",
+   "sha256": "47b28a45ffe5736845f079eb7115770f500b1ef667037cfe29c5d759c3c59c7e"
   },
   "price-trx.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "d3a183cf1905dd8e0a2985bee655686a24b273126372ab8bf586c4b19f758296"
+   "lastmod": "2026-11-13",
+   "sha256": "235d391f07191bd715a0fc004e4f3ed262cfc3fe16f155db063c2a610b2867b4"
   },
   "price-usd.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "7e8b29b9167ba3963649bff0beb614e8dd75431af71fe9e5eab9150d9a1a891b"
+   "lastmod": "2026-11-13",
+   "sha256": "25ec1b9758c58945cf8aee6a0145b94909afe41161fee8438eb5214713429c95"
   },
   "price-usdt.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "d64c0dd8d06a501cbe3dfcfda87f06877479172df9365381c83f68fb68bac31f"
+   "lastmod": "2026-11-13",
+   "sha256": "f284df5cacb8f9d1c9ebe5c5444e8b62ebc659e38762be8f3f9cd72a05c946c7"
   },
   "price-wti-spot.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "db0e01a378b2969abff2959ce3f3da0887d4ecd14eff7764b1ae1cbb71c8ea80"
+   "lastmod": "2026-11-13",
+   "sha256": "8e493d21f3c31a9147e7308677d0463a3f34db73eac4a89fea61b3b20446641b"
   },
   "price-wti.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "bda4885c8156bf92431ed371fc1ae9eca8219fce98b7ec43bf341cf1229a5c6b"
+   "lastmod": "2026-11-13",
+   "sha256": "7dc9e7819385be353db68dba07f66c64942ba9cf49b48950cc205a1285a35bdd"
   },
   "price-xag.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "516aa0e8f791b2753afe7aa134dd094420acc42927eee047bf962ca19197b9dc"
+   "lastmod": "2026-11-13",
+   "sha256": "e6d96993831290233ac2c526f0d12a7b0157baa87a43c600d8382ebb8180c159"
   },
   "price-xau.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "06d1d775ebb0be29fdd58846e6a72f6483555b0150c9b332408c73d2fed4c21c"
+   "lastmod": "2026-11-13",
+   "sha256": "d3cb7b82a8a56a2ecab70bfaad747728d64aa70cd3417d0dcb55d6aced6b5650"
   },
   "price-xpd.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "e053f995d21c1c5724c95402533e3345fd50433e68200b75bf9b37f90604b645"
+   "lastmod": "2026-11-13",
+   "sha256": "6d43ba7056b635cf2727d61ab98af7f2dcc9001e2dc15d3a5130110bd678f5c6"
   },
   "price-xpt.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "e8f768167e63fcfe59a8c27ac3f6d10ee8c0d0b8be2c750af4f95a51938d7969"
+   "lastmod": "2026-11-13",
+   "sha256": "de2925d3d807a537a5a34a833762bd42ad586ede0b4ef66876cb2b8f6982dec4"
   },
   "price-xrp.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "389d4d78cc6d60ce1d65e1ef1c1b4de707d2eb9e17ae2ef0ad94c71e512980b8"
+   "lastmod": "2026-11-13",
+   "sha256": "6206d248bd3c727319f5eaac00d4f915b5377b94e1668a45e15757c7ab7d68df"
   },
   "prices.html": {
-   "lastmod": "2026-11-10",
-   "sha256": "239d0db7d295a02230c5c1aa6d12a649dcdf05e3e1f5cee352d703518aa9b6d2"
+   "lastmod": "2026-11-13",
+   "sha256": "5b04004d585d1272e00db75b3ab0e8499fafad7476b1c9a3608a877bf5049a1d"
   },
   "tools.html": {
    "lastmod": "2026-11-13",
-   "sha256": "15662b5328ce4fc73a90e744fa8be718f3f50054c4edb466687221145ad38171"
+   "sha256": "bf907ab77fa5dd7efb1920edf865d35a1bba3a175fa8eb2631ac9c536ef30e40"
   },
   "transparency.html": {
    "lastmod": "2026-11-13",
-   "sha256": "5368ac19d9439f2a9eb9259323b015a75599dc58049306c8b798dd4587d6cb55"
+   "sha256": "d70e6450dd3dd9dd26dc4d6a2e793305204bfeb1843954519384e0b2728274d0"
   }
  },
  "v": 1
