@@ -26,8 +26,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run unit tests (never blocks price updates; failures show as an error annotation)
-        run: python3 -m unittest discover -s tests || echo "::error::Unit tests failed - see log"
+      - name: Run unit tests and site checks (a failure stops publishing)
+        run: |
+          python3 -m unittest discover -s tests
+          python3 tools/validate_site.py
 
       - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
@@ -37,21 +39,35 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           CYCLES=2; [ "${{ github.event_name }}" = "workflow_dispatch" ] && CYCLES=1   # manual run: one quick cycle
+          FAILED=0
           for cycle in $(seq 1 $CYCLES); do
             echo "=== cycle $cycle ==="
-            python3 update_prices.py || echo "update_prices failed in cycle $cycle (continuing)"
+            if python3 update_prices.py; then
+              python3 tools/record_run.py success "cycle $cycle fetched"
+            else
+              # A failed fetch is reported as a failure; half-written files are discarded, never published.
+              echo "::error::update_prices.py failed in cycle $cycle"
+              git checkout -- data/ api/ 2>/dev/null || true
+              python3 tools/record_run.py failure "update_prices.py failed in cycle $cycle"
+              FAILED=1
+            fi
             git add -A data/ api/
             if ! git diff --cached --quiet; then
               git commit -m "Update market prices and history"
+              PUSHED=0
               for attempt in 1 2 3 4; do
-                git pull --rebase --autostash origin main && git push origin HEAD:main && break
+                if git pull --rebase --autostash origin main && git push origin HEAD:main; then PUSHED=1; break; fi
                 echo "Push attempt $attempt failed; retrying..."
                 sleep $((attempt * 5))
               done
+              if [ "$PUSHED" -ne 1 ]; then
+                echo "::error::git push failed after 4 attempts in cycle $cycle"
+                FAILED=1
+              fi
             fi
             [ "$cycle" -lt "$CYCLES" ] && sleep 270
           done
-          exit 0
+          exit $FAILED
 
       - name: Start the next run (self-chaining)
         if: always() && github.event_name != 'workflow_dispatch'
