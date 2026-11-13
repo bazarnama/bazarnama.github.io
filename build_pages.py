@@ -103,13 +103,14 @@ async function load(){
 function show(data,early){
  try{
   const x=(data.items||[]).find(i=>i&&i.id===ID);
+  let aged=false;if(x&&x.freshness&&x.freshness.observed_utc&&x.freshness.max_age_seconds>0&&Date.now()-Date.parse(x.freshness.observed_utc)>x.freshness.max_age_seconds*1000){x.stale=true;aged=true;}
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent='\\u2066'+(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪\\u2069';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||'NerkhAra';
   $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
-  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
+  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':aged?'زمان آخرین به‌روزرسانی منبع از سقف تازگی این دارایی گذشته است؛ این داده قدیمی است و نباید نرخ زنده تلقی شود.':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 let rangeDays=30,LAST=null,ALLPTS=[];

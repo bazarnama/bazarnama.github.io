@@ -558,6 +558,22 @@ tr:last-child td{border-bottom:0!important}
     try { const r=await fetch(url,{cache:'no-store',signal:controller.signal,headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error('HTTP '+r.status); return await r.json(); }
     finally { clearTimeout(timer); }
   }
+  // The freshness status in the published files is computed when the file is generated. If the file is
+  // old when the browser reads it (delayed workflow, old tab, offline cache) that status would still say
+  // "fresh", so it is re-evaluated here against the current clock with the same limits the server used.
+  function reageFreshness(d) {
+    if (!d || !Array.isArray(d.items)) return d;
+    const now=Date.now();
+    for (const it of d.items) {
+      const f=it && it.freshness; if (!f || !f.observed_utc || !(f.max_age_seconds>0)) continue;
+      const seen=Date.parse(f.observed_utc); if (!Number.isFinite(seen)) continue;
+      const age=Math.max(0,Math.floor((now-seen)/1000));
+      f.age_seconds=age;
+      if (age>f.max_age_seconds) { f.status='stale'; it.stale=true; }
+      else if (age>f.max_age_seconds*0.65 && f.status==='fresh') f.status='aging';
+    }
+    return d;
+  }
   async function getPrices() {
     let old=null;
     try {
@@ -565,11 +581,11 @@ tr:last-child td{border-bottom:0!important}
       if (d && Array.isArray(d.items) && d.items.length) {
         old=d;
         const stamp=d.fetched_at_utc||d.fetched_utc||d.generated_utc;
-        if (stamp && Date.now()-Date.parse(stamp) < 20*60*1000) return d;
+        if (stamp && Date.now()-Date.parse(stamp) < 20*60*1000) return reageFreshness(d);
       }
     } catch {}
-    try { return await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 4000); }
-    catch (e) { if (old) return old; throw e; }   // the file's own per-item stale/freshness flags decide what is shown as old
+    try { return reageFreshness(await fetchJSON(API + '/latest.json?refresh=' + Date.now(), 4000)); }
+    catch (e) { if (old) return reageFreshness(old); throw e; }   // per-item freshness is re-evaluated against the current clock
   }
   // ---------- Supplementary sources (added in the ChatGPT revision) ----------
   async function fetchCoinGecko() {
