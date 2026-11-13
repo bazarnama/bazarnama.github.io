@@ -93,7 +93,7 @@ def build():
 <section class="panel"><h2>تشخیص جهش غیرعادی</h2><p>قیمت جدید با بازهٔ ۲۴ساعتهٔ تاریخچهٔ خودِ بازارنما و با منبع دوم مقایسه می‌شود. جهش خارج از بازه تا تأیید با دریافت بعدی منتشر نمی‌شود و آخرین قیمت معتبر باقی می‌ماند. نتیجهٔ آخرین اجرا: {e(json.dumps(vlog.get("counts"), ensure_ascii=False) if vlog.get("counts") else None)}.</p><ul>{reasons}</ul></section>
 <section class="panel"><h2>اصلاح داده‌های اشتباه</h2><p>اصلاح تاریخچه فقط با ابزار مخصوص انجام می‌شود و هر مورد (دارایی، نقطه، مقدار، دلیل، زمان) در <code>data/history-repairs.json</code> ثبت می‌ماند. این ساختار ممیزی است و ادعای دستکاری‌ناپذیری نیست.</p><ul>{rep}</ul></section>
 <section class="panel"><h2>محدودیت‌ها</h2><ul><li>وابستگی به یک رابط داده اصلی؛ قطع آن می‌تواند چند دارایی را همزمان قدیمی کند.</li><li>مجوز بازنشر داده‌های منابع هنوز با تأیید انسانی بررسی نشده است.</li><li>این اطلاعات نرخ رسمی بانکی یا توصیهٔ مالی نیست و ممکن است با قیمت معامله‌شدهٔ واقعی تفاوت داشته باشد.</li><li>تاریخچهٔ قبل از راه‌اندازی بازارنما از منبع داده گرفته شده و به‌طور مستقل بازبینی نشده است.</li></ul></section>
-<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره بازارنما و روش کار</a> · <a href="/transparency.html">شفافیت و اعتبار داده‌ها</a></footer>
+<footer class="footer"><a href="/">صفحه اصلی بازارنما</a> · <a href="/prices.html">همه قیمت‌ها</a> · <a href="/about.html">درباره بازارنما و روش کار</a> · <a href="/transparency.html">شفافیت و اعتبار داده‌ها</a> · <a href="/analysis.html">تحلیل بازار</a></footer>
 </main>"""
     src = (ROOT / "about.html").read_text(encoding="utf-8")
     head, rest = src.split("<body>", 1)

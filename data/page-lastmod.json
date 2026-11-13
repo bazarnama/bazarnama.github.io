@@ -2,7 +2,11 @@
  "pages": {
   "about.html": {
    "lastmod": "2026-11-13",
-   "sha256": "506eb8d26e52b53e9a782794dba936901ff24d42da328e5b2c1a07153d5f6559"
+   "sha256": "5077ad0abe9db2ecffee596552edd6eab42d47f9445d954e180e65dd87ff27d1"
+  },
+  "analysis.html": {
+   "lastmod": "2026-11-13",
+   "sha256": "26ed364b834f6194230addef67f8f018b626d8a926fad792171375f99faae148"
   },
   "crypto.html": {
    "lastmod": "2026-11-10",
@@ -178,7 +182,7 @@
   },
   "transparency.html": {
    "lastmod": "2026-11-13",
-   "sha256": "a63134a500f97b65f28bdf2565327c6094b4f5a07f2e3f351f4e544fee9d851a"
+   "sha256": "5368ac19d9439f2a9eb9259323b015a75599dc58049306c8b798dd4587d6cb55"
   }
  },
  "v": 1
