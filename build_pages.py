@@ -76,7 +76,7 @@ async function mergeDirectCurrencies(data){
    const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
    const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
    const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<3*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};
@@ -103,14 +103,13 @@ async function load(){
 function show(data,early){
  try{
   const x=(data.items||[]).find(i=>i&&i.id===ID);
-  let aged=false;if(x&&x.freshness&&x.freshness.observed_utc&&x.freshness.max_age_seconds>0&&Date.now()-Date.parse(x.freshness.observed_utc)>x.freshness.max_age_seconds*1000){x.stale=true;aged=true;}
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent='\\u2066'+(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪\\u2069';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||'NerkhAra';
   $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
-  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':aged?'زمان آخرین به‌روزرسانی منبع از سقف تازگی این دارایی گذشته است؛ این داده قدیمی است و نباید نرخ زنده تلقی شود.':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
+  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 let rangeDays=30,LAST=null,ALLPTS=[];
@@ -160,26 +159,16 @@ async function loadHistory(){
   drawHistory(points);
  }catch(e){hint.textContent='تاریخچه برای این دارایی فعلاً در دسترس نیست.';const c=$('historyChart');c.getContext('2d').clearRect(0,0,c.width,c.height);}
 }
-let HP=null;
-(function(){try{const c=$('historyChart');if(!c)return;const wrap=document.createElement('div');wrap.style.position='relative';c.parentNode.insertBefore(wrap,c);wrap.appendChild(c);c.style.touchAction='pan-y';const tip=document.createElement('div');tip.className='chartTip';wrap.appendChild(tip);
- const show=ev=>{if(!HP)return;const r=c.getBoundingClientRect(),x=ev.clientX-r.left;let k=0,bd=1e9;HP.xy.forEach((p,i)=>{const d=Math.abs(p.x-x);if(d<bd){bd=d;k=i;}});const p=HP.xy[k],q=HP.points[k];tip.innerHTML='<b>'+fmt(q.v)+'</b>'+new Date(q.t*1000).toLocaleDateString('fa-IR-u-nu-latn');tip.classList.add('on');const tw=tip.offsetWidth;tip.style.left=Math.max(0,Math.min(r.width-tw,p.x-tw/2))+'px';tip.style.top=Math.max(0,p.y-60)+'px';};
- c.addEventListener('pointermove',show);c.addEventListener('pointerdown',show);c.addEventListener('pointerleave',()=>tip.classList.remove('on'));}catch(e){}})();
 function drawHistory(points){
  const canvas=$('historyChart'),ctx=canvas.getContext('2d'),w=canvas.clientWidth||700,h=260,dpr=window.devicePixelRatio||1;
- canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);HP=null;
+ canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
  if(points.length<2){$('chartHint').textContent=points.length?'برای رسم نمودار حداقل دو نقطه لازم است.':'داده تاریخی در دسترس نیست.';return;}
- const cs=getComputedStyle(document.body),muted=cs.getPropertyValue('--muted')||'#777',lineC=cs.getPropertyValue('--line')||'#ddd',brand=(cs.getPropertyValue('--brand')||'#087e6e').trim();
  const vals=points.map(p=>p.v),min=Math.min(...vals),max=Math.max(...vals),pad={l:58,r:14,t:16,b:32},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,span=max-min||Math.max(1,max*.01);
- ctx.font='11px sans-serif';ctx.strokeStyle=lineC;ctx.fillStyle=muted;ctx.lineWidth=1;ctx.setLineDash([2,5]);
+ ctx.font='11px sans-serif';ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--line')||'#ddd';ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.lineWidth=1;
  for(let i=0;i<4;i++){const y=pad.t+ch*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(fmt(max-span*i/3),pad.l-8,y+4);}
- ctx.setLineDash([]);
- const xy=points.map((p,i)=>({x:pad.l+cw*i/(points.length-1),y:pad.t+ch-(p.v-min)/span*ch}));
- if(/^#[0-9a-f]{6}$/i.test(brand)){const g=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);g.addColorStop(0,brand+'30');g.addColorStop(1,brand+'00');ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(xy[xy.length-1].x,pad.t+ch);ctx.lineTo(xy[0].x,pad.t+ch);ctx.closePath();ctx.fillStyle=g;ctx.fill();}
- ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
- ctx.strokeStyle=brand;ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
- const e=xy[xy.length-1];ctx.beginPath();ctx.arc(e.x,e.y,3.5,0,6.2832);ctx.fillStyle=brand;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.stroke();
- HP={xy,points};
- ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
+ ctx.beginPath();points.forEach((p,i)=>{const x=pad.l+cw*i/(points.length-1),y=pad.t+ch-(p.v-min)/span*ch;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+ ctx.strokeStyle='#087e6e';ctx.lineWidth=2.3;ctx.lineJoin='round';ctx.stroke();
+ ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
  const delta=(points[points.length-1].v/points[0].v-1)*100;
  $('chartHint').textContent=fmt(points.length)+' نقطه تاریخی · تغییر بازه: '+'\\u2066'+(delta>0?'+':'')+fmt(delta,2)+'٪\\u2069';
 }

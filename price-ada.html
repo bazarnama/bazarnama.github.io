@@ -252,201 +252,93 @@ body{
  .top-actions a{font-size:12px!important}
  .theme-toggle{width:36px;height:36px}
 }
-.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}</style><style id="glass">/* Bazarnama design system — calm Liquid Glass. Single source for every page (edit here only).
-   Layers: tokens → page → glass surfaces → controls → data (tables, prices) → motion → fallbacks. */
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66}.bni svg{width:62%;height:62%;display:block}.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kv small{display:block;color:var(--muted)}.kv b{font-size:20px}.up{color:#0a8a4a}.down{color:#c0392b}.rel{display:flex;flex-wrap:wrap;gap:8px}.rel a{border:1px solid var(--line);border-radius:999px;padding:3px 13px;text-decoration:none;color:var(--text);background:var(--surface)}</style><style id="glass">/* Liquid-glass theme — edit here, applies to every page */
+:root{--g-bg:rgba(255,255,255,.40);--g-bg2:rgba(255,255,255,.28);--g-border:rgba(255,255,255,.65);--g-shadow:0 10px 34px rgba(16,70,62,.14);--g-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 22px rgba(255,255,255,.18);--g-blur:blur(28px) saturate(200%)}
+[data-theme="dark"]{--g-bg:rgba(28,48,45,.42);--g-bg2:rgba(34,56,52,.32);--g-border:rgba(255,255,255,.14);--g-shadow:0 12px 36px rgba(0,0,0,.38);--g-hi:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 22px rgba(255,255,255,.03)}
 
-/* ───────── 1. Tokens ───────── */
-:root{
-  --font:"Vazirmatn","IRANSans","Segoe UI",system-ui,-apple-system,Tahoma,Arial,sans-serif;
-  --r-xl:26px;--r-lg:20px;--r-md:14px;--r-pill:999px;
-  --sp-1:6px;--sp-2:10px;--sp-3:16px;--sp-4:24px;
-  --blur:blur(18px) saturate(150%);
-  --pos:#0b8a5f;--neg:#d13f48;--warn:#b7791f;
-  --g-bg:rgba(255,255,255,.62);--g-bg-solid:rgba(255,255,255,.86);--g-sub:rgba(255,255,255,.5);
-  --g-line:rgba(255,255,255,.78);--g-hair:rgba(18,60,52,.09);
-  --g-hi:inset 0 1px 0 rgba(255,255,255,.9);
-  --g-shadow:0 1px 2px rgba(16,50,44,.05),0 8px 24px rgba(16,50,44,.07),0 22px 44px -14px rgba(16,50,44,.10);
-  --page-a:rgba(10,140,120,.10);--page-b:rgba(90,110,200,.07);--page-c:rgba(215,160,60,.06);
-  --ring:rgba(8,126,110,.6);
-}
-[data-theme="dark"]{
-  --pos:#4cd6a2;--neg:#ff7b80;--warn:#e9b64f;
-  --g-bg:rgba(21,38,35,.62);--g-bg-solid:rgba(20,35,32,.9);--g-sub:rgba(255,255,255,.05);
-  --g-line:rgba(255,255,255,.10);--g-hair:rgba(255,255,255,.06);
-  --g-hi:inset 0 1px 0 rgba(255,255,255,.07);
-  --g-shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.34),0 24px 48px -16px rgba(0,0,0,.4);
-  --page-a:rgba(24,160,135,.13);--page-b:rgba(90,100,210,.09);--page-c:rgba(200,140,40,.05);
-  --ring:rgba(74,214,170,.7);
-}
-
-/* ───────── 2. Page ───────── */
-html{-webkit-text-size-adjust:100%}
-body{font-family:var(--font)!important;font-feature-settings:"tnum" 1;transition:background-color .3s,color .3s;
-  padding-inline:env(safe-area-inset-right) env(safe-area-inset-left);padding-bottom:env(safe-area-inset-bottom);
-  overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(900px 520px at 100% 0%,var(--page-a),transparent 70%),
-             radial-gradient(800px 520px at 0% 40%,var(--page-b),transparent 70%),
-             radial-gradient(900px 520px at 70% 100%,var(--page-c),transparent 70%)}
-*{-webkit-tap-highlight-color:transparent}
-h1,h2,h3{letter-spacing:0}
-.muted,.sub,.status{color:var(--muted)}
-.up{color:var(--pos)!important}.down{color:var(--neg)!important}.neutral{color:var(--muted)}
-.status.error{color:var(--neg)}.status.ok{color:var(--pos)}
+ background:radial-gradient(520px 420px at 12% 8%,rgba(32,200,165,.75),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(124,92,255,.55),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(255,184,64,.60),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(64,150,255,.50),transparent 70%)}
+[data-theme="dark"] body::before{background:radial-gradient(520px 420px at 12% 8%,rgba(20,150,125,.55),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(100,70,230,.42),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(210,140,30,.30),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(40,110,220,.34),transparent 70%)}
 
-/* ───────── 3. Glass surfaces ─────────
-   Blur only on the few large containers; small/repeated items use a plain translucent fill
-   (no per-card backdrop-filter → smooth on mid-range phones). */
-.topbar,.top,.panel,.tablewrap,.newsItem,.card,.result,.hero,.heroBox,.kv div,.price{
-  border:1px solid var(--g-line)!important;
-  box-shadow:var(--g-shadow),var(--g-hi)!important}
-.topbar,.top,.panel,.tablewrap,.newsItem,.card,.result,.kv div,.price{
-  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 46%),var(--g-bg)!important}
-[data-theme="dark"] .topbar,[data-theme="dark"] .top,[data-theme="dark"] .panel,[data-theme="dark"] .tablewrap,
-[data-theme="dark"] .newsItem,[data-theme="dark"] .card,[data-theme="dark"] .result,[data-theme="dark"] .kv div,[data-theme="dark"] .price{
-  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 46%),var(--g-bg)!important}
-.topbar,.top,.panel,.tablewrap,.hero:not(:has(.heroBox)),.heroBox{-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
-.panel .card,.panel .price,.panel .kv div,.panel .result,.panel .newsItem,.tablewrap .tag{-webkit-backdrop-filter:none;backdrop-filter:none}
-.panel .price,.panel .kv div,.panel .result{background:var(--g-sub)!important;box-shadow:var(--g-hi)!important;border-color:var(--g-hair)!important}
-.card,.panel,.newsItem,.tablewrap,.hero,.heroBox{border-radius:var(--r-xl)!important}
-.price,.kv div,.result{border-radius:var(--r-md)!important}
-.result{border-style:solid!important}
-.card:hover{transform:translateY(-2px)}
-
-/* header: floating glass bar */
-.topbar{position:sticky;top:8px;z-index:30;width:min(1160px,calc(100% - 20px));margin:8px auto 0;border-radius:22px!important}
-.topinner{min-height:58px}
-.top{position:sticky;top:8px;z-index:30;padding:8px 14px!important;margin-bottom:14px;border-radius:20px}
-.brand{letter-spacing:0}
-.brandmark{border-radius:12px!important;box-shadow:0 4px 12px rgba(8,126,110,.28),inset 0 1px 0 rgba(255,255,255,.4)!important}
-.brand>span:last-child{background:none!important;-webkit-text-fill-color:currentColor!important;color:var(--brand)!important}
-
-/* hero: tonal brand glass, no bright gradients */
-.hero,.heroBox{color:#fff;
-  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0) 42%),linear-gradient(135deg,#0a6a5f,#0b8070)!important;
-  border-color:rgba(255,255,255,.28)!important;
-  box-shadow:0 14px 34px rgba(8,100,88,.22),inset 0 1px 0 rgba(255,255,255,.35)!important}
-[data-theme="dark"] .hero,[data-theme="dark"] .heroBox{
-  background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,0) 42%),linear-gradient(135deg,#0b3a35,#0c5247)!important;
-  border-color:rgba(255,255,255,.12)!important;box-shadow:0 14px 34px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)!important}
-.hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none}
-.hero p,.heroBox p{color:rgba(255,255,255,.88)}
-
-/* ───────── 4. Controls ───────── */
-.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag,.nav a,.rel a{
-  background:var(--g-bg)!important;border:1px solid var(--g-line)!important;color:var(--text);
-  box-shadow:var(--g-hi)!important;border-radius:var(--r-pill)!important;
-  -webkit-backdrop-filter:none;backdrop-filter:none;
-  transition:transform .2s cubic-bezier(.2,.8,.2,1),background-color .2s,border-color .2s,color .2s}
+.card,.panel,.newsItem,.tablewrap,.topbar,.result,.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.btn.ghost,.tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.04) 42%,rgba(255,255,255,.16)),var(--g-bg)!important;
+ -webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);
+ border:1px solid var(--g-border)!important;box-shadow:var(--g-shadow),var(--g-hi)!important}
+[data-theme="dark"] .card,[data-theme="dark"] .panel,[data-theme="dark"] .newsItem,[data-theme="dark"] .tablewrap,[data-theme="dark"] .topbar,[data-theme="dark"] .result,[data-theme="dark"] .chip,[data-theme="dark"] .smallbtn,[data-theme="dark"] .iconbtn,[data-theme="dark"] .theme-toggle,[data-theme="dark"] .select,[data-theme="dark"] .field input,[data-theme="dark"] .field select,[data-theme="dark"] .tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.01) 42%,rgba(255,255,255,.05)),var(--g-bg)!important}
+.topbar{border-radius:0 0 22px 22px;border-top:0!important}
+.panel,.card,.newsItem{border-radius:24px!important}
+.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag{border-radius:999px!important}
 .field input,.field select{padding-inline:16px!important}
-.chip,.smallbtn,.nav a,.rel a{cursor:pointer}
-.chip:hover,.smallbtn:hover,.nav a:hover,.rel a:hover{transform:translateY(-1px);color:var(--brand);border-color:color-mix(in srgb,var(--brand) 40%,transparent)!important}
-.chip:active,.smallbtn:active,.nav a:active,.btn:active,.iconbtn:active,.theme-toggle:active{transform:scale(.97)}
-.chip.active,.smallbtn.active{background:var(--brand)!important;color:#fff!important;border-color:transparent!important}
-.iconbtn,.theme-toggle{min-width:40px;min-height:40px}
-.tag{padding:3px 10px}
-.btn{border-radius:var(--r-pill)!important;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-.btn:not(.ghost):not(.alt){background:#fff!important;color:#07625a!important;border:0!important}
-.btn.ghost,.btn.alt{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.4)!important;box-shadow:none}
-.btn:hover{transform:translateY(-1px)}
-:focus-visible{outline:2px solid var(--ring)!important;outline-offset:2px}
-a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),[tabindex]:focus:not(:focus-visible){outline:none!important}
+.result{border-style:solid!important;border-radius:20px!important}
+.chip.active{background:linear-gradient(135deg,rgba(32,190,160,.75),rgba(8,126,110,.75))!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
 
-/* nav rail (index): draggable, masked edges */
-.nav{--mL:0px;--mR:0px;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);
-  mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);
-  scroll-snap-type:x proximity;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none}
-.nav.dragging{cursor:grabbing;scroll-snap-type:none}.nav.dragging a{pointer-events:none}
-.nav a{flex:0 0 auto;white-space:nowrap;scroll-snap-align:center;font-size:13px;padding:5px 12px}
-@media(min-width:701px){.nav{flex:1 1 auto;min-width:0;gap:6px;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:4px 8px}
-  .nav::-webkit-scrollbar{display:none}}
-@media(min-width:701px) and (max-width:980px){.nav a{padding:5px 9px;font-size:12px}}
+/* nested items inside a glass panel: lighter, no extra blur */
+.price{background:linear-gradient(135deg,rgba(255,255,255,.45),rgba(255,255,255,.12))!important;border:1px solid var(--g-border)!important;border-radius:18px!important;box-shadow:var(--g-hi)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+[data-theme="dark"] .price{background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02))!important}
+.panel .card,.panel .newsItem,.panel .select,.panel .smallbtn,.panel .chip,.panel .tag,.panel .result{-webkit-backdrop-filter:none;backdrop-filter:none}
 
-/* ───────── 5. Data ───────── */
-.assetPrice,.price b,.kv b,.pv,td,.result strong{font-variant-numeric:tabular-nums}
-.assetPrice{font-weight:800;letter-spacing:-.2px}
-.assetName,.assetUnit,.assetFoot,.price small,.kv small,.sub,.chartHint{color:var(--muted)}
-.change{padding:2px 9px;border-radius:var(--r-pill);background:color-mix(in srgb,currentColor 11%,transparent)}
-.change.neutral{background:transparent;padding-inline:0}
+/* hero: tinted glass with sheen */
+.hero,.heroBox{background:linear-gradient(135deg,rgba(255,255,255,.30),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,92,85,.80),rgba(11,139,121,.68) 60%,rgba(36,173,145,.58))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 18px 44px rgba(8,100,88,.30),inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 30px rgba(255,255,255,.10)!important}
+.hero{border-radius:28px}
+[data-theme="dark"] .hero,[data-theme="dark"] .heroBox{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,62,57,.78),rgba(7,94,83,.66) 60%,rgba(19,125,105,.55))!important}
+
+/* buttons */
+.btn:not(.ghost){background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.72))!important;color:#075e53!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 6px 18px rgba(0,0,0,.12),inset 0 1px 0 #fff!important;border-radius:999px!important}
+.hero .btn.alt,.heroBox .btn.ghost,.btn.ghost{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.5)!important;border-radius:999px!important}
+[data-theme="dark"] .btn:not(.ghost):not(.alt){background:linear-gradient(180deg,rgba(231,242,238,.92),rgba(231,242,238,.7))!important}
+
+/* motion */
+.card,.chip,.smallbtn,.btn{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .25s}
+.card:hover{transform:translateY(-3px)}
+.chip:hover,.smallbtn:hover,.btn:hover{transform:translateY(-1px)}
+.footer{border-top:1px solid var(--g-border)!important}
 table{border-collapse:separate;border-spacing:0}
-th{font-size:11px;font-weight:700;color:var(--muted);background:var(--g-sub);position:sticky;top:0}
-th,td{border-bottom:1px solid var(--g-hair)!important}
-tbody tr{transition:background-color .15s}
-tbody tr:hover{background:color-mix(in srgb,var(--brand) 6%,transparent)}
-tr:last-child td{border-bottom:0!important}
-.tablewrap{padding:2px;-webkit-overflow-scrolling:touch}
-.chartArea canvas{border-radius:var(--r-md)}
-.chartTip{position:absolute;pointer-events:none;z-index:2;min-width:96px;padding:6px 10px;border-radius:12px;font-size:11px;line-height:1.7;
-  background:var(--g-bg-solid);border:1px solid var(--g-line);box-shadow:var(--g-shadow);color:var(--text);
-  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;white-space:nowrap}
-.chartTip.on{opacity:1;transform:none}
-.chartTip b{display:block;font-size:13px;direction:ltr;text-align:right}
-.footer{border-top:1px solid var(--g-hair)!important}
-.panel p a,.panel li a{color:var(--brand);font-weight:700}
-.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.34),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 4px 10px color-mix(in srgb,var(--b) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.45);margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
-.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
-.price{position:relative;transition:transform .2s cubic-bezier(.2,.8,.2,1)}.price:hover{transform:translateY(-2px)}
-.price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
-.price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--ring);outline-offset:2px}
 
-/* ───────── 6. Layout helpers ───────── */
-@media(min-width:1600px){.wrap{width:min(1480px,100%)}main.wrap:not(#home){width:min(1040px,100%)}.stats{grid-template-columns:repeat(5,minmax(0,1fr))}}
-@media(min-width:2200px){.wrap{width:min(1760px,100%)}main.wrap:not(#home){width:min(1120px,100%)}.stats{grid-template-columns:repeat(6,minmax(0,1fr))}}
+/* fallbacks */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--g-bg:rgba(255,255,255,.85)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.92)}}
+@media (prefers-reduced-transparency:reduce){:root{--g-bg:rgba(255,255,255,.92)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.96)}.card,.panel,.topbar,.hero,.heroBox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+@media (prefers-reduced-motion:reduce){.card,.chip,.smallbtn,.btn{transition:none}.card:hover{transform:none}}
+
+/* index: the outer .hero is only a wrapper around .heroBox */
+.hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.panel p a,.panel li a{color:var(--brand);font-weight:700}
+
+/* large screens (Windows desktops 1600px+) */
+@media (min-width:1600px){
+ .wrap{width:min(1480px,100%)}
+ main.wrap:not(#home){width:min(1040px,100%)}
+ .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:2200px){
+ .wrap{width:min(1760px,100%)}
+ main.wrap:not(#home){width:min(1120px,100%)}
+ .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+
+/* no blue box around items you click/tap; keyboard focus stays visible */
+*{-webkit-tap-highlight-color:transparent}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
+:focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
+
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
+.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
+
+.price{position:relative;transition:transform .15s ease,box-shadow .15s ease}.price:hover{transform:translateY(-2px)}
+.price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--brand,#087e6e);outline-offset:2px}
+
+/* فشرده‌سازی بخش معرفی صفحهٔ اصلی تا نمای کلی بازار زودتر دیده شود */
 .hero:has(.heroBox){padding:10px 0 6px!important}
-.heroBox{padding:16px 20px!important;border-radius:22px!important}
+.heroBox{padding:15px 18px!important;border-radius:20px!important}
 .heroBox .eyebrow{font-size:12px!important;margin:0!important}
-.hero .heroBox h1{font-size:clamp(19px,4.4vw,28px)!important;line-height:1.4!important;margin:4px 0!important}
+.hero .heroBox h1{font-size:clamp(19px,4.4vw,27px)!important;line-height:1.4!important;margin:4px 0!important}
 .heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .heroBox .heroActions{margin-top:10px!important;gap:7px!important}
-.heroBox .heroActions .btn{padding:6px 14px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;height:auto!important;line-height:1.6!important}
-
-/* ───────── 7. Mobile (app-like, Safe-Area aware) ───────── */
-@media(max-width:700px){
-  #markets .sectionHead .sub{display:none!important}
-  #markets .sectionHead h2{font-size:19px!important;margin:0!important}
-  #markets .sectionHead{margin-bottom:4px!important;gap:6px!important}
-  #markets{padding-top:6px!important}
-  #marketStatus{font-size:11px!important;line-height:1.5!important;margin:4px 0!important}
-  #filters{margin-top:6px!important}
-  .topbar{top:max(6px,env(safe-area-inset-top));width:calc(100% - 14px);margin-top:6px;border-radius:20px!important}
-  .topinner{display:flex;flex-wrap:wrap;min-height:0!important;gap:5px 10px!important;padding-top:8px;padding-bottom:7px}
-  .brand{font-size:18px!important;gap:8px!important}
-  .brandmark{width:34px;height:34px}
-  #themeBtn{margin-inline-start:auto;min-width:38px;padding:6px 9px}
-  .nav{display:flex!important;order:3;flex:0 0 calc(100% + 26px);width:calc(100% + 26px);margin-inline:-13px;padding:3px 13px 4px;gap:7px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .nav::-webkit-scrollbar{display:none}
-  .top{top:max(6px,env(safe-area-inset-top))}
-  .hero:has(.heroBox){padding:7px 0 4px!important}
-  .heroBox{padding:13px 14px!important;border-radius:20px!important}
-  .heroBox .heroActions .btn{padding:5px 12px!important;font-size:12px!important}
-  .panel,.hero:not(:has(.heroBox)){border-radius:22px!important}
-  .chip,.smallbtn,.select{min-height:36px}
-}
-@media(max-width:380px){.wrap{padding-inline:11px}.brand{font-size:17px!important}.hero .heroBox h1{font-size:18px!important}
-  .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}}
-
-
-/* section headings: never break a title word-by-word next to its toolbar */
-.sectionHead{flex-wrap:wrap}
-.sectionHead h2{white-space:nowrap}
-.sectionHead>div:first-child{flex:1 1 auto}
-@media(max-width:700px){.sectionHead{align-items:center}.sectionHead .toolbar{flex:1 1 100%;justify-content:space-between}}
-
-/* ───────── 8. Motion (subtle, opt-out respected) ───────── */
-@keyframes bn-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.panel,.hero,.heroBox,.newsItem{animation:bn-rise .38s cubic-bezier(.2,.8,.2,1) both}
-.card,.chip,.smallbtn,.btn{transition:transform .2s cubic-bezier(.2,.8,.2,1),background-color .2s,box-shadow .2s}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .card:hover,.price:hover,.chip:hover,.smallbtn:hover,.nav a:hover,.btn:hover{transform:none}}
-
-/* ───────── 9. Fallbacks ───────── */
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  :root{--g-bg:rgba(255,255,255,.92)}[data-theme="dark"]{--g-bg:rgba(20,35,32,.95)}}
-@media(prefers-reduced-transparency:reduce){
-  :root{--g-bg:rgba(255,255,255,.95)}[data-theme="dark"]{--g-bg:rgba(20,35,32,.97)}
-  .topbar,.top,.panel,.tablewrap,.hero,.heroBox,.chartTip{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
-@media(prefers-contrast:more){:root{--g-line:rgba(18,60,52,.4)}[data-theme="dark"]{--g-line:rgba(255,255,255,.35)}}
+.heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
+@media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
 </style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما | ارز دیجیتال</div><h1 style="display:flex;align-items:center;gap:12px"><span class="bni" aria-hidden="true" style="--a:#4f8df5;--b:#1a47a6;--s:48px"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="2.6" fill="#fff"/><circle cx="20" cy="11" r="1.9" fill="#fff"/><circle cx="20" cy="29" r="1.9" fill="#fff"/><circle cx="12.2" cy="15.5" r="1.9" fill="#fff"/><circle cx="27.8" cy="15.5" r="1.9" fill="#fff"/><circle cx="12.2" cy="24.5" r="1.9" fill="#fff"/><circle cx="27.8" cy="24.5" r="1.9" fill="#fff"/></svg></span><span>قیمت کاردانو امروز</span></h1><p>کاردانو بلاک‌چین اثبات سهام (PoS) است که با رویکرد پژوهشی توسعه یافته است.</p><div class="actions"><a class="btn" href="/prices.html">همه قیمت‌ها</a><a class="btn alt" href="/about.html">روش جمع‌آوری داده‌ها</a></div></section>
@@ -476,7 +368,7 @@ async function mergeDirectCurrencies(data){
    const row=rows.find(x=>String(x?.symbol||x?.id||'').toUpperCase()===symbol);
    const price=Number(row?.price),raw=row?.updated_utc||row?.updated_at||row?.timestamp||payload.generated_utc||payload.updated_at;
    const stamp=typeof raw==='number'?(raw>1e12?raw:raw*1000):(raw?Date.parse(/[zZ]|[+-][0-9]{2}:?[0-9]{2}$/.test(String(raw))?String(raw):String(raw)+'Z'):NaN);
-   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<2*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
+   const fresh=Number.isFinite(stamp)&&Date.now()-stamp<3*60*60*1000&&Date.now()-stamp>-5*60*1000&&Number.isFinite(price)&&price>0;
    const at=data.items.findIndex(x=>x.id===id),primary=at>=0?data.items[at]:null;
    if(fresh){
     const direct={...(primary||{}),id,price,unit:'IRT',source_name:'Iran Market Data',source_updated_utc:new Date(stamp).toISOString(),source:'Iran Market Data',stale:false,method:'direct'};
@@ -503,14 +395,13 @@ async function load(){
 function show(data,early){
  try{
   const x=(data.items||[]).find(i=>i&&i.id===ID);
-  let aged=false;if(x&&x.freshness&&x.freshness.observed_utc&&x.freshness.max_age_seconds>0&&Date.now()-Date.parse(x.freshness.observed_utc)>x.freshness.max_age_seconds*1000){x.stale=true;aged=true;}
   if(!x||typeof x.price!=='number'){$('price').textContent='ناموجود';$('status').textContent='قیمت معتبر از منابع دریافت نشد.';return;}
   $('price').textContent=fmt(x.price);LAST=x.price;renderReturns();$('unit').textContent=UNITS[x.unit]||x.unit||'—';
   if(typeof x.change_pct==='number'){const c=x.change_pct;$('chg').textContent='\u2066'+(c>0?'▲ +':c<0?'▼ ':'• ')+fmt(c,2)+'٪\u2069';$('chg').className=c>0?'up':c<0?'down':'';}else $('chg').textContent='نامشخص';
   $('time').textContent=tl(x.source_updated_utc||x.updated_utc||x.as_of);
   const source=x.source_name||x.source||'NerkhAra';
   $('sourceInfo').textContent='منبع: '+source+' · زمان آخرین به‌روزرسانی منبع: '+tl(x.source_updated_utc||x.updated_utc||x.as_of)+(x.stale?' · داده قدیمی؛ نرخ زنده نیست':'');
-  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':aged?'زمان آخرین به‌روزرسانی منبع از سقف تازگی این دارایی گذشته است؛ این داده قدیمی است و نباید نرخ زنده تلقی شود.':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
+  $('status').textContent=early?'در حال دریافت نرخ زنده‌تر…':x.stale?'اتصال به منبع برقرار نشد؛ این آخرین داده ذخیره‌شده است و نباید نرخ زنده تلقی شود.':'قیمت با موفقیت دریافت شد.';
  }catch(e){$('status').textContent='دریافت قیمت ناموفق بود؛ بعداً دوباره تلاش کن.';}
 }
 let rangeDays=30,LAST=null,ALLPTS=[];
@@ -560,26 +451,16 @@ async function loadHistory(){
   drawHistory(points);
  }catch(e){hint.textContent='تاریخچه برای این دارایی فعلاً در دسترس نیست.';const c=$('historyChart');c.getContext('2d').clearRect(0,0,c.width,c.height);}
 }
-let HP=null;
-(function(){try{const c=$('historyChart');if(!c)return;const wrap=document.createElement('div');wrap.style.position='relative';c.parentNode.insertBefore(wrap,c);wrap.appendChild(c);c.style.touchAction='pan-y';const tip=document.createElement('div');tip.className='chartTip';wrap.appendChild(tip);
- const show=ev=>{if(!HP)return;const r=c.getBoundingClientRect(),x=ev.clientX-r.left;let k=0,bd=1e9;HP.xy.forEach((p,i)=>{const d=Math.abs(p.x-x);if(d<bd){bd=d;k=i;}});const p=HP.xy[k],q=HP.points[k];tip.innerHTML='<b>'+fmt(q.v)+'</b>'+new Date(q.t*1000).toLocaleDateString('fa-IR-u-nu-latn');tip.classList.add('on');const tw=tip.offsetWidth;tip.style.left=Math.max(0,Math.min(r.width-tw,p.x-tw/2))+'px';tip.style.top=Math.max(0,p.y-60)+'px';};
- c.addEventListener('pointermove',show);c.addEventListener('pointerdown',show);c.addEventListener('pointerleave',()=>tip.classList.remove('on'));}catch(e){}})();
 function drawHistory(points){
  const canvas=$('historyChart'),ctx=canvas.getContext('2d'),w=canvas.clientWidth||700,h=260,dpr=window.devicePixelRatio||1;
- canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);HP=null;
+ canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
  if(points.length<2){$('chartHint').textContent=points.length?'برای رسم نمودار حداقل دو نقطه لازم است.':'داده تاریخی در دسترس نیست.';return;}
- const cs=getComputedStyle(document.body),muted=cs.getPropertyValue('--muted')||'#777',lineC=cs.getPropertyValue('--line')||'#ddd',brand=(cs.getPropertyValue('--brand')||'#087e6e').trim();
  const vals=points.map(p=>p.v),min=Math.min(...vals),max=Math.max(...vals),pad={l:58,r:14,t:16,b:32},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,span=max-min||Math.max(1,max*.01);
- ctx.font='11px sans-serif';ctx.strokeStyle=lineC;ctx.fillStyle=muted;ctx.lineWidth=1;ctx.setLineDash([2,5]);
+ ctx.font='11px sans-serif';ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--line')||'#ddd';ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.lineWidth=1;
  for(let i=0;i<4;i++){const y=pad.t+ch*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(fmt(max-span*i/3),pad.l-8,y+4);}
- ctx.setLineDash([]);
- const xy=points.map((p,i)=>({x:pad.l+cw*i/(points.length-1),y:pad.t+ch-(p.v-min)/span*ch}));
- if(/^#[0-9a-f]{6}$/i.test(brand)){const g=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);g.addColorStop(0,brand+'30');g.addColorStop(1,brand+'00');ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(xy[xy.length-1].x,pad.t+ch);ctx.lineTo(xy[0].x,pad.t+ch);ctx.closePath();ctx.fillStyle=g;ctx.fill();}
- ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
- ctx.strokeStyle=brand;ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
- const e=xy[xy.length-1];ctx.beginPath();ctx.arc(e.x,e.y,3.5,0,6.2832);ctx.fillStyle=brand;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.stroke();
- HP={xy,points};
- ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
+ ctx.beginPath();points.forEach((p,i)=>{const x=pad.l+cw*i/(points.length-1),y=pad.t+ch-(p.v-min)/span*ch;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+ ctx.strokeStyle='#087e6e';ctx.lineWidth=2.3;ctx.lineJoin='round';ctx.stroke();
+ ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
  const delta=(points[points.length-1].v/points[0].v-1)*100;
  $('chartHint').textContent=fmt(points.length)+' نقطه تاریخی · تغییر بازه: '+'\u2066'+(delta>0?'+':'')+fmt(delta,2)+'٪\u2069';
 }

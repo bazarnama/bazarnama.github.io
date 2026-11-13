@@ -47,11 +47,10 @@ const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',COL=['#0
 const RANGES=[['۳۰ روز',30],['۹۰ روز',90],['۶ ماه',182],['یک سال',365],['تمام تاریخچه',0]];
 const STFA={fresh:'به‌روز',aging:'در آستانهٔ تأخیر',stale:'قدیمی',unknown:'نامشخص'};
 let items=[],sel=['usd','btc','gold-18k'],days=90;const cache={};
-const HEATMAP_IDS=new Set(__HEATMAP_IDS__);
 const fmt=(x,d=2)=>x==null||!isFinite(x)?'نامشخص':x.toLocaleString('en-US',{maximumFractionDigits:d});
 const el=(t,txt,cls)=>{const e=document.createElement(t);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e};
 async function getJSON(u){const r=await fetch(u,{cache:'no-cache'});if(!r.ok)throw new Error(u+' '+r.status);return r.json()}
-function heat(){const h=$('heat');h.textContent='';let n=0;for(const i of items){if(!HEATMAP_IDS.has(i.id))continue;const c=i.change_pct,a=el('a',null,(typeof c==='number'?(c>0?'up':c<0?'down':''):'')+((i.freshness||{}).status!=='fresh'?' old':''));a.href='/price-'+encodeURIComponent(i.id)+'.html';a.append(el('b',(i.name||{}).fa||i.id),el('small',typeof c==='number'?(c>0?'+':'')+fmt(c)+'٪':'نامشخص'),el('small',STFA[(i.freshness||{}).status]||'نامشخص'));h.append(a);n++}
+function heat(){const h=$('heat');h.textContent='';let n=0;for(const i of items){const c=i.change_pct,a=el('a',null,(typeof c==='number'?(c>0?'up':c<0?'down':''):'')+((i.freshness||{}).status!=='fresh'?' old':''));a.href='/price-'+encodeURIComponent(i.id)+'.html';a.append(el('b',(i.name||{}).fa||i.id),el('small',typeof c==='number'?(c>0?'+':'')+fmt(c)+'٪':'نامشخص'),el('small',STFA[(i.freshness||{}).status]||'نامشخص'));h.append(a);n++}
 $('heatNote').textContent=n?'':'داده‌ای برای نمایش وجود ندارد.'}
 function chips(){const A=$('assets');A.textContent='';for(const i of items){const b=el('button',(i.name||{}).fa||i.id);b.type='button';b.setAttribute('aria-pressed',sel.includes(i.id));b.onclick=()=>{const k=sel.indexOf(i.id);if(k>=0)sel.splice(k,1);else if(sel.length<6)sel.push(i.id);else $('status').textContent='حداکثر ۶ دارایی.';chips();draw()};A.append(b)}
 const R=$('ranges');R.textContent='';for(const [t,d] of RANGES){const b=el('button',t);b.type='button';b.setAttribute('aria-pressed',d===days);b.onclick=()=>{days=d;chips();draw()};R.append(b)}}
@@ -89,9 +88,7 @@ def build():
     head = re.sub(r'<script type="application/ld\+json">.*?</script>', lambda m: f'<script type="application/ld+json">{ld}</script>',
                   head, count=1, flags=re.S)
     head = head.replace("</head>", f"<style>{CSS}</style></head>")
-    page_ids = sorted(p.stem.removeprefix('price-') for p in ROOT.glob('price-*.html'))
-    js = JS.replace('__HEATMAP_IDS__', json.dumps(page_ids, ensure_ascii=False))
-    (ROOT / "analysis.html").write_text(head + '<body><main class="wrap">\n' + BODY + js + tail, encoding="utf-8")
+    (ROOT / "analysis.html").write_text(head + '<body><main class="wrap">\n' + BODY + JS + tail, encoding="utf-8")
     print("analysis.html written")
 
 
