@@ -109,7 +109,164 @@
     }
   ]
   </script>
-<link rel="stylesheet" href="/bazarnama-redesign.css?v=33"></head>
+<style id="glass">/* Liquid-glass theme — edit here, applies to every page */
+:root{--g-bg:rgba(255,255,255,.40);--g-bg2:rgba(255,255,255,.28);--g-border:rgba(255,255,255,.65);--g-shadow:0 10px 34px rgba(16,70,62,.14);--g-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.18),inset 0 0 22px rgba(255,255,255,.18);--g-blur:blur(28px) saturate(200%)}
+[data-theme="dark"]{--g-bg:rgba(28,48,45,.42);--g-bg2:rgba(34,56,52,.32);--g-border:rgba(255,255,255,.14);--g-shadow:0 12px 36px rgba(0,0,0,.38);--g-hi:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 22px rgba(255,255,255,.03)}
+
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(520px 420px at 12% 8%,rgba(32,200,165,.75),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(124,92,255,.55),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(255,184,64,.60),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(64,150,255,.50),transparent 70%)}
+[data-theme="dark"] body::before{background:radial-gradient(520px 420px at 12% 8%,rgba(20,150,125,.55),transparent 70%),radial-gradient(560px 480px at 92% 18%,rgba(100,70,230,.42),transparent 70%),radial-gradient(520px 460px at 78% 92%,rgba(210,140,30,.30),transparent 70%),radial-gradient(480px 420px at 8% 88%,rgba(40,110,220,.34),transparent 70%)}
+
+.card,.panel,.newsItem,.tablewrap,.topbar,.result,.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.btn.ghost,.tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.04) 42%,rgba(255,255,255,.16)),var(--g-bg)!important;
+ -webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);
+ border:1px solid var(--g-border)!important;box-shadow:var(--g-shadow),var(--g-hi)!important}
+[data-theme="dark"] .card,[data-theme="dark"] .panel,[data-theme="dark"] .newsItem,[data-theme="dark"] .tablewrap,[data-theme="dark"] .topbar,[data-theme="dark"] .result,[data-theme="dark"] .chip,[data-theme="dark"] .smallbtn,[data-theme="dark"] .iconbtn,[data-theme="dark"] .theme-toggle,[data-theme="dark"] .select,[data-theme="dark"] .field input,[data-theme="dark"] .field select,[data-theme="dark"] .tag{
+ background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.01) 42%,rgba(255,255,255,.05)),var(--g-bg)!important}
+.topbar{border-radius:0 0 22px 22px;border-top:0!important}
+.panel,.card,.newsItem{border-radius:24px!important}
+.chip,.smallbtn,.iconbtn,.theme-toggle,.select,.field input,.field select,.tag{border-radius:999px!important}
+.field input,.field select{padding-inline:16px!important}
+.result{border-style:solid!important;border-radius:20px!important}
+.result small{display:block;margin-top:4px}
+.chip.active{background:linear-gradient(135deg,rgba(32,190,160,.75),rgba(8,126,110,.75))!important;color:#fff!important;border-color:rgba(255,255,255,.5)!important}
+
+/* nested items inside a glass panel: lighter, no extra blur */
+.price{background:linear-gradient(135deg,rgba(255,255,255,.45),rgba(255,255,255,.12))!important;border:1px solid var(--g-border)!important;border-radius:18px!important;box-shadow:var(--g-hi)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+[data-theme="dark"] .price{background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02))!important}
+.panel .card,.panel .newsItem,.panel .select,.panel .smallbtn,.panel .chip,.panel .tag,.panel .result{-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* hero: tinted glass with sheen */
+.hero,.heroBox{background:linear-gradient(135deg,rgba(255,255,255,.30),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,92,85,.80),rgba(11,139,121,.68) 60%,rgba(36,173,145,.58))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 18px 44px rgba(8,100,88,.30),inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 30px rgba(255,255,255,.10)!important}
+.hero{border-radius:28px}
+[data-theme="dark"] .hero,[data-theme="dark"] .heroBox{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,0) 38%),linear-gradient(125deg,rgba(7,62,57,.78),rgba(7,94,83,.66) 60%,rgba(19,125,105,.55))!important}
+
+/* buttons */
+.btn:not(.ghost){background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.72))!important;color:#075e53!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 6px 18px rgba(0,0,0,.12),inset 0 1px 0 #fff!important;border-radius:999px!important}
+.hero .btn.alt,.heroBox .btn.ghost,.btn.ghost{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.5)!important;border-radius:999px!important}
+[data-theme="dark"] .btn:not(.ghost):not(.alt){background:linear-gradient(180deg,rgba(231,242,238,.92),rgba(231,242,238,.7))!important}
+
+/* motion */
+.card,.chip,.smallbtn,.btn{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .25s}
+.card:hover{transform:translateY(-3px)}
+.chip:hover,.smallbtn:hover,.btn:hover{transform:translateY(-1px)}
+.footer{border-top:1px solid var(--g-border)!important}
+table{border-collapse:separate;border-spacing:0}
+
+/* fallbacks */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--g-bg:rgba(255,255,255,.85)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.92)}}
+@media (prefers-reduced-transparency:reduce){:root{--g-bg:rgba(255,255,255,.92)}[data-theme="dark"]{--g-bg:rgba(28,48,45,.96)}.card,.panel,.topbar,.hero,.heroBox{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+@media (prefers-reduced-motion:reduce){.card,.chip,.smallbtn,.btn{transition:none}.card:hover{transform:none}}
+
+/* index: the outer .hero is only a wrapper around .heroBox */
+.hero:has(.heroBox){background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.panel p a,.panel li a{color:var(--brand);font-weight:700}
+
+/* large screens (Windows desktops 1600px+) */
+@media (min-width:1600px){
+ .wrap{width:min(1480px,100%)}
+ main.wrap:not(#home){width:min(1040px,100%)}
+ .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:2200px){
+ .wrap{width:min(1760px,100%)}
+ main.wrap:not(#home){width:min(1120px,100%)}
+ .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+
+/* no blue box around items you click/tap; keyboard focus stays visible */
+*{-webkit-tap-highlight-color:transparent}
+a:focus:not(:focus-visible),button:focus:not(:focus-visible),select:focus:not(:focus-visible),input:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible),[role="link"]:focus:not(:focus-visible),.card:focus:not(:focus-visible),.chip:focus:not(:focus-visible){outline:none!important;box-shadow:inherit}
+:focus-visible{outline:2px solid rgba(8,126,110,.65)!important;outline-offset:2px}
+
+.bni{display:inline-grid;place-items:center;width:var(--s,40px);height:var(--s,40px);flex:0 0 var(--s,40px);border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.38),transparent 55%),linear-gradient(150deg,var(--a),var(--b));color:#fff;box-shadow:0 5px 12px color-mix(in srgb,var(--b) 33%,transparent),inset 0 1px 0 #ffffff66;margin-inline-end:9px;vertical-align:middle}.bni svg{width:62%;height:62%;display:block}
+.price strong a{color:inherit;text-decoration:none}.price strong a:hover{text-decoration:underline}
+
+.price{position:relative;transition:transform .15s ease,box-shadow .15s ease}.price:hover{transform:translateY(-2px)}
+.price strong a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.price strong a:focus-visible{outline:none}.price:has(strong a:focus-visible){outline:2px solid var(--brand,#087e6e);outline-offset:2px}
+
+/* فشرده‌سازی بخش معرفی صفحهٔ اصلی تا نمای کلی بازار زودتر دیده شود */
+.hero:has(.heroBox){padding:10px 0 6px!important}
+.heroBox{padding:15px 18px!important;border-radius:20px!important}
+.heroBox .eyebrow{font-size:12px!important;margin:0!important}
+.hero .heroBox h1{font-size:clamp(19px,4.4vw,27px)!important;line-height:1.4!important;margin:4px 0!important}
+.heroBox .heroContent>p{font-size:13px!important;line-height:1.65!important}
+.heroBox .heroActions{margin-top:10px!important;gap:7px!important}
+.heroBox .heroActions .btn{padding:6px 13px!important;font-size:13px!important;white-space:nowrap;flex:0 0 auto!important;width:auto!important;min-width:max-content!important;height:auto!important;line-height:1.5!important}
+@media(max-width:700px){.heroBox .heroActions{gap:6px!important}.heroBox .heroActions .btn{padding:5px 11px!important;font-size:12px!important}}
+
+@media(max-width:700px){
+#markets .sectionHead .sub{display:none!important}
+#markets .sectionHead h2{font-size:19px!important;margin:0!important}
+#markets .sectionHead{margin-bottom:4px!important;gap:6px!important}
+#markets{padding-top:6px!important}
+#marketStatus{font-size:11px!important;line-height:1.5!important;margin:4px 0!important}
+#filters{margin-top:6px!important}
+}
+
+/* Mobile top area: keep primary navigation reachable and prevent the hero buttons
+   from pushing the market overview too far below the fold. */
+@media(max-width:700px){
+  .topinner{display:flex;flex-wrap:wrap;min-height:0!important;gap:5px 10px!important;padding-top:8px;padding-bottom:7px}
+  .brand{font-size:18px!important;gap:8px!important}
+  .brandmark{width:34px;height:34px;border-radius:11px}
+  #themeBtn{margin-inline-start:auto;min-width:38px;padding:6px 9px}
+  .nav{display:flex!important;order:3;flex:0 0 calc(100% + 26px);width:calc(100% + 26px);margin-inline:-13px;padding:5px 13px 7px;gap:7px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;border-top:1px solid var(--line);font-size:12px}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{flex:0 0 auto;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface2)}
+  .hero:has(.heroBox){padding:7px 0 4px!important}
+  .heroBox{padding:13px 14px!important;border-radius:17px!important}
+  .hero .heroBox h1{font-size:20px!important;line-height:1.5!important}
+  .heroBox .heroContent>p{font-size:12px!important;line-height:1.7!important}
+  .heroBox .heroActions{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding:2px 1px 5px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .heroBox .heroActions::-webkit-scrollbar{display:none}
+  .heroBox .heroActions .btn{flex:0 0 auto!important}
+}
+@media(max-width:380px){
+  .wrap{padding-inline:11px}
+  .brand{font-size:17px!important}
+  .hero .heroBox h1{font-size:18px!important}
+  .nav{flex-basis:calc(100% + 22px);width:calc(100% + 22px);margin-inline:-11px;padding-inline:11px}
+}
+
+
+/* آراستن نوار بالای صفحه */
+.brand>span:last-child{background:linear-gradient(120deg,var(--brand),var(--brand2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.brandmark{box-shadow:0 6px 18px rgba(8,126,110,.38),inset 0 1px 0 rgba(255,255,255,.5)}
+.topbar::after{content:"";position:absolute;left:28px;right:28px;bottom:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--brand2),var(--brand),transparent);opacity:.6;pointer-events:none}
+.iconbtn#themeBtn{border-radius:999px}
+/* دکمه‌های شیشه‌ای نوار بالا */
+.nav a{background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.08) 48%,rgba(255,255,255,.28)),var(--g-bg);-webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);border:1px solid var(--g-border);border-radius:999px;box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+[data-theme="dark"] .nav a{background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,0) 48%),var(--g-bg);box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)}
+.nav a:hover{transform:translateY(-1px);color:var(--brand);background:linear-gradient(135deg,rgba(255,255,255,.7),rgba(255,255,255,.12) 48%,rgba(255,255,255,.34)),color-mix(in srgb,var(--brand) 16%,var(--g-bg));box-shadow:0 4px 0 rgba(8,126,110,.20),0 10px 16px rgba(8,126,110,.20),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)}
+[data-theme="dark"] .nav a:hover{background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.02) 48%),color-mix(in srgb,var(--brand) 22%,var(--g-bg))}
+.iconbtn#themeBtn{box-shadow:0 3px 0 rgba(8,126,110,.16),0 7px 12px rgba(16,70,62,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 4px rgba(16,70,62,.08)!important}
+[data-theme="dark"] .iconbtn#themeBtn{box-shadow:0 3px 0 rgba(0,0,0,.40),0 7px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 4px rgba(0,0,0,.30)!important}
+@media(min-width:701px){.nav{gap:5px}.nav a{padding:6px 12px}}
+@media(prefers-reduced-motion:reduce){.nav a:hover{transform:none}}
+@media(min-width:701px) and (max-width:980px){.nav{font-size:12px}.nav a{padding:6px 8px}}
+
+/* نوار بالا: حالت برجسته (ریلیف) */
+.topbar{box-shadow:0 3px 0 rgba(8,126,110,.14),0 12px 26px rgba(16,70,62,.20),0 26px 44px rgba(16,70,62,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -4px 8px rgba(16,70,62,.08),inset 0 0 0 1px rgba(255,255,255,.35)!important;border-bottom:1px solid rgba(8,126,110,.24)!important}
+[data-theme="dark"] .topbar{box-shadow:0 3px 0 rgba(0,0,0,.45),0 14px 28px rgba(0,0,0,.50),0 28px 46px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -4px 8px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.06)!important;border-bottom:1px solid rgba(0,0,0,.45)!important}
+.nav a:active,.iconbtn#themeBtn:active{transform:translateY(2px)}
+.nav a:active{box-shadow:0 1px 0 rgba(8,126,110,.16),inset 0 2px 5px rgba(16,70,62,.18)}
+[data-theme="dark"] .nav a:active{box-shadow:0 1px 0 rgba(0,0,0,.40),inset 0 2px 5px rgba(0,0,0,.45)}
+@media(max-width:700px){.nav a{box-shadow:0 2px 0 rgba(8,126,110,.16),0 4px 6px rgba(16,70,62,.12),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 3px rgba(16,70,62,.08)}[data-theme="dark"] .nav a{box-shadow:0 2px 0 rgba(0,0,0,.40),0 4px 6px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.30)}}
+
+/* نوار بالا به‌صورت ریل: قابل کشیدن و لغزیدن به چپ و راست */
+.nav{--mL:0px;--mR:0px;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 var(--mL),#000 calc(100% - var(--mR)),transparent 100%);scroll-snap-type:x proximity;overscroll-behavior-x:contain;cursor:grab;user-select:none;-webkit-user-select:none}
+.nav.dragging{cursor:grabbing;scroll-snap-type:none}
+.nav.dragging a{pointer-events:none}
+.nav a{flex:0 0 auto;white-space:nowrap;scroll-snap-align:center}
+@media(min-width:701px){
+  .nav{flex:1 1 auto;min-width:0;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:4px 8px 10px;margin-top:6px}
+  .nav::-webkit-scrollbar{display:none}
+}
+</style></head>
 <body>
   <header class="topbar">
     <div class="wrap topinner">
@@ -122,14 +279,14 @@
   </header>
 
   <main id="home" class="wrap">
-    <section class="hero market-intro" aria-label="معرفی بازارنما"><div class="marketIntroLine">
-      <div class="hero-copy"><div class="eyebrow"><span class="liveDot" aria-hidden="true"></span> پایگاه رصد بازارهای مالی</div>
-        <h1>نبض بازار،<br><span>یک‌جا و شفاف.</span></h1><p>قیمت ارز، طلا، سکه، رمزارز و انرژی را در یک نمای دقیق دنبال کن؛ با نمودار، مقایسه و ابزارهای کاربردی.</p>
-        <div class="hero-links"><a class="hero-primary" href="#markets">مشاهده قیمت‌ها <span aria-hidden="true">←</span></a><a class="hero-secondary" href="/analysis.html">تحلیل بازار</a></div>
-        <p class="introMore">نرخ‌ها ممکن است با تأخیر همراه باشند و توصیه خرید یا فروش نیستند.</p></div>
-      <div class="hero-orbit" aria-hidden="true"><div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div><div class="orbit-core"><span>BN</span><small>MARKET<br>WATCH</small></div><i class="orbit-point point-a"></i><i class="orbit-point point-b"></i><i class="orbit-point point-c"></i></div>
-      <div class="hero-bottomline"><span>بازارهای ایران و جهان</span><span class="hero-separator"></span><span>داده و نمودار در یک نگاه</span><span class="hero-separator"></span><span>ابزارهای تحلیلی</span></div>
-    </div></section>
+    <section class="hero market-intro" aria-label="معرفی بازارنما">
+      <div class="marketIntroLine">
+        <div class="eyebrow"><span class="liveDot" aria-hidden="true"></span>رصد بازارهای مالی ایران و جهان</div>
+        <h1>قیمت لحظه‌ای بازار</h1>
+        <p>ارز، طلا، سکه، انرژی و رمزارز؛ همراه با تحلیل تغییرات و نقشهٔ حرارتی بازار.</p>
+        <p class="introMore">قیمت‌ها مربوط به بازار آزادن و با نرخ رسمی فرق دارن؛ پیشنهاد خرید یا فروش نیست.</p>
+      </div>
+    </section>
 
     <section id="markets" class="section">
       <div class="sectionHead"><div><h2>نمای کلی بازار</h2><div class="sub">با بازکردن صفحه یا زدن دکمه بروزرسانی، قیمت‌ها دوباره از منابع آنلاین دریافت می‌شوند.</div></div>
