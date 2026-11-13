@@ -1,8 +1,8 @@
 {
  "pages": {
   "about.html": {
-   "lastmod": "2026-11-12",
-   "sha256": "21644aaaaaa9faee9f2eed1eb79a03a681b4160f091b082bf46d9c2a2e61034a"
+   "lastmod": "2026-11-13",
+   "sha256": "506eb8d26e52b53e9a782794dba936901ff24d42da328e5b2c1a07153d5f6559"
   },
   "crypto.html": {
    "lastmod": "2026-11-10",
@@ -175,6 +175,10 @@
   "prices.html": {
    "lastmod": "2026-11-10",
    "sha256": "239d0db7d295a02230c5c1aa6d12a649dcdf05e3e1f5cee352d703518aa9b6d2"
+  },
+  "transparency.html": {
+   "lastmod": "2026-11-13",
+   "sha256": "a63134a500f97b65f28bdf2565327c6094b4f5a07f2e3f351f4e544fee9d851a"
   }
  },
  "v": 1

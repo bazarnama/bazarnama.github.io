@@ -1,109 +1,14 @@
 {
  "schema": "bazarnama/run-report/v1",
  "last_status": "success",
- "last_run_utc": "2026-11-13T10:09:30Z",
+ "last_run_utc": "2026-11-13T07:59:31Z",
  "runs": [
   {
-   "utc": "2026-11-13T08:38:48Z",
+   "utc": "2026-11-13T07:59:31Z",
    "status": "success",
    "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T08:43:46Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T08:44:24Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T08:49:22Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T08:49:59Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T08:54:56Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:04:29Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:09:29Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:21:47Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:26:47Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:34:31Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:39:30Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:47:46Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:52:44Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:53:22Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:58:20Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T09:58:55Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T10:03:54Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
-  },
-  {
-   "utc": "2026-11-13T10:04:31Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
-  {
-   "utc": "2026-11-13T10:09:30Z",
-   "status": "success",
-   "reason": "cycle 2 fetched"
   }
  ],
- "last_success_utc": "2026-11-13T10:09:30Z",
+ "last_success_utc": "2026-11-13T07:59:31Z",
  "last_failure_utc": null
 }
