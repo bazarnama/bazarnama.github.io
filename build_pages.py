@@ -159,16 +159,26 @@ async function loadHistory(){
   drawHistory(points);
  }catch(e){hint.textContent='تاریخچه برای این دارایی فعلاً در دسترس نیست.';const c=$('historyChart');c.getContext('2d').clearRect(0,0,c.width,c.height);}
 }
+let HP=null;
+(function(){try{const c=$('historyChart');if(!c)return;const wrap=document.createElement('div');wrap.style.position='relative';c.parentNode.insertBefore(wrap,c);wrap.appendChild(c);c.style.touchAction='pan-y';const tip=document.createElement('div');tip.className='chartTip';wrap.appendChild(tip);
+ const show=ev=>{if(!HP)return;const r=c.getBoundingClientRect(),x=ev.clientX-r.left;let k=0,bd=1e9;HP.xy.forEach((p,i)=>{const d=Math.abs(p.x-x);if(d<bd){bd=d;k=i;}});const p=HP.xy[k],q=HP.points[k];tip.innerHTML='<b>'+fmt(q.v)+'</b>'+new Date(q.t*1000).toLocaleDateString('fa-IR-u-nu-latn');tip.classList.add('on');const tw=tip.offsetWidth;tip.style.left=Math.max(0,Math.min(r.width-tw,p.x-tw/2))+'px';tip.style.top=Math.max(0,p.y-60)+'px';};
+ c.addEventListener('pointermove',show);c.addEventListener('pointerdown',show);c.addEventListener('pointerleave',()=>tip.classList.remove('on'));}catch(e){}})();
 function drawHistory(points){
  const canvas=$('historyChart'),ctx=canvas.getContext('2d'),w=canvas.clientWidth||700,h=260,dpr=window.devicePixelRatio||1;
- canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);HP=null;
  if(points.length<2){$('chartHint').textContent=points.length?'برای رسم نمودار حداقل دو نقطه لازم است.':'داده تاریخی در دسترس نیست.';return;}
+ const cs=getComputedStyle(document.body),muted=cs.getPropertyValue('--muted')||'#777',lineC=cs.getPropertyValue('--line')||'#ddd',brand=(cs.getPropertyValue('--brand')||'#087e6e').trim();
  const vals=points.map(p=>p.v),min=Math.min(...vals),max=Math.max(...vals),pad={l:58,r:14,t:16,b:32},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,span=max-min||Math.max(1,max*.01);
- ctx.font='11px sans-serif';ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--line')||'#ddd';ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.lineWidth=1;
+ ctx.font='11px sans-serif';ctx.strokeStyle=lineC;ctx.fillStyle=muted;ctx.lineWidth=1;ctx.setLineDash([2,5]);
  for(let i=0;i<4;i++){const y=pad.t+ch*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(fmt(max-span*i/3),pad.l-8,y+4);}
- ctx.beginPath();points.forEach((p,i)=>{const x=pad.l+cw*i/(points.length-1),y=pad.t+ch-(p.v-min)/span*ch;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
- ctx.strokeStyle='#087e6e';ctx.lineWidth=2.3;ctx.lineJoin='round';ctx.stroke();
- ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted')||'#777';ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
+ ctx.setLineDash([]);
+ const xy=points.map((p,i)=>({x:pad.l+cw*i/(points.length-1),y:pad.t+ch-(p.v-min)/span*ch}));
+ if(/^#[0-9a-f]{6}$/i.test(brand)){const g=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);g.addColorStop(0,brand+'30');g.addColorStop(1,brand+'00');ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(xy[xy.length-1].x,pad.t+ch);ctx.lineTo(xy[0].x,pad.t+ch);ctx.closePath();ctx.fillStyle=g;ctx.fill();}
+ ctx.beginPath();xy.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+ ctx.strokeStyle=brand;ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+ const e=xy[xy.length-1];ctx.beginPath();ctx.arc(e.x,e.y,3.5,0,6.2832);ctx.fillStyle=brand;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.stroke();
+ HP={xy,points};
+ ctx.fillStyle=muted;ctx.textAlign='left';ctx.fillText(new Date(points[0].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),pad.l,h-8);ctx.textAlign='right';ctx.fillText(new Date(points[points.length-1].t*1000).toLocaleDateString('fa-IR-u-nu-latn'),w-pad.r,h-8);
  const delta=(points[points.length-1].v/points[0].v-1)*100;
  $('chartHint').textContent=fmt(points.length)+' نقطه تاریخی · تغییر بازه: '+'\\u2066'+(delta>0?'+':'')+fmt(delta,2)+'٪\\u2069';
 }
