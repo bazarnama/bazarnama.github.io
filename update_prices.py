@@ -571,6 +571,39 @@ def prefer_direct_usdt(items, ns):
             items.append(row)
 
 
+CRYPTO_FRESHER_BY = 180        # CoinGecko must be at least 3 minutes newer than the primary quote
+CRYPTO_MAX_GAP_PCT = 5.0       # ...and agree with it within 5 %, otherwise the primary quote is kept
+
+
+def prefer_fresher_crypto(items, cg, now=None):
+    """NerkhAra publishes all crypto prices with ONE timestamp every ~10-15 minutes, so they are always old
+    when fetched. CoinGecko stamps each coin separately (usually < 5 min). When it is clearly newer and agrees
+    with the primary price, use it; the primary value is kept whenever the two disagree. Returns replaced ids."""
+    replaced = []
+    for item in items:
+        pid = item.get("id")
+        row = cg.get(pid) if isinstance(cg, dict) else None
+        if item.get("family") != "crypto" or not row or pid == "usdt_usd":
+            continue
+        price, new_price = item.get("price"), row.get("price")
+        if not (isinstance(price, (int, float)) and price > 0 and isinstance(new_price, (int, float)) and new_price > 0):
+            continue
+        cur_ts, new_ts = item_source_epoch(item), parse_timestamp(row.get("source_updated_utc"))
+        if cur_ts is None or new_ts is None or new_ts - cur_ts < CRYPTO_FRESHER_BY:
+            continue
+        if abs(new_price / price - 1) * 100 > CRYPTO_MAX_GAP_PCT:
+            continue
+        stamp = row["source_updated_utc"]
+        item.update({"price": new_price, "unit": "USD", "updated_utc": stamp, "source_updated_utc": stamp,
+                     "source_checked_utc": now_iso(), "backup_source": "coingecko", "source_name": "CoinGecko",
+                     "source_selection": "fresher-secondary"})
+        if isinstance(row.get("change_pct"), (int, float)):
+            item["change_pct"] = round(row["change_pct"], 3)
+        item.pop("stale", None)
+        replaced.append(pid)
+    return replaced
+
+
 def drop_derived(items):
     """Public data must not contain dollar-cross calculations presented as market quotes.
     (A flagged copy of the dollar price is kept only for USDT when no direct tether quote exists.)"""
@@ -927,7 +960,7 @@ def update_history(items):
 # promises about provider update cadence. The source timestamp is never replaced by
 # the time our workflow happened to fetch the response.
 FRESHNESS_LIMITS = {          # same values as DATA-FRESHNESS.md and the browser (index.html)
-    "crypto": 20 * 60,
+    "crypto": 30 * 60,
     "currency": 90 * 60,
     "gold": 2 * 60 * 60,
     "coin": 2 * 60 * 60,
@@ -1100,6 +1133,7 @@ def main():
                 items[items.index(by_id[key])] = row
             else:
                 items.append(row)
+    print("Crypto prices replaced by fresher CoinGecko quotes:", prefer_fresher_crypto(items, cg))
     if "usdt_usd" in cg:
         payload["usdt_usd"] = cg["usdt_usd"]["price"]  # USDT in USD (for reference)
 
@@ -1184,6 +1218,11 @@ def main():
     removed_derived = drop_derived(items)
     print("Removed dollar-derived items:", len(removed_derived))
     strip_range_fields(items)
+    # The source reports exactly 0.0 for every gold/coin item (it has no 24 h figure), which the site showed
+    # as a real "0%" change. Treat it as missing so it is computed from our own hourly history instead.
+    for item in items:
+        if item.get("family") in ("gold", "coin") and item.get("change_pct") == 0 and not item.get("stale"):
+            item["change_pct"] = None
     run_price_validation(items, previous_items, payload.get("generated_utc"))
     fill_missing_changes_from_source_history(items)
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
