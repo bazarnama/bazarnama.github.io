@@ -32,3 +32,10 @@ GitHub Actions در `.github/workflows/update-prices.yml` تقریباً هر ۱
 - اخبار: `news_quality.py` (تطبیق کلمهٔ کامل، دسته‌بندی، حذف تکراری بین رسانه‌ها، پذیرش فقط تاریخ معتبر). فیلدهای قبلی حفظ شده و `category`، `relevance`، `also_reported_by` افزوده شده‌اند.
 - `site-checks.yml`: تست‌ها و اعتبارسنجی روی هر push، و به‌روزرسانی lastmod سایت‌مپ روی main.
 
+
+## تغییرات پایداری آپدیت (۱۳ نوامبر ۲۰۲۶)
+- علت توقف آپدیت: `update_prices.py` با تست‌ها و بقیهٔ پروژه ناهماهنگ بود (۱۲ تست رد می‌شد) و workflow قیمت پیش از دریافت، همین تست‌ها را اجرا می‌کرد؛ پس هر اجرا متوقف می‌شد.
+- `update_prices.py`: اتصال `price_validation.py`، `screen_point` (فیلتر جهش تاریخچه)، `strip_range_fields`، آستانه‌های تازگی مطابق `DATA-FRESHNESS.md`، نرخ‌آرا همچنان منبع اول ارزها.
+- `update-prices.yml`: تست واحد دیگر دروازهٔ دریافت قیمت نیست (در `site-checks.yml` اجرا می‌شود)؛ فقط خروجی داده با `validate_site.py --data` پیش از commit بررسی می‌شود. صفحه‌های `transparency.html` و `api-docs.html` ساعتی بازسازی می‌شوند.
+- `sw.js`: فایل‌های `/data/` و `/api/` هرگز از کش مرورگر خوانده نمی‌شوند.
+- توجه: `import-bazarnama.yml` پوشهٔ `.github/workflows/` را عمداً کپی نمی‌کند؛ فایل‌های workflow را باید دستی در مخزن جایگزین کنید.

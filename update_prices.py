@@ -16,7 +16,7 @@ Sources
      Brent and WTI (daily); also fills them when the primary feed lacks them
 If the primary source is down the previous prices are kept and flagged stale.
 """
-import json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
+import copy, json, os, statistics, sys, time, urllib.parse, urllib.request, urllib.error, datetime, pathlib, re, html
 from zoneinfo import ZoneInfo
 
 PRIMARY = "https://nerkhara.com/api/v1/latest.json"
@@ -46,12 +46,19 @@ CG_IDS = {"bitcoin": "btc", "ethereum": "eth", "tether": "usdt_usd", "solana": "
           "bitcoin-cash": "bch", "polkadot": "dot", "pax-gold": "paxg"}
 
 ROOT = pathlib.Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))      # tests load this file by path, so make the sibling module importable
+import price_validation  # noqa: E402
 OUT = ROOT / "data" / "prices.json"
 HIST = ROOT / "data" / "history.json"               # lean file read by the site (last days, main assets only)
 HIST_ARCHIVE = ROOT / "data" / "history-archive.json"  # full store, never read by the browser
 HIST_RECENT_DAYS = 14        # hourly resolution is kept this long, older points become one per day
 HIST_LEAN_DAYS = 8           # days published in the lean data/history.json
 SUMMARY = ROOT / "data" / "summary.json"
+VALIDATION_LOG = ROOT / "data" / "validation-log.json"
+VALIDATION_STATE = ROOT / "data" / "validation-state.json"
+# Daily high/low ("ceiling/floor") fields are never published anywhere on the site.
+RANGE_FIELDS = ("low_24h", "high_24h", "day_low", "day_high", "daily_low", "daily_high", "range_low", "range_high")
 SOURCE_HEALTH = ROOT / "data" / "source-health.json"
 HIST_MAX = None  # preserve the full series; old points are never discarded
 
@@ -539,6 +546,9 @@ def is_derived(item):
 def add_extra_currencies(items, ns):
     """yuan, lira, ... come only from an independent Iranian quote; never from usd x fx."""
     for pid in sorted(EXTRA_DIRECT):
+        cur = next((i for i in items if i.get("id") == pid), None)
+        if cur and not cur.get("derived") and not cur.get("stale") and isinstance(cur.get("price"), (int, float)) and cur["price"] > 0:
+            continue                      # NerkhAra stays the first source; NerkhSanj only fills a gap
         items[:] = [i for i in items if i.get("id") != pid]
         q = ns.get(pid)
         if q and not q.get("stale"):
@@ -564,8 +574,14 @@ def prefer_direct_usdt(items, ns):
 def drop_derived(items):
     """Public data must not contain dollar-cross calculations presented as market quotes.
     (A flagged copy of the dollar price is kept only for USDT when no direct tether quote exists.)"""
+    keep_ids = set(DIRECT_CURRENCY_IDS) | EXTRA_DIRECT
+
     def drop(i):
-        return bool(i.get("derived") and i.get("id") != "usdt") or i.get("method") == "derived"
+        # A NerkhAra quote that merely carries method="derived" is NerkhAra's own published market value for
+        # the currency list, so it stays. Our own dollar x fx estimates carry the explicit `derived` flag.
+        if i.get("derived"):
+            return i.get("id") != "usdt"
+        return i.get("method") == "derived" and i.get("id") not in keep_ids
     removed = [i.get("id") for i in items if drop(i)]
     items[:] = [i for i in items if not drop(i)]
     for item in items:
@@ -608,7 +624,7 @@ def select_currency_quotes(items, fallback):
         primary = by_id.get(pid)
         alt = fallback.get(pid)
         p_ok = bool(primary and isinstance(primary.get("price"), (int, float)) and
-                    not primary.get("stale") and not primary.get("derived") and primary.get("method") != "derived")
+                    not primary.get("stale") and not primary.get("derived"))
         a_ok = bool(alt and isinstance(alt.get("price"), (int, float)) and
                     not alt.get("stale") and alt.get("method") != "derived")
         discrepancy = None
@@ -646,7 +662,7 @@ def select_currency_quotes(items, fallback):
                 primary["source_discrepancy_pct"] = checks[pid]["discrepancy_pct"]
                 primary["validation_warning"] = discrepancy is not None and discrepancy > DISCREPANCY_PCT
                 primary["discrepancy_warning"] = primary["validation_warning"]
-        elif primary and (primary.get("derived") or primary.get("method") == "derived"):
+        elif primary and primary.get("derived"):
             # No fresh direct backup exists; remove the derived value instead of publishing an estimate.
             items.remove(primary)
         elif primary:
@@ -828,6 +844,41 @@ def compact_points(points, now):
     return sorted(daily.values(), key=lambda p: p[0]) + [p for p in points if p[0] >= cut]
 
 
+JUMP_WINDOW = 6 * 3600      # a jump is judged only against a point this recent
+JUMP_CONFIRM_PCT = 2.0      # the next reading must agree with the held one within this band
+
+
+def screen_point(points, pending, pid, ts, price, family):
+    """Decide which history point(s) to append for a new hourly reading. Returns a list of [ts, price].
+
+    A reading that jumps further than the family's limit from the previous point (<= 6 h old) is held in
+    `pending` and not recorded. If the next reading agrees with it (within 2 %) both are recorded, because
+    the market really moved; if the next reading is normal again, the held one was a spike and is dropped."""
+    tol = price_validation.tolerance(family) / 100.0
+    last = points[-1] if points else None
+    if last is None or ts - last[0] > JUMP_WINDOW or abs(price / last[1] - 1) <= tol:
+        pending.pop(pid, None)
+        return [[ts, price]]
+    held = pending.get(pid)
+    if held and 0 < ts - held[0] <= JUMP_WINDOW and abs(price / held[1] - 1) * 100 <= JUMP_CONFIRM_PCT:
+        pending.pop(pid, None)
+        return [[int(held[0]), float(held[1])], [ts, price]]
+    pending[pid] = [ts, price]
+    return []
+
+
+def strip_range_fields(items):
+    """Remove daily high/low fields from every item; returns how many fields were removed."""
+    removed = 0
+    for item in items or []:
+        if isinstance(item, dict):
+            for key in RANGE_FIELDS:
+                if key in item:
+                    del item[key]
+                    removed += 1
+    return removed
+
+
 def update_history(items):
     """Full store -> data/history-archive.json (never read by the browser, compacted so it stays small).
     The site reads the lean data/history.json (last days of the main assets only)."""
@@ -842,6 +893,9 @@ def update_history(items):
     attempts = data.get("seed_attempted", {})
     if not isinstance(attempts, dict):
         attempts = {}
+    pending_points = data.get("pending_points", {})
+    if not isinstance(pending_points, dict):
+        pending_points = {}
     # Import provider history once per symbol; retain it across every future run.
     seed_history(series, [i.get("id") for i in items if i.get("id") in SITE_ASSETS], seeded, attempts)
     now = time.time()
@@ -852,14 +906,15 @@ def update_history(items):
             continue
         points = series.setdefault(pid, [])
         if not points or points[-1][0] < hour:     # at most one observation per hour
-            points.append([hour, float(price)])
+            points.extend(screen_point(points, pending_points, pid, hour, float(price), item.get("family")))
     keep = SITE_ASSETS | EXTRA_DIRECT | {i.get("id") for i in items if i.get("id")}
     for pid in [k for k in series if k not in keep]:
         del series[pid]                            # leftovers of removed (dollar-derived) currencies
     for pid, points in list(series.items()):
         unique = {int(p[0]): [int(p[0]), float(p[1])] for p in points if isinstance(p, (list, tuple)) and len(p) >= 2}
         series[pid] = compact_points(sorted(unique.values(), key=lambda p: p[0]), now)
-    archive = {"v": 2, "seeded": sorted(seeded), "seed_attempted": attempts, "series": series}
+    archive = {"v": 2, "seeded": sorted(seeded), "seed_attempted": attempts, "pending_points": pending_points,
+               "series": series}
     write_if_changed(HIST_ARCHIVE, dumps(archive))
     lean = {"v": 3, "lean": True, "series": {
         pid: [p for p in series[pid] if p[0] >= now - HIST_LEAN_DAYS * 86400] for pid in sorted(SITE_ASSETS) if pid in series}}
@@ -871,15 +926,16 @@ def update_history(items):
 # Maximum acceptable source-data age. These are publication-aware guardrails, not
 # promises about provider update cadence. The source timestamp is never replaced by
 # the time our workflow happened to fetch the response.
-FRESHNESS_LIMITS = {
-    "crypto": 45 * 60,
-    "currency": 3 * 60 * 60,
-    "gold": 4 * 60 * 60,
-    "coin": 4 * 60 * 60,
-    "metal": 4 * 60 * 60,
-    "energy": 6 * 60 * 60,
+FRESHNESS_LIMITS = {          # same values as DATA-FRESHNESS.md and the browser (index.html)
+    "crypto": 20 * 60,
+    "currency": 90 * 60,
+    "gold": 2 * 60 * 60,
+    "coin": 2 * 60 * 60,
+    "metal": 2 * 60 * 60,
+    "energy": 2 * 60 * 60,
 }
 FRESHNESS_DEFAULT = 4 * 60 * 60
+DAILY_SERIES = {"brent-spot", "wti-spot", "opec-basket", "natural-gas"}   # published once per working day
 
 
 def item_source_epoch(item):
@@ -911,10 +967,10 @@ def annotate_freshness(items, checked_at=None):
         # quotes (for example, a 21:00 quote checked at 23:10) as stale.
         if item.get("source_name") == "Arzhaam":
             limit = 6 * 60 * 60
-        if item.get("backup_source") in {"eia", "fred"}:
-            limit = 72 * 60 * 60  # EIA/FRED benchmark series are daily publications.
-        elif item.get("id") in {"opec-basket", "natural-gas"}:
-            limit = 4 * 24 * 60 * 60
+        if item.get("id") in DAILY_SERIES:
+            limit = 4 * 24 * 60 * 60   # daily publications; no new value over a weekend
+        elif item.get("backup_source") in {"eia", "fred"}:
+            limit = 72 * 60 * 60       # other EIA/FRED benchmark series are daily publications
         observed = item_source_epoch(item)
         if observed is None:
             status, age = ("stale", None) if item.get("stale") else ("unknown", None)
@@ -960,7 +1016,30 @@ def write_source_health(payload, health):
     write_if_changed(SOURCE_HEALTH, dumps(health_doc))
 
 
+def run_price_validation(items, previous_items, generated_utc):
+    """Judge every price against our own 24 h history and the independent source (price_validation.py).
+    A suspicious reading is held (last valid value kept, flagged stale) until the next run confirms it."""
+    state = load_json(VALIDATION_STATE)
+    pending = state.get("pending") if isinstance(state, dict) and isinstance(state.get("pending"), dict) else {}
+    archive = load_json(HIST_ARCHIVE)
+    series = archive.get("series") if isinstance(archive, dict) and isinstance(archive.get("series"), dict) else {}
+    log, new_pending = price_validation.validate_items(items, previous_items, series, pending, time.time())
+    plain = {"accepted", "skipped"}
+    doc = {
+        "schema": "bazarnama/validation-log/v1", "generated_utc": generated_utc, "fetched_utc": now_iso(),
+        "counts": price_validation.summarize(log), "reasons": price_validation.REASONS,
+        "notable": [e for e in log if e["decision"] not in plain],
+        "decisions": [{"id": e["id"], "decision": e["decision"], "reason": e["reason"]} for e in log],
+    }
+    write_if_changed(VALIDATION_LOG, dumps(doc))
+    write_if_changed(VALIDATION_STATE, dumps({"v": 1, "pending": new_pending}))
+    print("Price validation:", doc["counts"])
+    return log
+
+
 def main():
+    previous_doc = load_json(OUT)
+    previous_items = copy.deepcopy(previous_doc["items"]) if valid_primary(previous_doc) else []
     try:
         primary = get_json(PRIMARY)
         if not valid_primary(primary):
@@ -1104,6 +1183,8 @@ def main():
     prefer_direct_usdt(items, ns)
     removed_derived = drop_derived(items)
     print("Removed dollar-derived items:", len(removed_derived))
+    strip_range_fields(items)
+    run_price_validation(items, previous_items, payload.get("generated_utc"))
     fill_missing_changes_from_source_history(items)
     payload["source_status"] = {"primary": bool(primary), "iran_market_data": sorted(irm), "nerkhsanj": sorted(ns),
                                  "arzhaam_currencies": sorted(arz),
