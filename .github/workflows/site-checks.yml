@@ -1,0 +1,58 @@
+name: Site checks
+
+# Unit tests + release gate on every code change. Bot commits that only touch data/ or api/ are ignored,
+# otherwise this would run every few minutes. The price workflow does NOT depend on this workflow, so a
+# failing test turns this check red but never stops the automatic price updates.
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/**"
+      - "api/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bazarnama-site-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Release gate (data + site)
+        run: python3 tools/validate_site.py
+
+  sitemap:
+    # lastmod changes only when a page's HTML really changed (tools/update_sitemap.py)
+    needs: checks
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Update sitemap lastmod
+        run: python3 tools/update_sitemap.py
+      - name: Commit sitemap
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml data/page-lastmod.json
+          if git diff --cached --quiet; then echo "Sitemap unchanged."; exit 0; fi
+          git commit -m "Update sitemap lastmod"
+          for attempt in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            sleep $((attempt * 5))
+          done
+          exit 1

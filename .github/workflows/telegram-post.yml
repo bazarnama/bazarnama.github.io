@@ -1,0 +1,25 @@
+name: Post prices to Telegram
+
+# Needs repository secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID (Settings -> Secrets and variables -> Actions).
+# Without them the job only prints the message and succeeds. Runs every 2 hours (UTC).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3,5,7,9,11,13,15,17,19 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Post summary
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 tools/telegram_post.py

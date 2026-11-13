@@ -31,6 +31,9 @@ jobs:
       - name: Update news
         run: python update_news.py
 
+      - name: Validate news data (a bad file is never published)
+        run: python3 tools/validate_site.py --data
+
       - name: Commit news (only data/news.json)
         run: |
           git config user.name "github-actions[bot]"

@@ -30,11 +30,6 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Run unit tests and site checks (a failure stops publishing)
-        run: |
-          python3 -m unittest discover -s tests
-          python3 tools/validate_site.py
-
       - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
@@ -44,6 +39,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           CYCLES=2; [ "${{ github.event_name }}" = "workflow_dispatch" ] && CYCLES=1   # manual run: one quick cycle
           FAILED=0
+          # Unit tests run in site-checks.yml on every code push. They must NOT gate this workflow: a broken
+          # test used to stop every price update silently. Only the freshly written DATA is validated here.
           for cycle in $(seq 1 $CYCLES); do
             echo "=== cycle $cycle ==="
             if python3 update_prices.py; then
@@ -55,7 +52,19 @@ jobs:
               python3 tools/record_run.py failure "update_prices.py failed in cycle $cycle"
               FAILED=1
             fi
-            git add -A data/ api/
+            if ! python3 tools/validate_site.py --data; then
+              echo "::error::generated data failed validation in cycle $cycle; not publishing it"
+              git checkout -- data/ api/ 2>/dev/null || true
+              python3 tools/record_run.py failure "data validation failed in cycle $cycle"
+              FAILED=1
+            fi
+            # The status pages embed a snapshot of the data, so they go stale unless rebuilt: refresh them
+            # about once an hour (first 10 minutes of the hour) and on manual runs.
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%M)" -lt 10 ]; then
+              python3 tools/build_transparency.py || echo "::warning::transparency page not rebuilt"
+              python3 tools/build_api_docs.py || echo "::warning::api-docs page not rebuilt"
+            fi
+            git add -A data/ api/ transparency.html api-docs.html
             if ! git diff --cached --quiet; then
               git commit -m "Update market prices and history"
               PUSHED=0
@@ -70,7 +79,7 @@ jobs:
                 FAILED=1
               fi
             fi
-            [ "$cycle" -lt "$CYCLES" ] && sleep 270
+            if [ "$cycle" -lt "$CYCLES" ]; then sleep 270; fi
           done
           exit $FAILED
 
