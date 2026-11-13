@@ -1,12 +1,10 @@
 name: Update market prices
 
-# Goal: prices refreshed every 10 minutes.
-# GitHub's own cron is throttled (often 20-60 min late), so it cannot be trusted alone. Each run therefore:
-#   1. fetches prices once, right away, and commits them;
-#   2. waits until 10 minutes have passed since the run started;
-#   3. starts the next run itself (repository_dispatch is allowed even when sent with GITHUB_TOKEN).
-# The cron is only a safety net that restarts the chain if it ever breaks. A guard skips the fetch if
-# prices were already fetched less than 7 minutes ago (and then does not start a second chain).
+# GitHub's own cron is throttled to roughly hourly. To get real 5-minute updates this workflow
+# runs several fetch cycles inside ONE run (every ~5 min for ~6 min), then starts itself again
+# with repository_dispatch (that event is allowed even when sent with GITHUB_TOKEN).
+# The cron below is a recovery trigger if the self-chaining dispatch ever stops.
+# GitHub may delay scheduled events under load; the dispatch chain is the primary cadence.
 on:
   workflow_dispatch:
   repository_dispatch:
@@ -17,7 +15,6 @@ on:
 permissions:
   contents: write
 
-# One run at a time; a waiting run is never cancelled by a newer one for long, the chain simply continues.
 concurrency:
   group: bazarnama-prices
   cancel-in-progress: false
@@ -25,92 +22,61 @@ concurrency:
 jobs:
   update-prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 15
     steps:
-      - name: Remember start time
-        run: echo "RUN_START=$(date +%s)" >> "$GITHUB_ENV"
-
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
-      # Tests are a warning here, NOT a gate: a flaky test must never freeze the prices on the site.
-      # Real protection against bad data lives in price_validation.py inside update_prices.py.
-      - name: Run unit tests and site checks (warning only)
-        continue-on-error: true
+      - name: Run unit tests and site checks (a failure stops publishing)
         run: |
-          python3 -m unittest discover -s tests || echo "::warning::unit tests failed (prices are still updated)"
-          python3 tools/validate_site.py || echo "::warning::validate_site reported problems (prices are still updated)"
+          python3 -m unittest discover -s tests
+          python3 tools/validate_site.py
 
-      - name: Fetch prices and commit
-        id: fetch
+      - name: Fetch prices every 5 minutes (2 cycles) and commit each time
         env:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           STOOQ_API_KEY: ${{ secrets.STOOQ_API_KEY }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          BRANCH="${GITHUB_REF_NAME:-main}"
-
-          # Guard: skip if a fetch happened less than 7 minutes ago (e.g. cron fired right after the chain).
-          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
-            if python3 - <<'PY'
-          import json, datetime, sys
-          try:
-              d = json.load(open("data/run-report.json"))
-              t = datetime.datetime.strptime(d["last_success_utc"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
-              age = (datetime.datetime.now(datetime.timezone.utc) - t).total_seconds()
-              sys.exit(0 if age < 420 else 1)
-          except Exception:
-              sys.exit(1)
-          PY
-            then
-              echo "Prices were fetched less than 7 minutes ago; skipping this fetch."
-              echo "skipped=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-          fi
-
+          CYCLES=2; [ "${{ github.event_name }}" = "workflow_dispatch" ] && CYCLES=1   # manual run: one quick cycle
           FAILED=0
-          if python3 update_prices.py; then
-            python3 tools/record_run.py success "fetched"
-          else
-            # A failed fetch is reported as a failure; half-written files are discarded, never published.
-            echo "::error::update_prices.py failed"
-            git checkout -- data/ api/ 2>/dev/null || true
-            python3 tools/record_run.py failure "update_prices.py failed"
-            FAILED=1
-          fi
-
-          git add -A data/ api/
-          if ! git diff --cached --quiet; then
-            git commit -m "Update market prices and history"
-            PUSHED=0
-            for attempt in 1 2 3 4; do
-              if git pull --rebase --autostash origin "$BRANCH" && git push origin "HEAD:$BRANCH"; then PUSHED=1; break; fi
-              echo "Push attempt $attempt failed; retrying..."
-              sleep $((attempt * 5))
-            done
-            if [ "$PUSHED" -ne 1 ]; then
-              echo "::error::git push failed after 4 attempts"
+          for cycle in $(seq 1 $CYCLES); do
+            echo "=== cycle $cycle ==="
+            if python3 update_prices.py; then
+              python3 tools/record_run.py success "cycle $cycle fetched"
+            else
+              # A failed fetch is reported as a failure; half-written files are discarded, never published.
+              echo "::error::update_prices.py failed in cycle $cycle"
+              git checkout -- data/ api/ 2>/dev/null || true
+              python3 tools/record_run.py failure "update_prices.py failed in cycle $cycle"
               FAILED=1
             fi
-          fi
+            git add -A data/ api/
+            if ! git diff --cached --quiet; then
+              git commit -m "Update market prices and history"
+              PUSHED=0
+              for attempt in 1 2 3 4 5; do
+                if git fetch origin main && git rebase --autostash origin/main && git push origin HEAD:main; then PUSHED=1; break; fi
+                echo "Push attempt $attempt failed; retrying..."
+                git rebase --abort 2>/dev/null || true
+                sleep $((attempt * 5))
+              done
+              if [ "$PUSHED" -ne 1 ]; then
+                echo "::error::git push failed after 5 attempts in cycle $cycle"
+                FAILED=1
+              fi
+            fi
+            [ "$cycle" -lt "$CYCLES" ] && sleep 270
+          done
           exit $FAILED
 
-      # Keep the chain alive: wait until 10 minutes after this run started, then trigger the next run.
-      - name: Wait for the 10-minute mark and start the next run
-        if: always() && github.event_name != 'workflow_dispatch' && steps.fetch.outputs.skipped != 'true'
+      - name: Start the next run (self-chaining)
+        if: always() && github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          NOW=$(date +%s)
-          WAIT=$(( 600 - (NOW - RUN_START) ))
-          if [ "$WAIT" -gt 0 ]; then
-            echo "Waiting ${WAIT}s before starting the next run"
-            sleep "$WAIT"
-          fi
-          for attempt in 1 2 3; do
-            if gh api "repos/${{ github.repository }}/dispatches" -f event_type=update-prices; then exit 0; fi
-            sleep 5
-          done
-          echo "::warning::dispatch failed; the cron will restart the chain"
+          gh api "repos/${{ github.repository }}/dispatches" -f event_type=update-prices || echo "dispatch failed; cron will restart the chain"
