@@ -1003,6 +1003,23 @@ def write_validation_files(payload, vlog, vcounts, vpending):
     write_if_changed(VALIDATION_STATE, dumps({"v": 1, "pending": vpending}))
 
 
+# Price ceiling / floor (daily high / low) fields are not part of Bazarnama's data model: they are removed
+# from every upstream item before anything is validated, stored or published.
+RANGE_FIELDS = ("low_24h", "high_24h")
+
+
+def strip_range_fields(items):
+    """Remove daily low/high fields from items in place; returns how many fields were removed."""
+    removed = 0
+    for it in items or []:
+        if isinstance(it, dict):
+            for key in RANGE_FIELDS:
+                if key in it:
+                    del it[key]
+                    removed += 1
+    return removed
+
+
 def main():
     previously_published = copy.deepcopy((load_json(OUT) or {}).get("items") or []) if isinstance(load_json(OUT), dict) else []
 
@@ -1043,8 +1060,8 @@ def main():
         prev = load_json(OUT)
         if not valid_primary(prev):
             if not fx and not cg and not iran_direct and not ns:
-                print("No valid data at all; keeping previous files.")
-                return 0
+                print("No valid data at all; keeping previous files.", file=sys.stderr)
+                return 2   # a failed fetch is a failure, never a false success
             prev = {"items": []}
         payload = prev
         payload["primary_ok"] = False
@@ -1052,6 +1069,8 @@ def main():
             i["stale"] = True
 
     items = payload["items"]
+    strip_range_fields(items)
+    strip_range_fields(previously_published)
     # Apply source-age checks before fallback selection. This is important: a provider
     # can return HTTP 200 with an old quote, which must trigger a fresher backup.
     annotate_freshness(items)
