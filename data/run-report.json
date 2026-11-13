@@ -1,7 +1,7 @@
 {
  "schema": "bazarnama/run-report/v1",
  "last_status": "success",
- "last_run_utc": "2026-11-13T11:03:44Z",
+ "last_run_utc": "2026-11-13T16:38:11Z",
  "runs": [
   {
    "utc": "2026-11-13T07:59:31Z",
@@ -17,8 +17,73 @@
    "utc": "2026-11-13T11:03:44Z",
    "status": "success",
    "reason": "cycle 1 fetched"
+  },
+  {
+   "utc": "2026-11-13T13:07:17Z",
+   "status": "success",
+   "reason": "cycle 1 fetched"
+  },
+  {
+   "utc": "2026-11-13T13:37:31Z",
+   "status": "success",
+   "reason": "cycle 1 fetched"
+  },
+  {
+   "utc": "2026-11-13T14:05:11Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T14:56:46Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T15:06:52Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T15:17:02Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T15:27:11Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T15:37:19Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T15:47:26Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T16:07:43Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T16:17:54Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T16:28:06Z",
+   "status": "success",
+   "reason": "fetched"
+  },
+  {
+   "utc": "2026-11-13T16:38:11Z",
+   "status": "success",
+   "reason": "fetched"
   }
  ],
- "last_success_utc": "2026-11-13T11:03:44Z",
+ "last_success_utc": "2026-11-13T16:38:11Z",
  "last_failure_utc": null
 }
