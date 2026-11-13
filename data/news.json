@@ -1,14 +1,77 @@
 {
-  "updated_at": "2026-11-13T04:32:37.451029+00:00",
+  "updated_at": "2026-11-13T05:34:31.316573+00:00",
   "items": [
     {
-      "title": "بودجه‌ریزی مبتنی بر عملکرد، راهکار افزایش بهره‌وری و کاهش هزینه‌های غیرضروری است",
-      "url": "https://www.irna.ir/news/86320049/%D8%A8%D9%88%D8%AF%D8%AC%D9%87-%D8%B1%DB%8C%D8%B2%DB%8C-%D9%85%D8%A8%D8%AA%D9%86%DB%8C-%D8%A8%D8%B1-%D8%B9%D9%85%D9%84%DA%A9%D8%B1%D8%AF-%D8%B1%D8%A7%D9%87%DA%A9%D8%A7%D8%B1-%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%D8%B4-%D8%A8%D9%87%D8%B1%D9%87-%D9%88%D8%B1%DB%8C-%D9%88-%DA%A9%D8%A7%D9%87%D8%B4-%D9%87%D8%B2%DB%8C%D9%86%D9%87-%D9%87%D8%A7%DB%8C",
+      "title": "دولت در شرایط جنگ اقتصادی با محدودیت منابع مالی روبروست",
+      "url": "https://www.irna.ir/news/86314524/%D8%AF%D9%88%D9%84%D8%AA-%D8%AF%D8%B1-%D8%B4%D8%B1%D8%A7%DB%8C%D8%B7-%D8%AC%D9%86%DA%AF-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C-%D8%A8%D8%A7-%D9%85%D8%AD%D8%AF%D9%88%D8%AF%DB%8C%D8%AA-%D9%85%D9%86%D8%A7%D8%A8%D8%B9-%D9%85%D8%A7%D9%84%DB%8C-%D8%B1%D9%88%D8%A8%D8%B1%D9%88%D8%B3%D8%AA",
       "source": "ایرنا",
-      "published_at": "2026-11-13T04:30:00+00:00",
+      "published_at": "2026-11-13T05:30:00+00:00",
       "category": "macro",
       "category_label": "اقتصاد کلان",
-      "relevance": 4,
+      "relevance": 2,
+      "date_status": "ok"
+    },
+    {
+      "title": "قیمت نفت برنت به ۹۵ دلار رسید",
+      "url": "https://tabnak.ir/fa/news/4201523/%D9%82%DB%8C%D9%85%D8%AA-%D9%86%D9%81%D8%AA-%D8%A8%D8%B1%D9%86%D8%AA-%D8%A8%D9%87-%DB%B9%DB%B5-%D8%AF%D9%84%D8%A7%D8%B1-%D8%B1%D8%B3%DB%8C%D8%AF-d7da664b73c8474a8ba02985",
+      "source": "تابناک",
+      "published_at": "2026-11-13T05:26:45+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
+      "relevance": 5,
+      "date_status": "ok",
+      "also_reported_by": [
+        "ایسنا"
+      ]
+    },
+    {
+      "title": "قیمت سکه امروز ۲۲ آبان ۱۴۰۵/ نیم‌سکه به قیمت ۱۳۳ میلیون تومان فروش رفت + جدول",
+      "url": "https://www.khabaronline.ir/news/2301377/%D9%82%DB%8C%D9%85%D8%AA-%D8%B3%DA%A9%D9%87-%D8%A7%D9%85%D8%B1%D9%88%D8%B2-%DB%B2%DB%B2-%D8%A2%D8%A8%D8%A7%D9%86-%DB%B1%DB%B4%DB%B0%DB%B5-%D9%86%DB%8C%D9%85-%D8%B3%DA%A9%D9%87-%D8%A8%D9%87-%D9%82%DB%8C%D9%85%D8%AA-%DB%B1%DB%B3%DB%B3-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D8%AA%D9%88%D9%85%D8%A7%D9%86",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-13T05:20:00+00:00",
+      "category": "gold",
+      "category_label": "طلا و سکه",
+      "relevance": 3,
+      "date_status": "ok"
+    },
+    {
+      "title": "توزیع ۶.۶ میلیون لیتر نفت سفید برای تامین سوخت جایگزین در خراسان شمالی",
+      "url": "https://www.irna.ir/news/86315577/%D8%AA%D9%88%D8%B2%DB%8C%D8%B9-%DB%B6-%DB%B6-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D9%84%DB%8C%D8%AA%D8%B1-%D9%86%D9%81%D8%AA-%D8%B3%D9%81%DB%8C%D8%AF-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%AA%D8%A7%D9%85%DB%8C%D9%86-%D8%B3%D9%88%D8%AE%D8%AA-%D8%AC%D8%A7%DB%8C%DA%AF%D8%B2%DB%8C%D9%86-%D8%AF%D8%B1-%D8%AE%D8%B1%D8%A7%D8%B3%D8%A7%D9%86",
+      "source": "ایرنا",
+      "published_at": "2026-11-13T05:06:30+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
+      "relevance": 2,
+      "date_status": "ok"
+    },
+    {
+      "title": "قیمت دلار، یورو و انواع ارزها امروز ۲۲ آبان ۱۴۰۵/ دلار روی قیمت ۲۶۶ هزار و ۹۰۰ تومان ایستاد + جدول",
+      "url": "https://www.khabaronline.ir/news/2301379/%D9%82%DB%8C%D9%85%D8%AA-%D8%AF%D9%84%D8%A7%D8%B1-%DB%8C%D9%88%D8%B1%D9%88-%D9%88-%D8%A7%D9%86%D9%88%D8%A7%D8%B9-%D8%A7%D8%B1%D8%B2%D9%87%D8%A7-%D8%A7%D9%85%D8%B1%D9%88%D8%B2-%DB%B2%DB%B2-%D8%A2%D8%A8%D8%A7%D9%86-%DB%B1%DB%B4%DB%B0%DB%B5-%D8%AF%D9%84%D8%A7%D8%B1-%D8%B1%D9%88%DB%8C-%D9%82%DB%8C%D9%85%D8%AA",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-13T05:04:00+00:00",
+      "category": "currency",
+      "category_label": "ارز",
+      "relevance": 5,
+      "date_status": "ok"
+    },
+    {
+      "title": "پشت پرده عملکرد بانک مرکزی در تامین ارز دارو و تجهیزات",
+      "url": "https://www.mehrnews.com/news/7009103/%D9%BE%D8%B4%D8%AA-%D9%BE%D8%B1%D8%AF%D9%87-%D8%B9%D9%85%D9%84%DA%A9%D8%B1%D8%AF-%D8%A8%D8%A7%D9%86%DA%A9-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C-%D8%AF%D8%B1-%D8%AA%D8%A7%D9%85%DB%8C%D9%86-%D8%A7%D8%B1%D8%B2-%D8%AF%D8%A7%D8%B1%D9%88-%D9%88-%D8%AA%D8%AC%D9%87%DB%8C%D8%B2%D8%A7%D8%AA",
+      "source": "مهر",
+      "published_at": "2026-11-13T04:58:00+00:00",
+      "category": "currency",
+      "category_label": "ارز",
+      "relevance": 5,
+      "date_status": "ok"
+    },
+    {
+      "title": "قیمت طلا امروز ۲۲ آبان ۱۴۰۵/ هر گرم طلای ۲۴عیار ۳۳ میلیون و ۳۲۵ هزار تومان قیمت پیدا کرد + جدول",
+      "url": "https://www.khabaronline.ir/news/2301375/%D9%82%DB%8C%D9%85%D8%AA-%D8%B7%D9%84%D8%A7-%D8%A7%D9%85%D8%B1%D9%88%D8%B2-%DB%B2%DB%B2-%D8%A2%D8%A8%D8%A7%D9%86-%DB%B1%DB%B4%DB%B0%DB%B5-%D9%87%D8%B1-%DA%AF%D8%B1%D9%85-%D8%B7%D9%84%D8%A7%DB%8C-%DB%B2%DB%B4%D8%B9%DB%8C%D8%A7%D8%B1-%DB%B3%DB%B3-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D9%88-%DB%B3%DB%B2%DB%B5",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-13T04:35:54+00:00",
+      "category": "gold",
+      "category_label": "طلا و سکه",
+      "relevance": 3,
       "date_status": "ok"
     },
     {
@@ -19,16 +82,6 @@
       "category": "macro",
       "category_label": "اقتصاد کلان",
       "relevance": 3,
-      "date_status": "ok"
-    },
-    {
-      "title": "چرا یارانه کود شیمیایی به انتهای زنجیره منتقل شد؟",
-      "url": "https://www.irna.ir/news/86319176/%DA%86%D8%B1%D8%A7-%DB%8C%D8%A7%D8%B1%D8%A7%D9%86%D9%87-%DA%A9%D9%88%D8%AF-%D8%B4%DB%8C%D9%85%DB%8C%D8%A7%DB%8C%DB%8C-%D8%A8%D9%87-%D8%A7%D9%86%D8%AA%D9%87%D8%A7%DB%8C-%D8%B2%D9%86%D8%AC%DB%8C%D8%B1%D9%87-%D9%85%D9%86%D8%AA%D9%82%D9%84-%D8%B4%D8%AF",
-      "source": "ایرنا",
-      "published_at": "2026-11-13T04:30:00+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
       "date_status": "ok"
     },
     {
@@ -52,46 +105,6 @@
       "date_status": "ok"
     },
     {
-      "title": "درخواست ۱۳ نهاد فرانسوی برای ممنوعیت واردات کالاهای شهرک‌های صهیونیستی",
-      "url": "https://www.mehrnews.com/news/7009171/%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA-%DB%B1%DB%B3-%D9%86%D9%87%D8%A7%D8%AF-%D9%81%D8%B1%D8%A7%D9%86%D8%B3%D9%88%DB%8C-%D8%A8%D8%B1%D8%A7%DB%8C-%D9%85%D9%85%D9%86%D9%88%D8%B9%DB%8C%D8%AA-%D9%88%D8%A7%D8%B1%D8%AF%D8%A7%D8%AA-%DA%A9%D8%A7%D9%84%D8%A7%D9%87%D8%A7%DB%8C-%D8%B4%D9%87%D8%B1%DA%A9-%D9%87%D8%A7%DB%8C",
-      "source": "مهر",
-      "published_at": "2026-11-13T02:05:45+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "وزارت خزانه‌داری آمریکا از ثبت کسری بودجه بی‌سابقه ۴۰۴ میلیارد دلاری خبر داد",
-      "url": "https://www.isna.ir/news/1405082214847/%D9%88%D8%B2%D8%A7%D8%B1%D8%AA-%D8%AE%D8%B2%D8%A7%D9%86%D9%87-%D8%AF%D8%A7%D8%B1%DB%8C-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A7%D8%B2-%D8%AB%D8%A8%D8%AA-%DA%A9%D8%B3%D8%B1%DB%8C-%D8%A8%D9%88%D8%AF%D8%AC%D9%87-%D8%A8%DB%8C-%D8%B3%D8%A7%D8%A8%D9%82%D9%87-%DB%B4%DB%B0%DB%B4-%D9%85%DB%8C%D9%84%DB%8C%D8%A7%D8%B1%D8%AF",
-      "source": "ایسنا",
-      "published_at": "2026-11-12T23:34:42+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "آغاز سال مالی ۲۰۲۷ آمریکا با کسری بودجه ۴۰۴ میلیارد دلاری",
-      "url": "https://www.mehrnews.com/news/7009165/%D8%A2%D8%BA%D8%A7%D8%B2-%D8%B3%D8%A7%D9%84-%D9%85%D8%A7%D9%84%DB%8C-%DB%B2%DB%B0%DB%B2%DB%B7-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A8%D8%A7-%DA%A9%D8%B3%D8%B1%DB%8C-%D8%A8%D9%88%D8%AF%D8%AC%D9%87-%DB%B4%DB%B0%DB%B4-%D9%85%DB%8C%D9%84%DB%8C%D8%A7%D8%B1%D8%AF-%D8%AF%D9%84%D8%A7%D8%B1%DB%8C",
-      "source": "مهر",
-      "published_at": "2026-11-12T23:19:57+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "حمله پهپادی مجدد یمن به خط لوله نفت راهبردی عربستان",
-      "url": "https://www.irna.ir/news/86320254/%D8%AD%D9%85%D9%84%D9%87-%D9%BE%D9%87%D9%BE%D8%A7%D8%AF%DB%8C-%D9%85%D8%AC%D8%AF%D8%AF-%DB%8C%D9%85%D9%86-%D8%A8%D9%87-%D8%AE%D8%B7-%D9%84%D9%88%D9%84%D9%87-%D9%86%D9%81%D8%AA-%D8%B1%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%DB%8C-%D8%B9%D8%B1%D8%A8%D8%B3%D8%AA%D8%A7%D9%86",
-      "source": "ایرنا",
-      "published_at": "2026-11-12T22:15:14+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
       "title": "از کم‌فروشی نان تا تخلف در توزیع برنج؛ مردم قربانی بی‌نظارتی بازار شدند!",
       "url": "https://tabnak.ir/fa/news/4200930/%D8%A7%D8%B2-%DA%A9%D9%85%D9%81%D8%B1%D9%88%D8%B4%DB%8C-%D9%86%D8%A7%D9%86-%D8%AA%D8%A7-%D8%AA%D8%AE%D9%84%D9%81-%D8%AF%D8%B1-%D8%AA%D9%88%D8%B2%DB%8C%D8%B9-%D8%A8%D8%B1%D9%86%D8%AC-%D9%85%D8%B1%D8%AF%D9%85-%D9%82%D8%B1%D8%A8%D8%A7%D9%86%DB%8C-%D8%A8%DB%8C%D9%86%D8%B8%D8%A7%D8%B1%D8%AA%DB%8C-%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1-10438a6ff3684ca495e5f1c2",
       "source": "تابناک",
@@ -99,26 +112,6 @@
       "category": "commodities",
       "category_label": "کالاهای اساسی",
       "relevance": 4,
-      "date_status": "ok"
-    },
-    {
-      "title": "مادرید به 1400 میلیون یورو درآمد می‌رسد",
-      "url": "https://www.khabaronline.ir/news/2301256/%D9%85%D8%A7%D8%AF%D8%B1%DB%8C%D8%AF-%D8%A8%D9%87-1400-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%DB%8C%D9%88%D8%B1%D9%88-%D8%AF%D8%B1%D8%A2%D9%85%D8%AF-%D9%85%DB%8C-%D8%B1%D8%B3%D8%AF",
-      "source": "خبرآنلاین",
-      "published_at": "2026-11-12T20:45:00+00:00",
-      "category": "currency",
-      "category_label": "ارز",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
-      "title": "درخواست فوری ترامپ برای بودجه نظامی سنگین",
-      "url": "https://tabnak.ir/fa/news/4201499/%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA-%D9%81%D9%88%D8%B1%DB%8C-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%A8%D9%88%D8%AF%D8%AC%D9%87-%D9%86%D8%B8%D8%A7%D9%85%DB%8C-%D8%B3%D9%86%DA%AF%DB%8C%D9%86-0d46ad176a5f435ca9ddfed2",
-      "source": "تابناک",
-      "published_at": "2026-11-12T18:57:03+00:00",
-      "category": "macro",
-      "category_label": "اقتصاد کلان",
-      "relevance": 2,
       "date_status": "ok"
     },
     {
@@ -137,8 +130,8 @@
     "off_topic": 197,
     "no_valid_date": 0,
     "too_old": 0,
-    "duplicates": 0,
-    "published": 13
+    "duplicates": 1,
+    "published": 12
   },
   "sources_ok": [
     "ایران اینترنشنال",
