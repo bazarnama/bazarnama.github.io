@@ -1,0 +1,7 @@
+name = "bazarnama-live"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+# Extra allowed origins (comma separated), e.g. your own domain once you have one.
+ALLOWED_ORIGINS = "https://bazarnama.github.io"

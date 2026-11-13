@@ -29,7 +29,7 @@ CAT = {"currency":"/currency.html","gold":"/gold.html","crypto":"/crypto.html","
 CATN = {"currency":"قیمت ارز","gold":"طلا و سکه","crypto":"ارز دیجیتال","energy":"نفت و انرژی"}
 
 HEAD_COMMON = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">'
-SW = "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script>"
+SW = "<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))</script><script src=\"/pwa-install.js\" defer></script>"
 THEME = """const root=document.documentElement,btn=document.getElementById('themeBtn');
 function ap(t,s){root.dataset.theme=t;root.style.colorScheme=t;if(btn)btn.textContent=t==='dark'?'☀':'☾';if(s){try{localStorage.setItem('bazarnama-theme',JSON.stringify(t))}catch(e){}}}
 let st=null;try{st=JSON.parse(localStorage.getItem('bazarnama-theme'))}catch(e){}

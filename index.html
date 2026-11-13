@@ -17,7 +17,7 @@
   <meta name="twitter:title" content="قیمت دلار، طلا، ارز دیجیتال و نفت امروز | بازارنما">
   <meta name="twitter:description" content="نرخ روز ارز، طلا، رمزارزها و نفت را در بازارنما ببینید؛ همراه با نمودار و ماشین‌حساب تبدیل ارز.">
   <title>قیمت دلار، طلا، ارز دیجیتال و نفت امروز | بازارنما</title>
-  <script src="/bn-icons.js"></script><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
+  <script src="/live-config.js"></script><script src="/bn-icons.js"></script><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
   <!-- Favicon / لوگوی سایت در نتایج گوگل -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="shortcut icon" href="/favicon.svg">
@@ -576,6 +576,13 @@ tr:last-child td{border-bottom:0!important}
   }
   async function getPrices() {
     let old=null;
+    const liveUrl=String(window.BAZARNAMA_LIVE_URL||'').trim();
+    if (liveUrl) {       // optional Cloudflare relay: edge-cached, at most ~60 s old
+      try {
+        const d=await fetchJSON(liveUrl,4000);
+        if (d && Array.isArray(d.items) && d.items.length) return reageFreshness(d);
+      } catch {}
+    }
     try {
       const d=await fetchJSON('/data/prices.json',8000);
       if (d && Array.isArray(d.items) && d.items.length) {
@@ -1034,5 +1041,6 @@ if(moved)n.scrollLeft=sl-dx;});
 window.addEventListener('pointerup',function(){if(!down)return;down=false;if(moved)setTimeout(function(){n.classList.remove('dragging');},0);});
 })();
 </script>
+<script src="/pwa-install.js" defer></script>
 </body>
 </html>
