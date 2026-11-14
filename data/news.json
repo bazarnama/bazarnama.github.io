@@ -1,6 +1,16 @@
 {
-  "updated_at": "2026-11-14T00:59:35.335109+00:00",
+  "updated_at": "2026-11-14T02:00:09.752626+00:00",
   "items": [
+    {
+      "title": "نماینده مجلس: پارسال با حذف ارز ۲۸ هزار و ۵۰۰ تومانی حدود ۱۰ میلیون از جیب هر ایرانی برداشتند و تنها یک میلیون تومان کالابرگ دادند/ این یعنی فقیرسازی",
+      "url": "https://www.khabaronline.ir/news/2301687/%D9%86%D9%85%D8%A7%DB%8C%D9%86%D8%AF%D9%87-%D9%85%D8%AC%D9%84%D8%B3-%D9%BE%D8%A7%D8%B1%D8%B3%D8%A7%D9%84-%D8%A8%D8%A7-%D8%AD%D8%B0%D9%81-%D8%A7%D8%B1%D8%B2-%DB%B2%DB%B8-%D9%87%D8%B2%D8%A7%D8%B1-%D9%88-%DB%B5%DB%B0%DB%B0-%D8%AA%D9%88%D9%85%D8%A7%D9%86%DB%8C-%D8%AD%D8%AF%D9%88%D8%AF-%DB%B1%DB%B0",
+      "source": "خبرآنلاین",
+      "published_at": "2026-11-14T01:11:00+00:00",
+      "category": "currency",
+      "category_label": "ارز",
+      "relevance": 4,
+      "date_status": "ok"
+    },
     {
       "title": "تشدید تنش‌ها در تنگه هرمز و باب‌ المندب تهدیدی برای اقتصاد جهانی است",
       "url": "https://www.mehrnews.com/news/7009925/%D8%AA%D8%B4%D8%AF%DB%8C%D8%AF-%D8%AA%D9%86%D8%B4-%D9%87%D8%A7-%D8%AF%D8%B1-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2-%D9%88-%D8%A8%D8%A7%D8%A8-%D8%A7%D9%84%D9%85%D9%86%D8%AF%D8%A8-%D8%AA%D9%87%D8%AF%DB%8C%D8%AF%DB%8C-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%AC%D9%87%D8%A7%D9%86%DB%8C",
@@ -109,10 +119,7 @@
       "category": "macro",
       "category_label": "اقتصاد کلان",
       "relevance": 3,
-      "date_status": "ok",
-      "also_reported_by": [
-        "ایرنا"
-      ]
+      "date_status": "ok"
     },
     {
       "title": "واکنش کاربران به معیار جدید کالابرگ / زیر خط فقر هم باشیم، مشمول افزایش نمی‌شویم",
@@ -165,16 +172,6 @@
       "date_status": "ok"
     },
     {
-      "title": "حذف مرغ از سفره بازنشسته‌ با حقوق ۱۳ میلیون تومان/ وعده ترمیم مستمری‌ها در نیمه دوم سال روی زمین ماند",
-      "url": "https://www.khabaronline.ir/news/2301459/%D8%AD%D8%B0%D9%81-%D9%85%D8%B1%D8%BA-%D8%A7%D8%B2-%D8%B3%D9%81%D8%B1%D9%87-%D8%A8%D8%A7%D8%B2%D9%86%D8%B4%D8%B3%D8%AA%D9%87-%D8%A8%D8%A7-%D8%AD%D9%82%D9%88%D9%82-%DB%B1%DB%B3-%D9%85%DB%8C%D9%84%DB%8C%D9%88%D9%86-%D8%AA%D9%88%D9%85%D8%A7%D9%86-%D9%88%D8%B9%D8%AF%D9%87-%D8%AA%D8%B1%D9%85%DB%8C%D9%85",
-      "source": "خبرآنلاین",
-      "published_at": "2026-11-13T18:45:00+00:00",
-      "category": "commodities",
-      "category_label": "کالاهای اساسی",
-      "relevance": 2,
-      "date_status": "ok"
-    },
-    {
       "title": "رئیس کل بانک مرکزی به مجلس می‌رود / گزارش سیاست‌های پولی و ارزی در دستور کار نمایندگان",
       "url": "https://tabnak.ir/fa/news/4201653/%D8%B1%D8%A6%DB%8C%D8%B3-%DA%A9%D9%84-%D8%A8%D8%A7%D9%86%DA%A9-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C-%D8%A8%D9%87-%D9%85%D8%AC%D9%84%D8%B3-%D9%85%DB%8C%D8%B1%D9%88%D8%AF-%DA%AF%D8%B2%D8%A7%D8%B1%D8%B4-%D8%B3%DB%8C%D8%A7%D8%B3%D8%AA%D9%87%D8%A7%DB%8C-%D9%BE%D9%88%D9%84%DB%8C-%D9%88-%D8%A7%D8%B1%D8%B2%DB%8C-%D8%AF%D8%B1-%D8%AF%D8%B3%D8%AA%D9%88%D8%B1-%DA%A9%D8%A7%D8%B1-%D9%86%D9%85%D8%A7%DB%8C%D9%86%D8%AF%DA%AF%D8%A7%D9%86-7a0f0948ad2e4be8ac264abf",
       "source": "تابناک",
@@ -207,10 +204,10 @@
   ],
   "stats": {
     "seen": 210,
-    "off_topic": 189,
+    "off_topic": 190,
     "no_valid_date": 0,
     "too_old": 0,
-    "duplicates": 1,
+    "duplicates": 0,
     "published": 20
   },
   "sources_ok": [
