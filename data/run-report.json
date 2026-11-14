@@ -1,13 +1,8 @@
 {
  "schema": "bazarnama/run-report/v1",
  "last_status": "success",
- "last_run_utc": "2026-11-14T11:38:49Z",
+ "last_run_utc": "2026-11-14T11:40:10Z",
  "runs": [
-  {
-   "utc": "2026-11-14T10:21:36Z",
-   "status": "success",
-   "reason": "cycle 1 fetched"
-  },
   {
    "utc": "2026-11-14T10:27:18Z",
    "status": "success",
@@ -102,8 +97,13 @@
    "utc": "2026-11-14T11:38:49Z",
    "status": "success",
    "reason": "cycle 2 fetched"
+  },
+  {
+   "utc": "2026-11-14T11:40:10Z",
+   "status": "success",
+   "reason": "cycle 1 fetched"
   }
  ],
- "last_success_utc": "2026-11-14T11:38:49Z",
+ "last_success_utc": "2026-11-14T11:40:10Z",
  "last_failure_utc": null
 }
