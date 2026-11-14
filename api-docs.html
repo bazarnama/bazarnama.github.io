@@ -450,24 +450,24 @@ tr:last-child td{border-bottom:0!important}
 </style><style>pre.code{direction:ltr;text-align:left;overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;unicode-bidi:plaintext}.tw{overflow-x:auto}.tw table{border-collapse:collapse;width:100%;font-size:14px}.tw th,.tw td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}.tw td:first-child{direction:ltr;text-align:left;white-space:nowrap}code{direction:ltr;unicode-bidi:embed}</style></head><body><main class="wrap">
 <header class="top"><a class="brand" href="/">بازارنما</a><div class="top-actions"><a href="/">بازگشت به صفحه اصلی ←</a><button class="theme-toggle" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز">☾</button></div></header>
 <section class="hero"><div class="eyebrow">بازارنما</div><h1>مستندات API نسخهٔ ۱</h1><p>API عمومی، ایستا و بدون کلید. نمونه‌های این صفحه از فایل‌های واقعی API ساخته شده‌اند.</p></section>
-<section class="panel"><h2>نقاط دسترسی</h2><div class="tw"><table><thead><tr><th>مسیر</th><th>توضیح</th></tr></thead><tbody><tr><td><code>GET /api/v1/latest.json</code></td><td>آخرین قیمت‌ها (43 قلم؛ coin: 5، crypto: 13، currency: 11، energy: 6، gold: 3، metal: 5)</td></tr><tr><td><code>GET /api/v1/history/{asset_id}.json</code></td><td>تاریخچهٔ قیمت؛ فهرست شناسه‌ها در <code>index.json</code> (43 دارایی)</td></tr><tr><td><code>GET /api/v1/index.json</code></td><td>فهرست دارایی‌ها و الگوی مسیر تاریخچه</td></tr><tr><td><code>GET /api/v1/source-health.json</code></td><td>سلامت منابع، سقف تازگی و تعداد هر وضعیت</td></tr></tbody></table></div>
+<section class="panel"><h2>نقاط دسترسی</h2><div class="tw"><table><thead><tr><th>مسیر</th><th>توضیح</th></tr></thead><tbody><tr><td><code>GET /api/v1/latest.json</code></td><td>آخرین قیمت‌ها (44 قلم؛ coin: 5، crypto: 13، currency: 12، energy: 6، gold: 3، metal: 5)</td></tr><tr><td><code>GET /api/v1/history/{asset_id}.json</code></td><td>تاریخچهٔ قیمت؛ فهرست شناسه‌ها در <code>index.json</code> (44 دارایی)</td></tr><tr><td><code>GET /api/v1/index.json</code></td><td>فهرست دارایی‌ها و الگوی مسیر تاریخچه</td></tr><tr><td><code>GET /api/v1/source-health.json</code></td><td>سلامت منابع، سقف تازگی و تعداد هر وضعیت</td></tr></tbody></table></div>
 <p>پایهٔ آدرس: <code>https://bazarnama.github.io</code>. فایل‌ها ایستا هستند و با GitHub Actions بازسازی می‌شوند؛ زمان واقعی به‌روزرسانی را از <code>freshness</code> بخوانید، نه از زمان درخواست.</p></section>
 <section class="panel"><h2>نمونه: latest.json (ساختار)</h2><pre class="code" dir="ltr">{
   &quot;api&quot;: &quot;bazarnama/v1&quot;,
-  &quot;generated_utc&quot;: &quot;2026-11-14T03:55:30&quot;,
-  &quot;fetched_utc&quot;: &quot;2026-11-14T04:04:35Z&quot;,
+  &quot;generated_utc&quot;: &quot;2026-11-14T04:55:48&quot;,
+  &quot;fetched_utc&quot;: &quot;2026-11-14T05:01:11Z&quot;,
   &quot;freshness&quot;: {
     &quot;counts&quot;: {
-      &quot;fresh&quot;: 42,
+      &quot;fresh&quot;: 43,
       &quot;aging&quot;: 0,
       &quot;stale&quot;: 1,
       &quot;unknown&quot;: 0
     },
-    &quot;checked_utc&quot;: &quot;2026-11-14T04:04:35Z&quot;,
+    &quot;checked_utc&quot;: &quot;2026-11-14T05:01:11Z&quot;,
     &quot;policy_version&quot;: 1
   },
   &quot;items&quot;: [
-    &quot;... 43 items ...&quot;
+    &quot;... 44 items ...&quot;
   ]
 }</pre><h3>یک قلم واقعی</h3><pre class="code" dir="ltr">{
   &quot;id&quot;: &quot;usd&quot;,
@@ -477,14 +477,14 @@ tr:last-child td{border-bottom:0!important}
     &quot;fa&quot;: &quot;دلار آمریکا (بازار آزاد)&quot;
   },
   &quot;unit&quot;: &quot;IRT&quot;,
-  &quot;price&quot;: 270300.0,
+  &quot;price&quot;: 269100.0,
   &quot;price_irt&quot;: null,
-  &quot;change_pct&quot;: 0.15,
+  &quot;change_pct&quot;: -0.07,
   &quot;spread_pct&quot;: null,
   &quot;sources&quot;: 1,
   &quot;method&quot;: &quot;average&quot;,
   &quot;as_of&quot;: null,
-  &quot;updated_utc&quot;: &quot;2026-11-14T03:54:43&quot;,
+  &quot;updated_utc&quot;: &quot;2026-11-14T04:54:43&quot;,
   &quot;stale&quot;: false,
   &quot;page&quot;: {
     &quot;fa&quot;: &quot;https://nerkhara.com/dollar/&quot;,
@@ -498,15 +498,15 @@ tr:last-child td{border-bottom:0!important}
   },
   &quot;freshness&quot;: {
     &quot;status&quot;: &quot;fresh&quot;,
-    &quot;observed_utc&quot;: &quot;2026-11-14T03:54:43Z&quot;,
-    &quot;checked_utc&quot;: &quot;2026-11-14T04:04:35Z&quot;,
-    &quot;age_seconds&quot;: 592,
+    &quot;observed_utc&quot;: &quot;2026-11-14T04:54:43Z&quot;,
+    &quot;checked_utc&quot;: &quot;2026-11-14T05:01:11Z&quot;,
+    &quot;age_seconds&quot;: 388,
     &quot;max_age_seconds&quot;: 5400,
     &quot;clock_basis&quot;: &quot;provider_timestamp&quot;
   },
-  &quot;source_checked_utc&quot;: &quot;2026-11-14T04:04:32Z&quot;,
+  &quot;source_checked_utc&quot;: &quot;2026-11-14T05:01:08Z&quot;,
   &quot;source_name&quot;: &quot;NerkhAra&quot;,
-  &quot;source_updated_utc&quot;: &quot;2026-11-14T03:54:43&quot;,
+  &quot;source_updated_utc&quot;: &quot;2026-11-14T04:54:43&quot;,
   &quot;source_selection&quot;: &quot;primary-aggregated&quot;,
   &quot;validation&quot;: {
     &quot;status&quot;: &quot;accepted&quot;,
@@ -518,12 +518,8 @@ tr:last-child td{border-bottom:0!important}
   &quot;api&quot;: &quot;bazarnama/v1&quot;,
   &quot;id&quot;: &quot;usd&quot;,
   &quot;unit&quot;: &quot;IRT&quot;,
-  &quot;updated_utc&quot;: &quot;2026-11-14T04:00:00Z&quot;,
+  &quot;updated_utc&quot;: &quot;2026-11-14T05:00:00Z&quot;,
   &quot;points&quot;: [
-    {
-      &quot;timestamp&quot;: 1794621600,
-      &quot;price&quot;: 268600.0
-    },
     {
       &quot;timestamp&quot;: 1794625200,
       &quot;price&quot;: 270300.0
@@ -531,6 +527,10 @@ tr:last-child td{border-bottom:0!important}
     {
       &quot;timestamp&quot;: 1794628800,
       &quot;price&quot;: 270300.0
+    },
+    {
+      &quot;timestamp&quot;: 1794632400,
+      &quot;price&quot;: 269100.0
     }
   ]
 }</pre><p><code>timestamp</code> یعنی Unix UTC بر حسب ثانیه و <code>price</code> در همان <code>unit</code> سطح بالای فایل است. فاصلهٔ نقاط یکنواخت نیست (سال‌های قدیم معمولاً روزانه‌اند و نقاط اخیر می‌توانند ساعتی باشند) و ممکن است شکاف داشته باشد؛ نقطهٔ گمشده را درون‌یابی نکنید.</p></section>
@@ -546,7 +546,7 @@ tr:last-child td{border-bottom:0!important}
       &quot;energy&quot;: 7200
     },
     &quot;counts&quot;: {
-      &quot;fresh&quot;: 42,
+      &quot;fresh&quot;: 43,
       &quot;aging&quot;: 0,
       &quot;stale&quot;: 1,
       &quot;unknown&quot;: 0
