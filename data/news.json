@@ -1,6 +1,26 @@
 {
-  "updated_at": "2026-11-13T23:25:12.964100+00:00",
+  "updated_at": "2026-11-14T00:02:47.104226+00:00",
   "items": [
+    {
+      "title": "کلیدهای ارتقای هوش تجاری در بورس",
+      "url": "https://www.isna.ir/news/1405082215117/%DA%A9%D9%84%DB%8C%D8%AF%D9%87%D8%A7%DB%8C-%D8%A7%D8%B1%D8%AA%D9%82%D8%A7%DB%8C-%D9%87%D9%88%D8%B4-%D8%AA%D8%AC%D8%A7%D8%B1%DB%8C-%D8%AF%D8%B1-%D8%A8%D9%88%D8%B1%D8%B3",
+      "source": "ایسنا",
+      "published_at": "2026-11-13T23:45:00+00:00",
+      "category": "stock",
+      "category_label": "بورس",
+      "relevance": 2,
+      "date_status": "ok"
+    },
+    {
+      "title": "عرضه جهانی نفت برای نخستین بار از آغاز جنگ ایران از تقاضا پیشی گرفت",
+      "url": "https://www.iranintl.com/202611137323",
+      "source": "ایران اینترنشنال",
+      "published_at": "2026-11-13T23:20:03+00:00",
+      "category": "macro",
+      "category_label": "اقتصاد کلان",
+      "relevance": 2,
+      "date_status": "ok"
+    },
     {
       "title": "اعتراض نماینده اهواز به جمع‌آوری کارت‌های آزاد جایگاه‌های سوخت / مردم خوزستان در ماه‌های گرم سال ناچار به استفاده از خودرو هستند",
       "url": "https://www.khabaronline.ir/news/2301684/%D8%A7%D8%B9%D8%AA%D8%B1%D8%A7%D8%B6-%D9%86%D9%85%D8%A7%DB%8C%D9%86%D8%AF%D9%87-%D8%A7%D9%87%D9%88%D8%A7%D8%B2-%D8%A8%D9%87-%D8%AC%D9%85%D8%B9-%D8%A2%D9%88%D8%B1%DB%8C-%DA%A9%D8%A7%D8%B1%D8%AA-%D9%87%D8%A7%DB%8C-%D8%A2%D8%B2%D8%A7%D8%AF-%D8%AC%D8%A7%DB%8C%DA%AF%D8%A7%D9%87-%D9%87%D8%A7%DB%8C-%D8%B3%D9%88%D8%AE%D8%AA",
@@ -167,11 +187,11 @@
   ],
   "stats": {
     "seen": 210,
-    "off_topic": 193,
+    "off_topic": 191,
     "no_valid_date": 0,
     "too_old": 0,
     "duplicates": 1,
-    "published": 16
+    "published": 18
   },
   "sources_ok": [
     "ایران اینترنشنال",
